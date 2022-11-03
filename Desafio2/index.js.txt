@@ -84,7 +84,7 @@ class Contenedor {
   async deleteAll() {
     try {
       let data = await fs.promises.readFile(this.ruta, "utf-8");
-      if (data) {
+      if (!data) {
         console.log("No hay productos");
       } else {
         await fs.promises.writeFile(this.ruta, "");
