@@ -19,11 +19,11 @@ class Contenedor {
         });
       }
       id = idMax + 1;
-      data.id = id;
-      console.log(data);
+      producto.id = id;
+      console.log(producto);
       await fs.promises.writeFile(
         this.ubicacion,
-        JSON.stringify(data, null, 2)
+        JSON.stringify([...data, producto], null, 2)
       );
     } catch (error) {
       console.log("Se ha presentado error ", error);
