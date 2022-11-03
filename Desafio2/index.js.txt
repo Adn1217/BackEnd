@@ -1,0 +1,120 @@
+// const fs = require("fs");
+import * as fs from "fs";
+class Contenedor {
+  constructor(ubicacion) {
+    this.ruta = ubicacion;
+  }
+
+  async save(producto) {
+    try {
+      let data = await fs.promises.readFile(this.ruta, "utf-8");
+      let id = 0;
+      let idMax = id;
+      data = await JSON.parse(data);
+      if (!data) {
+        console.log("No hay productos");
+      } else {
+        data.forEach((producto) => {
+          producto.id > idMax && (idMax = producto.id);
+        });
+      }
+      id = idMax + 1;
+      data.id = id;
+      console.log(data);
+      await fs.promises.writeFile(
+        this.ubicacion,
+        JSON.stringify(data, null, 2)
+      );
+    } catch (error) {
+      console.log("Se ha presentado error ", error);
+    }
+  }
+
+  async getById(Id) {
+    try {
+      let data = await fs.promises.readFile(this.ruta);
+      let id = Id;
+      data = await JSON.parse(data);
+      let prod = data.find((producto) => producto.id === id);
+      if (data.Id) {
+        console.log("El producto es: ", prod);
+      } else {
+        return null;
+      }
+      return prod;
+    } catch (error) {
+      console.log("Se ha presentado error ", error);
+    }
+  }
+
+  async getAll() {
+    try {
+      let data = await fs.promises.readFile(this.ruta, "utf-8");
+      console.log(data);
+      data = await JSON.parse(data);
+      return data;
+    } catch (error) {
+      console.log("Se ha presentado error ", error);
+    }
+  }
+
+  async deleteById(Id) {
+    try {
+      let data = await fs.promises.readFile(this.ruta, "utf-8");
+      let id = Id;
+      data = await JSON.parse(data);
+      let prod = data.find((producto) => producto.id === id);
+      if (data.Id) {
+        data = data.filter((producto) => producto.id !== id);
+        await fs.promises.writeFile(
+          this.ubicacion,
+          JSON.stringify(data, null, 2)
+        );
+        console.log("Se elimina el producto: ", prod);
+        console.log("Quedan los productos: ", data);
+      } else {
+        console.log("No existe el producto con id: ", id);
+      }
+      return data;
+    } catch (error) {
+      console.log("Se ha presentado error ", error);
+    }
+  }
+
+  async deleteAll() {
+    try {
+      let data = await fs.promises.readFile(this.ruta, "utf-8");
+      if (data) {
+        console.log("No hay productos");
+      } else {
+        await fs.promises.writeFile(this.ruta, "");
+        console.log("Se han borrado los productos ", data);
+      }
+    } catch (error) {
+      console.log("Se ha presentado error ", error);
+    }
+  }
+}
+console.clear();
+console.log("---Desafío 2: Manejo de archivos---");
+let productos = new Contenedor("./productos.json");
+console.log(
+  "Estos son los productos del archivo productos.json :",
+  productos.getAll()
+);
+const nuevoProducto = {
+  title: "Globo Terraqueo",
+  price: 345.67,
+  thumbnail: "xxxyyyzzz3333",
+  id: 1
+};
+productos.save(nuevoProducto);
+console.log("Se guardó el producto :", nuevoProducto);
+console.log("La nueva lista de productos es (getAll): ", productos.getAll());
+console.log("El producto con id=1 es (getById): ", productos.getById(1));
+productos.deleteById(1);
+console.log("Se borró el producto con id=1 (deleteById)");
+console.log("La nueva lista de productos es :", productos.getAll());
+productos.deleteAll();
+console.log("Se borró toda la lista de productos (deleteAll)");
+console.log("La nueva lista de productos es (getAll) :", productos.getAll());
