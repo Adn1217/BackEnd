@@ -36,7 +36,7 @@ class Contenedor {
       let id = Id;
       data = await JSON.parse(data);
       let prod = data.find((producto) => producto.id === id);
-      if (prod.id) {
+      if (prod?.id) {
         console.log("El producto es: ", prod);
         return prod;
       } else {
@@ -64,7 +64,7 @@ class Contenedor {
       let id = Id;
       data = await JSON.parse(data);
       let prod = data.find((producto) => producto.id === id);
-      if (prod.id) {
+      if (prod?.id) {
         data = data.filter((producto) => producto.id !== id);
         await fs.promises.writeFile(
           this.ubicacion,
