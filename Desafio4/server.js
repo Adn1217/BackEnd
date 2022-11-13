@@ -4,13 +4,19 @@ import express from 'express';
 console.log('\n################INICIO DE SERVIDOR################\n')
 const app = express();
 const port = parseInt(process.env.PORT, 10) || 8080;
-app.use(express.urlencoded())
+app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 
 async function saveProduct(prod) {
     const productos = new Contenedor('./productos.json');
     const newProductId = await productos.save(prod);
     return newProductId
+} 
+
+async function saveAllProducts(prods) {
+    const productos = new Contenedor('./productos.json');
+    const saved = await productos.saveAll(prods);
+    return saved 
 } 
 
 async function getProducts() {
@@ -68,7 +74,6 @@ app.get('/productos/:id', (req, res) => {
             productById = {
                 error: "Producto no encontrado"
             }
-            console.log(productById);
             res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
         }else{
             console.log('El producto es: \n', productById); 
@@ -79,6 +84,39 @@ app.get('/productos/:id', (req, res) => {
     console.log(id);
     showProductById(parseInt(id));
     
+})
+
+app.put('/productos/:id', (req, res) => {
+    async function updateProductById(updatedProd, id) {
+        let productById = await getProductById(id);
+        if (!productById){
+            productById = {
+                error: "Producto no encontrado"
+            }
+            res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
+        }else{
+            const allProducts = await getProducts();
+            const newAllProducts = allProducts.map((prod) => {
+                if(prod.id === id){
+                    prod = updatedProd;
+                    prod.id = id;
+                    console.log(prod);
+                }
+                return prod;
+            })
+            console.log('La nueva lista es: ', newAllProducts);
+            const allSaved = await saveAllProducts(newAllProducts);
+            if (allSaved === 'ok'){
+                res.send(`<p><strong>Se ha actualizado exitosamente el producto. La nueva lista de productos es: </strong><br> ${JSON.stringify(newAllProducts)}</p>`);
+            }else{
+                res.send(`<p><strong>Se ha presentado error: </strong><br> ${saveAll}</p>`);
+            }
+        }
+    }
+    const prod = req.body;
+    const id = req.params.id;
+    // console.log(prod);
+    updateProductById(prod, parseInt(id));
 })
 
 let visitas = 0;

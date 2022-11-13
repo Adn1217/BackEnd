@@ -32,6 +32,16 @@ export default class Contenedor {
     }
   }
 
+  async saveAll(productos) {
+    try {
+      await fs.promises.writeFile(this.ruta,JSON.stringify([...productos], null, 2));
+      return 'ok'
+    } catch (error) {
+      console.log("Se ha presentado error ", error);
+      return error
+    }
+  }
+
   async getById(Id) {
     try {
       let data = await fs.promises.readFile(this.ruta);
