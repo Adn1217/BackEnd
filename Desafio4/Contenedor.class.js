@@ -86,7 +86,7 @@ export default class Contenedor {
       } else {
         console.log("No existe el producto con id: ", id);
       }
-      return data;
+      return prod;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }

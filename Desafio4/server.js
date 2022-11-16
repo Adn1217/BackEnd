@@ -31,6 +31,12 @@ async function getProductById(id) {
     return product
 }
 
+async function deleteProductById(id) {
+    const productos = new Contenedor('./productos.json');
+    const product = await productos.deleteById(id);
+    return product
+}
+
 function getRandId(products){
         const ids = products.map((prod) => prod.id);
         console.log("Los Ids son: ", ids);
@@ -119,26 +125,29 @@ app.put('/productos/:id', (req, res) => {
     updateProductById(prod, parseInt(id));
 })
 
-let visitas = 0;
-app.get('/Visitas', (req, res) => {
-    visitas ++;
-    res.send(`<h1>Renderizado desde el servidor</h1><h2>La cantidad de visitas es: ${visitas}</h2>`)
+app.delete('/productos/:id', (req, res) => {
+
+    async function doDeleteProductById(id) {
+        let deletedProduct = await deleteProductById(id);
+        if (!deletedProduct){
+            deletedProduct = {
+                error: "Producto no encontrado"
+            }
+            res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(deletedProduct)}`)
+        }else{
+            // console.log('Se ha eliminado el producto: \n', deletedProduct); 
+            res.send(`<p><strong>Se ha eliminado el producto: </strong><br> ${JSON.stringify(deletedProduct)}</p>`);
+        }
+            return deletedProduct;
+        }
+
+    const {id} = req.params;
+    console.log(id);
+    doDeleteProductById(parseInt(id));
 })
 
 const server = app.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
 })
 
-server.on('error', () => console.log('Se presentó error'));
-
-app.get('/productoRandom', (req, res) => {
-
-    async function showRandomProduct() {
-        const allProducts = await getProducts(); 
-        const randId = getRandId(allProducts);
-        const randProduct = await getProductById(randId); 
-        console.log('El producto es : \n', randProduct)
-        res.send(`<p><strong>El producto aleatorio es: </strong><br> ${JSON.stringify(randProduct)}</p>`);
-    }
-    showRandomProduct();
-})
+server.on('error', (error) => console.log('Se presentó error: ', error));
