@@ -5,12 +5,12 @@ console.log('\n################INICIO DE SERVIDOR################\n')
 
 const { Router } = express;
 const app = express();
-const router = Router();
+const productos = new Router();
 const port = parseInt(process.env.PORT, 10) || 8080;
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
-app.use('/api/productos', router);
+app.use('/api/productos', productos);
 
 async function saveProduct(prod) {
     const productos = new Contenedor('./productos.json');
@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
     res.send('Hola Mundo, este es mi primer servidor con Express');
 })
 
-router.get('/', (req, res) => {
+productos.get('/', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
         console.log('Los productos son: \n', allProducts)
@@ -56,7 +56,7 @@ router.get('/', (req, res) => {
     showProducts();
 })
 
-router.post('/', (req, res) => {
+productos.post('/', (req, res) => {
     async function doSaveProduct(prod) {
         const newProd = await saveProduct(prod); 
         // console.log('Se ha guardado el nuevo producto con el id: \n', newProdId)
@@ -73,7 +73,7 @@ router.post('/', (req, res) => {
     }
 })
 
-router.get('/:id', (req, res) => {
+productos.get('/:id', (req, res) => {
     async function showProductById(id) {
         let productById = await getProductById(id);
         if (!productById){
@@ -94,7 +94,7 @@ router.get('/:id', (req, res) => {
     
 })
 
-router.put('/:id', (req, res) => {
+productos.put('/:id', (req, res) => {
     async function updateProductById(updatedProd, id) {
         let productById = await getProductById(id);
         if (!productById){
@@ -129,7 +129,7 @@ router.put('/:id', (req, res) => {
     updateProductById(prod, parseInt(id));
 })
 
-router.delete('/:id', (req, res) => {
+productos.delete('/:id', (req, res) => {
 
     async function doDeleteProductById(id) {
         let deletedProduct = await deleteProductById(id);
