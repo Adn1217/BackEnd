@@ -11,6 +11,7 @@ const port = parseInt(process.env.PORT, 10) || 8080;
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 app.use('/api/productos', productos);
+app.use(express.static('public'));
 
 async function saveProduct(prod) {
     const productos = new Contenedor('./productos.json');
