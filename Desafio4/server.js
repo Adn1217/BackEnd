@@ -2,10 +2,15 @@ import Contenedor from './Contenedor.class.js';
 import express from 'express';
 // const express = require('express');
 console.log('\n################INICIO DE SERVIDOR################\n')
+
+const { Router } = express;
 const app = express();
+const productos = new Router();
 const port = parseInt(process.env.PORT, 10) || 8080;
+
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
+app.use('/api/productos', productos);
 
 async function saveProduct(prod) {
     const productos = new Contenedor('./productos.json');
@@ -41,7 +46,7 @@ app.get('/', (req, res) => {
     res.send('Hola Mundo, este es mi primer servidor con Express');
 })
 
-app.get('/productos', (req, res) => {
+productos.get('/', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
         console.log('Los productos son: \n', allProducts)
@@ -51,7 +56,7 @@ app.get('/productos', (req, res) => {
     showProducts();
 })
 
-app.post('/productos', (req, res) => {
+productos.post('/', (req, res) => {
     async function doSaveProduct(prod) {
         const newProd = await saveProduct(prod); 
         // console.log('Se ha guardado el nuevo producto con el id: \n', newProdId)
@@ -68,7 +73,7 @@ app.post('/productos', (req, res) => {
     }
 })
 
-app.get('/productos/:id', (req, res) => {
+productos.get('/:id', (req, res) => {
     async function showProductById(id) {
         let productById = await getProductById(id);
         if (!productById){
@@ -89,7 +94,7 @@ app.get('/productos/:id', (req, res) => {
     
 })
 
-app.put('/productos/:id', (req, res) => {
+productos.put('/:id', (req, res) => {
     async function updateProductById(updatedProd, id) {
         let productById = await getProductById(id);
         if (!productById){
@@ -124,7 +129,7 @@ app.put('/productos/:id', (req, res) => {
     updateProductById(prod, parseInt(id));
 })
 
-app.delete('/productos/:id', (req, res) => {
+productos.delete('/:id', (req, res) => {
 
     async function doDeleteProductById(id) {
         let deletedProduct = await deleteProductById(id);
