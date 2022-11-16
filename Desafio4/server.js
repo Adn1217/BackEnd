@@ -37,14 +37,6 @@ async function deleteProductById(id) {
     return product
 }
 
-function getRandId(products){
-        const ids = products.map((prod) => prod.id);
-        console.log("Los Ids son: ", ids);
-        const randId = ids[Math.round(Math.random()*(ids.length-1))];
-        console.log('El numero aleatorio es: ', randId);
-        return randId
-}
-
 app.get('/', (req, res) => {
     res.send('Hola Mundo, este es mi primer servidor con Express');
 })
@@ -53,20 +45,23 @@ app.get('/productos', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
         console.log('Los productos son: \n', allProducts)
-        res.send(`<p><strong>Los productos son: </strong><br> ${JSON.stringify(allProducts)}</p>`);
+        // res.send(`<p><strong>Los productos son: </strong><br> ${JSON.stringify(allProducts)}</p>`);
+        res.send([...allProducts])
     }
     showProducts();
 })
 
 app.post('/productos', (req, res) => {
     async function doSaveProduct(prod) {
-        const newProdId = await saveProduct(prod); 
-        console.log('Se ha guardado el nuevo producto con el id: \n', newProdId)
-        res.send(`<p><strong>Se ha guardado el nuevo producto con el id: </strong><br> ${newProdId}</p>`);
+        const newProd = await saveProduct(prod); 
+        // console.log('Se ha guardado el nuevo producto con el id: \n', newProdId)
+        // res.send(`<p><strong>Se ha guardado el nuevo producto con el id: </strong><br> ${newProdId}</p>`);
+        res.send({Guardado: newProd})
     }
     const product = req.body;
     if (Object.keys(product).length === 0){
-        res.send('<p><strong>No se recibió producto</strong></p>');
+        // res.send('<p><strong>No se recibió producto</strong></p>');
+        res.send({Error: "Producto no recibido"})
     }else{
         console.log('Producto', product);
         doSaveProduct(product);
@@ -77,13 +72,15 @@ app.get('/productos/:id', (req, res) => {
     async function showProductById(id) {
         let productById = await getProductById(id);
         if (!productById){
-            productById = {
-                error: "Producto no encontrado"
-            }
-            res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
+            // productById = {
+            //     error: "Producto no encontrado"
+            // }
+            // res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
+            res.send({error:"Producto no encontrado"})
         }else{
-            console.log('El producto es: \n', productById); 
-            res.send(`<p><strong>El producto es: </strong><br> ${JSON.stringify(productById)}</p>`);
+            // console.log('El producto es: \n', productById); 
+            // res.send(`<p><strong>El producto es: </strong><br> ${JSON.stringify(productById)}</p>`);
+            res.send({producto: productById})
         }
     }
     const id = req.params.id;
@@ -113,9 +110,11 @@ app.put('/productos/:id', (req, res) => {
             console.log('La nueva lista es: ', newAllProducts);
             const allSaved = await saveAllProducts(newAllProducts);
             if (allSaved === 'ok'){
-                res.send(`<p><strong>Se ha actualizado exitosamente el producto. La nueva lista de productos es: </strong><br> ${JSON.stringify(newAllProducts)}</p>`);
+                // res.send(`<p><strong>Se ha actualizado exitosamente el producto. La nueva lista de productos es: </strong><br> ${JSON.stringify(newAllProducts)}</p>`);
+                res.send({actualizado: updatedProd})
             }else{
-                res.send(`<p><strong>Se ha presentado error: </strong><br> ${saveAll}</p>`);
+                // res.send(`<p><strong>Se ha presentado error: </strong><br> ${saveAll}</p>`);
+                res.send({error: saveAll})
             }
         }
     }
@@ -133,10 +132,12 @@ app.delete('/productos/:id', (req, res) => {
             deletedProduct = {
                 error: "Producto no encontrado"
             }
-            res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(deletedProduct)}`)
+            // res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(deletedProduct)}`)
+            res.send(deletedProduct)
         }else{
             // console.log('Se ha eliminado el producto: \n', deletedProduct); 
-            res.send(`<p><strong>Se ha eliminado el producto: </strong><br> ${JSON.stringify(deletedProduct)}</p>`);
+            // res.send(`<p><strong>Se ha eliminado el producto: </strong><br> ${JSON.stringify(deletedProduct)}</p>`);
+            res.send({eliminado: deletedProduct})
         }
             return deletedProduct;
         }
@@ -150,4 +151,4 @@ const server = app.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);
 })
 
-server.on('error', (error) => console.log('Se presentó error: ', error));
+server.on('error', (error) => console.log('Se presentó error: ', error.message));

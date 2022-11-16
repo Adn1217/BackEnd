@@ -26,7 +26,7 @@ export default class Contenedor {
       }else{
         await fs.promises.writeFile(this.ruta,JSON.stringify([...data, producto], null, 2));
       }
-      return producto.id;
+      return producto;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
