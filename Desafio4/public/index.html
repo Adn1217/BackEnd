@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/variables.js" defer></script>
+    <script src="./js/functionality.js" defer></script>
+</head>
+<body>
+    <!-- <h1>Esto viene desde el Back</h1> -->
+    <fieldset class="container">
+        <legend>Formulario</legend>
+        <div class="col-md-4">
+            <label for="title" class="form-label">Producto</label>
+            <input type="text" class="form-control" id="titleInput" placeholder="Ingrese título de producto">
+        </div>
+        <div class="col-md-4">
+            <label for="price" class="form-label">Precio</label>
+            <input type="number" min="0" class="form-control" id="priceInput" placeholder="Ingrese precio de producto">
+        </div>
+        <div class="col-md-4">
+            <label for="thumbnail" class="form-label">Thumbnail</label>
+            <input type="text" class="form-control" id="thumbnailInput" placeholder="Ingrese url de imagen de producto">
+        </div>
+        <button id="submitButton" type="button" class="btn btn-success">Save</button>
+        <div class="col-md-1">
+            <label for="id" class="form-label">Id</label>
+            <input type="number" min="1" max="999" class="form-control" id="idInput" placeholder="id">
+        </div>
+    </fieldset>
+    <div class="container" id="buttons">
+        <button id="getOneButton" type="button" class="btn btn-secondary">GetById</button>
+        <button id="updateButton" type="button" class="btn btn-warning">UpdateById</button>
+        <button id="deleteOneButton" type="button" class="btn btn-danger">DeleteById</button>
+        <div>
+            <button id="getAllButton" type="button" class="btn btn-primary">GetAll</button>
+        </div>
+    </div>
+    <div id="results" class="container">
+
+    </div>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</body>
+</html>

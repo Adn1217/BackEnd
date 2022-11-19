@@ -11,6 +11,7 @@ const port = parseInt(process.env.PORT, 10) || 8080;
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 app.use('/api/productos', productos);
+app.use(express.static('public'));
 
 async function saveProduct(prod) {
     const productos = new Contenedor('./productos.json');
@@ -98,10 +99,11 @@ productos.put('/:id', (req, res) => {
     async function updateProductById(updatedProd, id) {
         let productById = await getProductById(id);
         if (!productById){
-            productById = {
-                error: "Producto no encontrado"
-            }
-            res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
+            // productById = {
+            //     error: "Producto no encontrado"
+            // }
+            // res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
+            res.send({error: "Producto no encontrado"});
         }else{
             const allProducts = await getProducts();
             const newAllProducts = allProducts.map((prod) => {
