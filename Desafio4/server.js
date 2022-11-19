@@ -99,10 +99,11 @@ productos.put('/:id', (req, res) => {
     async function updateProductById(updatedProd, id) {
         let productById = await getProductById(id);
         if (!productById){
-            productById = {
-                error: "Producto no encontrado"
-            }
-            res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
+            // productById = {
+            //     error: "Producto no encontrado"
+            // }
+            // res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
+            res.send({error: "Producto no encontrado"});
         }else{
             const allProducts = await getProducts();
             const newAllProducts = allProducts.map((prod) => {

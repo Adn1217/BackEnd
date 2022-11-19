@@ -1,0 +1,20 @@
+.btn {
+    margin: 10px;
+    min-width: 100px;
+}
+#buttons{
+    margin-top: 20px;
+}
+
+#results{
+    margin-left: auto;
+    width: 100%;
+}
+
+.errorLabel{
+    color: red;
+}
+
+.errorInput{
+    border-color: red !important;
+}
