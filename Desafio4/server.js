@@ -1,6 +1,5 @@
 import Contenedor from './Contenedor.class.js';
 import express from 'express';
-// const express = require('express');
 console.log('\n################INICIO DE SERVIDOR################\n')
 
 const { Router } = express;
@@ -51,7 +50,6 @@ productos.get('/', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
         console.log('Los productos son: \n', allProducts)
-        // res.send(`<p><strong>Los productos son: </strong><br> ${JSON.stringify(allProducts)}</p>`);
         res.send([...allProducts])
     }
     showProducts();
@@ -60,13 +58,10 @@ productos.get('/', (req, res) => {
 productos.post('/', (req, res) => {
     async function doSaveProduct(prod) {
         const newProd = await saveProduct(prod); 
-        // console.log('Se ha guardado el nuevo producto con el id: \n', newProdId)
-        // res.send(`<p><strong>Se ha guardado el nuevo producto con el id: </strong><br> ${newProdId}</p>`);
         res.send({Guardado: newProd})
     }
     const product = req.body;
     if (Object.keys(product).length === 0){
-        // res.send('<p><strong>No se recibió producto</strong></p>');
         res.send({Error: "Producto no recibido"})
     }else{
         console.log('Producto', product);
@@ -78,14 +73,8 @@ productos.get('/:id', (req, res) => {
     async function showProductById(id) {
         let productById = await getProductById(id);
         if (!productById){
-            // productById = {
-            //     error: "Producto no encontrado"
-            // }
-            // res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
             res.send({error:"Producto no encontrado"})
         }else{
-            // console.log('El producto es: \n', productById); 
-            // res.send(`<p><strong>El producto es: </strong><br> ${JSON.stringify(productById)}</p>`);
             res.send({producto: productById})
         }
     }
@@ -99,10 +88,6 @@ productos.put('/:id', (req, res) => {
     async function updateProductById(updatedProd, id) {
         let productById = await getProductById(id);
         if (!productById){
-            // productById = {
-            //     error: "Producto no encontrado"
-            // }
-            // res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(productById)}`)
             res.send({error: "Producto no encontrado"});
         }else{
             const allProducts = await getProducts();
@@ -117,17 +102,14 @@ productos.put('/:id', (req, res) => {
             console.log('La nueva lista es: ', newAllProducts);
             const allSaved = await saveAllProducts(newAllProducts);
             if (allSaved === 'ok'){
-                // res.send(`<p><strong>Se ha actualizado exitosamente el producto. La nueva lista de productos es: </strong><br> ${JSON.stringify(newAllProducts)}</p>`);
                 res.send({actualizado: updatedProd})
             }else{
-                // res.send(`<p><strong>Se ha presentado error: </strong><br> ${saveAll}</p>`);
                 res.send({error: saveAll})
             }
         }
     }
     const prod = req.body;
     const id = req.params.id;
-    // console.log(prod);
     updateProductById(prod, parseInt(id));
 })
 
@@ -139,11 +121,8 @@ productos.delete('/:id', (req, res) => {
             deletedProduct = {
                 error: "Producto no encontrado"
             }
-            // res.send(`<p><strong>Error: </p></strong> ${JSON.stringify(deletedProduct)}`)
             res.send(deletedProduct)
         }else{
-            // console.log('Se ha eliminado el producto: \n', deletedProduct); 
-            // res.send(`<p><strong>Se ha eliminado el producto: </strong><br> ${JSON.stringify(deletedProduct)}</p>`);
             res.send({eliminado: deletedProduct})
         }
             return deletedProduct;
