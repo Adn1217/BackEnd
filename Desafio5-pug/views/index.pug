@@ -1,0 +1,36 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Document
+  link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC' crossorigin='anonymous')
+  // <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+  link(rel='stylesheet' href='/css/styles.css')
+  script(src='/js/variables.js' defer='')
+  script(src='/js/functionality.js' defer='')
+fieldset.container
+  legend Formulario
+  .col-md-4
+    label.form-label(for='title') Producto
+    input#titleInput.form-control(type='text' placeholder='Ingrese título de producto')
+  .col-md-4
+    label.form-label(for='price') Precio
+    input#priceInput.form-control(type='number' min='0' placeholder='Ingrese precio de producto')
+  .col-md-4
+    label.form-label(for='thumbnail') Imagen
+    input#thumbnailInput.form-control(type='text' placeholder='Ingrese url de imagen de producto')
+  button#submitButton.btn.btn-success(type='button') Save
+  .col-md-1
+    label.form-label(for='id') Id
+    input#idInput.form-control(type='number' min='1' max='999' placeholder='id' disabled='')
+#buttons.container
+  button#getOneButton.btn.btn-secondary(type='button' disabled='') GetById
+  button#updateButton.btn.btn-warning(type='button' disabled='') UpdateById
+  button#deleteOneButton.btn.btn-danger(type='button' disabled='') DeleteById
+  div
+    button#getAllButton.btn.btn-primary(type='button' disabled='') GetAll
+#results.container
+#resultados.container
+  block resultTable
+link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC' crossorigin='anonymous')

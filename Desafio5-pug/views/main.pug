@@ -1,0 +1,18 @@
+extends index
+
+block resultTable
+    -const prods = products 
+    if prods
+        table.table
+            thead
+                th Id
+                th Producto
+                th Precio
+                th Imagen
+            tbody
+                each prod in prods
+                    tr
+                        td=prod.id
+                        td=prod.title
+                        td=prod.price
+                        td=prod.thumbnail
