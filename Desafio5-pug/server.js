@@ -52,16 +52,6 @@ async function deleteProductById(id) {
     return product
 }
 
-// app.get('/', (req, res) => {
-//     async function showProducts() {
-//         const allProducts = await getProducts(); 
-//         console.log('Los productos son: \n', allProducts);
-//         res.render('layouts/main', {products: allProducts})
-//     }
-//     showProducts();
-// })
-
-
 productos.get('/', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
