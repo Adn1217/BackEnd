@@ -16,7 +16,7 @@ const port = parseInt(process.env.PORT, 10) || 8080;
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
-app.use('/api/productos', productos);
+app.use('/productos', productos);
 
 app.engine('hbs', handlebars.engine({
     extname: '.hbs',
@@ -60,16 +60,6 @@ async function deleteProductById(id) {
     const product = await productos.deleteById(id);
     return product
 }
-
-app.get('/', (req, res) => {
-    async function showProducts() {
-        const allProducts = await getProducts(); 
-        console.log('Los productos son: \n', allProducts);
-        res.render('main', {products: allProducts})
-    }
-    showProducts();
-})
-
 
 productos.get('/', (req, res) => {
     async function showProducts() {

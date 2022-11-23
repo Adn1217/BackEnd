@@ -25,7 +25,7 @@ async function submitForm(id) {
             price: priceInput.value,
             thumbnail: thumbnailInput.value
         }
-        let url = 'http://localhost:8080/api/productos';
+        let url = 'http://localhost:8080/productos';
         let verb = 'POST';
         id && (url = url + `/${id}`);
         id && (verb = 'PUT');
@@ -40,7 +40,7 @@ async function submitForm(id) {
         !("error" in data) && ([titleInput.value, priceInput.value, thumbnailInput.value] = ['','','']);
         console.log(data);
         results.innerHTML=`<h1>Respuesta</h1><p>${JSON.stringify(data)}</p>`;
-        !("error" in data) && (window.location.href = 'http://localhost:8080/')
+        !("error" in data) && (window.location.href = 'http://localhost:8080/productos')
     }
 }
 

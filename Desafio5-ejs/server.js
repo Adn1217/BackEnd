@@ -16,8 +16,7 @@ const port = parseInt(process.env.PORT, 10) || 8080;
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
-app.use('/api/productos', productos);
-// app.engine('pug', pug.__express)
+app.use('/productos', productos);
 app.set('view engine', 'ejs');
 app.set('views', "./views");
 app.use(express.static(__dirname + '/public'));
@@ -52,21 +51,11 @@ async function deleteProductById(id) {
     return product
 }
 
-app.get('/', (req, res) => {
-    async function showProducts() {
-        const allProducts = await getProducts(); 
-        console.log('Los productos son: \n', allProducts);
-        res.render('pages/index', {products: allProducts})
-    }
-    showProducts();
-})
-
-
 productos.get('/', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
         console.log('Los productos son: \n', allProducts);
-        res.render('results', {products: allProducts})
+        res.render('pages/index', {products: allProducts})
     }
     showProducts();
 })
