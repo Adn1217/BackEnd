@@ -56,7 +56,7 @@ app.get('/', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
         console.log('Los productos son: \n', allProducts);
-        res.render('main', {products: allProducts})
+        res.render('layouts/main', {products: allProducts})
     }
     showProducts();
 })
