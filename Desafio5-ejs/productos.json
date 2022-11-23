@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Escuadra",
+    "price": 123.5,
+    "thumbnail": "https://es.wikipedia.org/wiki/Escuadra#/media/Archivo:Squadra_45.jpg",
+    "id": 1
+  },
+  {
+    "title": "Calculadora",
+    "price": 234.56,
+    "thumbnail": "https://es.wikipedia.org/wiki/Calculadora#/media/Archivo:Casio_fx-85WA_20050529.jpg",
+    "id": 2
+  },
+  {
+    "title": "Globo Terraqueo",
+    "price": 345.67,
+    "thumbnail": "https://panamericana.vteximg.com.br/arquivos/ids/190161-1600-1600/globo-terraqueo-politico-40-cm-1-7701016736787.jpg?v=636251722565900000",
+    "id": 3
+  },
+  {
+    "title": "Exacto",
+    "price": "8000",
+    "thumbnail": "urlExacto",
+    "id": 4
+  },
+  {
+    "title": "Medias",
+    "price": "25000",
+    "thumbnail": "urlMedia",
+    "id": 5
+  }
+]
