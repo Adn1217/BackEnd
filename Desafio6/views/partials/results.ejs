@@ -1,0 +1,20 @@
+<% if (!("error" in products)) {%>
+    <table class="table">
+        <thead>
+            <th>Id</th>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Imagen</th>
+        </thead>
+        <tbody>
+        <% for(let i=0; i<products.length; i++){ %>
+            <tr>
+                <td><%=products[i].id%></td>
+                <td><%=products[i].title%></td>
+                <td><%=products[i].price%></td>
+                <td><%=products[i].thumbnail%></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+<% } %>
