@@ -1,6 +1,6 @@
 <h2>Zona de Mensajes</h2>
 <div class="col-md-12">
-    <label for="title" class="form-label">Correo</label>
+    <label for="user" class="form-label">Correo</label>
     <input type="text" class="form-control" id="userInput" placeholder="Ingrese correo">
     <!-- <div class="user mb-3">
         <label for="title" class="form-label">Correo</label>
@@ -13,8 +13,28 @@
 </div>
 <div class="col-md-12">
     <label for="msj" class="form-label">Mensaje</label>
-    <input type="text" class="form-control" id="msjInput" placeholder="Ingrese mensaje">
+    <input type="text" class="form-control" id="msgInput" placeholder="Ingrese mensaje">
+    <button id="sendMsgButton" type="button" class="btn btn-primary" >Enviar</button>
 </div>
 <div id="msjs">
-    
+    <% if (!("error" in msgs)) {%>
+        <table class="table">
+            <thead>
+                <th>Id</th>
+                <th>Fecha</th>
+                <th>Usuario</th>
+                <th>Mensaje</th>
+            </thead>
+            <tbody>
+            <% for(let i=0; i<msgs.length; i++){ %>
+                <tr>
+                    <td><%=msgs[i].id%></td>
+                    <td><%=msgs[i].fecha%></td>
+                    <td><%=msgs[i].usuario%></td>
+                    <td><%=msgs[i].mensaje%></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    <% } %>
 </div>

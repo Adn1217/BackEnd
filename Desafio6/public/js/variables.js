@@ -14,3 +14,5 @@ let titleInput = document.getElementById('titleInput');
 let priceInput = document.getElementById('priceInput');
 let thumbnailInput = document.getElementById('thumbnailInput');
 let idInput = document.getElementById('idInput');
+let userInput = document.getElementById('userInput');
+let msgInput = document.getElementById('msgInput');

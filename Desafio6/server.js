@@ -13,6 +13,7 @@ const __dirname = path.dirname(__filename);
 const { Router } = express;
 const app = express();
 const productos = new Router();
+const mensajes = new Router();
 const port = parseInt(process.env.PORT, 10) || 8080;
 
 const httpServer = new HttpServer(app);
@@ -21,6 +22,7 @@ const io = new IOServer(httpServer);
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 app.use('/productos', productos);
+app.use('/mensajes', mensajes);
 app.set('view engine', 'ejs');
 app.set('views', "./views");
 app.use(express.static(__dirname + '/public'));
@@ -31,7 +33,8 @@ io.on('connection', (socket) => {
 
     socket.on('productRequest', async () => {
         const allProducts = await getProducts();
-        io.sockets.emit('productos', allProducts);
+        const allMsgs = await getMessages();
+        io.sockets.emit('productos', {productos: allProducts, msgs: allMsgs});
     })
 
 })
@@ -40,6 +43,12 @@ async function saveProduct(prod) {
     const productos = new Contenedor('./productos.json');
     const newProductId = await productos.save(prod);
     return newProductId
+} 
+
+async function saveMessage(msg) {
+    const messages = new Contenedor('./mensajes.json');
+    const newMessage = await messages.save(msg);
+    return newMessage
 } 
 
 async function saveAllProducts(prods) {
@@ -52,6 +61,12 @@ async function getProducts() {
     const productos = new Contenedor('./productos.json');
     const allProducts = await productos.getAll();
     return allProducts
+} 
+
+async function getMessages() {
+    const messages = new Contenedor('./mensajes.json');
+    const allMessages = await messages.getAll();
+    return allMessages
 } 
 
 async function getProductById(id) {
@@ -69,8 +84,9 @@ async function deleteProductById(id) {
 productos.get('/', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
+        const allMessages = await getMessages();
         console.log('Los productos son: \n', allProducts);
-        res.render('pages/index', {products: allProducts})
+        res.render('pages/index', {products: allProducts, msgs: allMessages})
     }
     showProducts();
 })
@@ -154,6 +170,22 @@ productos.delete('/:id', (req, res) => {
     const {id} = req.params;
     console.log(id);
     doDeleteProductById(parseInt(id));
+})
+
+mensajes.post('/', (req, res) => {
+    async function doSaveMessage(msg) {
+        const newMsg = await saveMessage(msg); 
+        res.send({Guardado: newMsg})
+        // const allProducts = await getProducts(); 
+        // res.send(allProducts);
+    }
+    const msg = req.body;
+    if (Object.keys(msg).length === 0){
+        res.send({Error: "Mensage no recibido"})
+    }else{
+        console.log('Mensaje: ', msg);
+        doSaveMessage(msg);
+    }
 })
 
 const server = httpServer.listen(port, () => {
