@@ -33,10 +33,13 @@ io.on('connection', (socket) => {
 
     socket.on('productRequest', async () => {
         const allProducts = await getProducts();
-        const allMsgs = await getMessages();
-        io.sockets.emit('productos', {productos: allProducts, msgs: allMsgs});
+        io.sockets.emit('productos', {productos: allProducts});
     })
 
+    socket.on('messageRequest', async () => {
+        const allMsgs = await getMessages();
+        io.sockets.emit('mensajes', {msgs: allMsgs});
+    })
 })
 
 async function saveProduct(prod) {
@@ -89,6 +92,15 @@ productos.get('/', (req, res) => {
         res.render('pages/index', {products: allProducts, msgs: allMessages})
     }
     showProducts();
+})
+
+mensajes.get('/', (req, res) => {
+    async function showMsgs() {
+        const allMessages = await getMessages();
+        console.log('Los mensajes son: \n', allMessages);
+        res.render('pages/index', {msgs: allMessages})
+    }
+    showMsgs();
 })
 
 productos.post('/', (req, res) => {

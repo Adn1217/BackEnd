@@ -8,6 +8,7 @@ let deleteOneButton = document.getElementById('deleteOneButton');
 // DIVs
 let results = document.getElementById('results');
 let resultados = document.getElementById('resultados');
+let chat = document.getElementById('msjs');
 
 // INPUTs
 let titleInput = document.getElementById('titleInput');

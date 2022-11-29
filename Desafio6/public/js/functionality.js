@@ -41,7 +41,7 @@ async function submitForm(id) {
         !("error" in data) && ([titleInput.value, priceInput.value, thumbnailInput.value] = ['','','']);
         console.log(data);
         // results.innerHTML=`<h1>Respuesta</h1><p>${JSON.stringify(data)}</p>`;
-        !("error" in data) && (window.location.href = 'http://localhost:8080/productos');
+        // !("error" in data) && (window.location.href = 'http://localhost:8080/productos');
     }
 }
 
@@ -131,8 +131,9 @@ async function sendMessage(id) {
         let data = await response.json();
         !("error" in data) && ([msgInput.value] = ['']);
         console.log(data);
+        socket.emit('messageRequest','msj')
         // results.innerHTML=`<h1>Respuesta</h1><p>${JSON.stringify(data)}</p>`;
-        !("error" in data) && (window.location.href = 'http://localhost:8080/productos');
+        // !("error" in data) && (window.location.href = 'http://localhost:8080/productos');
     // }
 }
 

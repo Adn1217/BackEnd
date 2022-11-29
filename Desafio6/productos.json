@@ -24,27 +24,9 @@
     "id": 4
   },
   {
-    "title": "Medias",
+    "title": "Televisor",
     "price": "25000",
-    "thumbnail": "urlMedia",
+    "thumbnail": "urlTele",
     "id": 5
-  },
-  {
-    "title": "Zapatos",
-    "price": "50000",
-    "thumbnail": "urlZapatos",
-    "id": 6
-  },
-  {
-    "title": "Pantalon",
-    "price": "55000",
-    "thumbnail": "urlPantalon",
-    "id": 7
-  },
-  {
-    "title": "Calzoncillos",
-    "price": "450000",
-    "thumbnail": "urlCalzoncillos",
-    "id": 8
   }
 ]

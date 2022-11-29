@@ -1,32 +1,14 @@
 [
   {
-    "fecha": "2021-01-01",
-    "usuario": "Bebi",
-    "mensaje": "Hola",
+    "fecha": "11/28/2022, 9:15:08 PM",
+    "usuario": "Pi",
+    "mensaje": "Biiii",
     "id": 1
   },
   {
-    "fecha": "2021-01-01",
-    "usuario": "Adrian",
-    "mensaje": "Hola",
+    "fecha": "11/28/2022, 9:15:52 PM",
+    "usuario": "Vi",
+    "mensaje": "Y po te?",
     "id": 2
-  },
-  {
-    "fecha": "11/27/2022, 6:56:32 PM",
-    "usuario": "Adrian",
-    "mensaje": "Oa Bi",
-    "id": 3
-  },
-  {
-    "fecha": "11/27/2022, 7:01:39 PM",
-    "usuario": "Adrian",
-    "mensaje": "Oa Bi",
-    "id": 4
-  },
-  {
-    "fecha": "11/27/2022, 7:01:56 PM",
-    "usuario": "Adrian",
-    "mensaje": "Oa BI",
-    "id": 5
   }
 ]
