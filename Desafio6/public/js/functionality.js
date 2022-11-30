@@ -113,7 +113,7 @@ async function sendMessage(id) {
     // let valideInputs = checkInputs(id);
     // if(valideInputs){
         let newMessage = {
-            fecha: new Date().toLocaleString(),
+            fecha: new Date().toLocaleString("en-GB"),
             usuario: userInput.value,
             mensaje: msgInput.value
         }

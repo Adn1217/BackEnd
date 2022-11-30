@@ -32,7 +32,7 @@ function tableRender(prods){
 function chatRender(msgs){
     let htmlChat = '';
     msgs.forEach((msg) => {
-        htmlChat += `<div>
+        htmlChat += `<div id="msj" class="rounded-3">
                         <p><strong>${msg.usuario}:</strong><br>${msg.mensaje}<br><em>Recibido el ${msg.fecha}</em></p>
                     </div>`
     })
