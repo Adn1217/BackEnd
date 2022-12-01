@@ -22,7 +22,7 @@ function checkMsgInputs(){
     if(userInput.value === '' || msgInput.value === ''){
         userInput.classList.add('errorInput');
         msgInput.classList.add('errorInput');
-        results.classList.remove('errorLabel');
+        results.classList.add('errorLabel');
         results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
         return false
     }else{
