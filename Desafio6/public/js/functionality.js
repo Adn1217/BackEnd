@@ -28,8 +28,10 @@ function checkMsgInputs(){
     }else{
         userInput.classList.remove('errorInput');
         msgInput.classList.remove('errorInput');
-        results.classList.remove('errorLabel');
-        results.innerHTML='';
+        if (results.classList.contains("errorLabel")) {
+            results.classList.remove("errorLabel");
+            results.innerHTML = "";
+          }
         return true
     }
 }

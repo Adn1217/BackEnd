@@ -153,7 +153,7 @@ productos.put('/:id', (req, res) => {
             if (allSaved === 'ok'){
                 res.send({actualizado: updatedProd})
             }else{
-                res.send({error: saveAll})
+                res.send({error: allSaved})
             }
         }
     }
