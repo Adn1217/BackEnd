@@ -1,4 +1,3 @@
-// const fs = require("fs");
 import * as fs from "fs";
 
 export default class Contenedor {
@@ -6,27 +5,27 @@ export default class Contenedor {
     this.ruta = ubicacion;
   }
 
-  async save(producto) {
+  async save(elemento) {
     try {
       let data = await fs.promises.readFile(this.ruta, "utf-8");
       let id = 0;
       let idMax = id;
       data !== [] && (data = await JSON.parse(data))
       if (!data || data.length === 0) {
-        console.log("No hay productos.");
+        console.log("No hay datos.");
       } else {
-        data.forEach((producto) => {
-          producto.id > idMax && (idMax = producto.id);
+        data.forEach((elemento) => {
+          elemento.id > idMax && (idMax = elemento.id);
         });
       }
       id = idMax + 1;
-      producto.id = id;
-      if (producto.length > 1){
-        await fs.promises.writeFile(this.ruta,JSON.stringify([...producto], null, 2));
+      elemento.id = id;
+      if (elemento.length > 1){
+        await fs.promises.writeFile(this.ruta,JSON.stringify([...elemento], null, 2));
       }else{
-        await fs.promises.writeFile(this.ruta,JSON.stringify([...data, producto], null, 2));
+        await fs.promises.writeFile(this.ruta,JSON.stringify([...data, elemento], null, 2));
       }
-      return producto;
+      return elemento;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }

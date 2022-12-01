@@ -8,7 +8,7 @@
 
 #results{
     margin-left: auto;
-    width: 100%;
+    /* width: 100%; */
 }
 
 .errorLabel{
@@ -17,6 +17,16 @@
 
 .errorInput{
     border-color: red !important;
+}
+
+img {
+    width: 8rem;
+    height: 8rem;
+}
+
+td {
+    /* text-align: center; */
+    vertical-align: middle;
 }
 
 #server {

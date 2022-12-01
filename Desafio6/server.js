@@ -107,8 +107,6 @@ productos.post('/', (req, res) => {
     async function doSaveProduct(prod) {
         const newProd = await saveProduct(prod); 
         res.send({Guardado: newProd})
-        // const allProducts = await getProducts(); 
-        // res.send(allProducts);
     }
     const product = req.body;
     if (Object.keys(product).length === 0){
@@ -188,8 +186,6 @@ mensajes.post('/', (req, res) => {
     async function doSaveMessage(msg) {
         const newMsg = await saveMessage(msg); 
         res.send({Guardado: newMsg})
-        // const allProducts = await getProducts(); 
-        // res.send(allProducts);
     }
     const msg = req.body;
     if (Object.keys(msg).length === 0){

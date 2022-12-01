@@ -8,14 +8,14 @@ function tableRender(prods){
                     <td>${element.id}</td>
                     <td>${element.title}</td>
                     <td>${element.price}</td>
-                    <td>${element.thumbnail}</td>
+                    <td><img src="${element.thumbnail}" alt="Imagen de producto ${element.id}"></td>
                     </tr>`
     })
 
     htmlTableHeaders = `<th>Id</th>
                         <th>Nombre</th>
                         <th>Precio</th>
-                        <th>Thumbnail</th>`
+                        <th>Imagen</th>`
 
     let htmlTable = `
         <table class="table">
@@ -31,6 +31,7 @@ function tableRender(prods){
 
 function chatRender(msgs){
     let htmlChat = '';
+    userInput.setAttribute('disabled', '');
     msgs.forEach((msg) => {
         htmlChat += `<div id="msj" class="rounded-3">
                         <p><strong>${msg.usuario}:</strong><br>${msg.mensaje}<br><em>Recibido el ${msg.fecha}</em></p>
