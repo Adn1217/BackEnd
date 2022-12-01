@@ -1,17 +1,60 @@
 const socket = io();
-let lastData;
+
+function tableRender(prods){
+    let htmlTableRows = '';
+    // console.log('Productos', data);
+    prods.forEach((element) => {
+        htmlTableRows += `<tr>
+                    <td>${element.id}</td>
+                    <td>${element.title}</td>
+                    <td>${element.price}</td>
+                    <td><img src="${element.thumbnail}" alt="Imagen de producto ${element.id}"></td>
+                    </tr>`
+    })
+
+    htmlTableHeaders = `<th>Id</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Imagen</th>`
+
+    let htmlTable = `
+        <table class="table">
+            <thead>
+                ${htmlTableHeaders}
+            </thead>
+            <tbody>
+                ${htmlTableRows}
+            </tbody>
+        </table>`
+    return htmlTable;
+    }
+
+function chatRender(msgs){
+    let htmlChat = '';
+    userInput.setAttribute('disabled', '');
+    msgs.forEach((msg) => {
+        htmlChat += `<div id="msj" class="rounded-3">
+                        <p><strong>${msg.usuario}:</strong><br>${msg.mensaje}<br><em>Recibido el ${msg.fecha}</em></p>
+                    </div>`
+    })
+    return htmlChat;
+}
 
 socket.on('welcome', data => {
     console.log(data)
     socket.emit('productRequest','msj')
 })
 
-socket.on('productos', data => {
-    console.log('Productos: ', data);
-    // if (!("error" in data) && lastData !==data){
-    //     lastData = data;
-        // fetch('http://localhost:8080/productos/');
-        // results.innerHTML=`<h1>Respuesta</h1><p>${JSON.stringify(data)}</p>`;
-        // !("error" in data) && (window.location.href = 'http://localhost:8080/productos/render')
-    // }
+socket.on('productos', prods => {
+    console.log('Productos: ', prods);
+    if (!("error" in prods)){
+        results.innerHTML= tableRender(prods.productos);
+    }
+})
+
+socket.on('mensajes', msgs => {
+    console.log('mensajes: ', msgs);
+    if (!("error" in msgs)){
+        chat.innerHTML= chatRender(msgs.msgs);
+    }
 })

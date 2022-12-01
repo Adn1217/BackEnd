@@ -1,20 +1,7 @@
-<h2>Zona de Mensajes</h2>
-<div class="col-md-12">
-    <label for="title" class="form-label">Correo</label>
-    <input type="text" class="form-control" id="userInput" placeholder="Ingrese correo">
-    <!-- <div class="user mb-3">
-        <label for="title" class="form-label">Correo</label>
-        <input type="text" class="form-control" id="userInput" placeholder="Ingrese correo">
-        <div id="server">
-            <span class="input-group-text">@</span>
-            <input type="text" class="form-control" placeholder="Dominio" aria-label="Server">
+<% if (!("error" in msgs)) {%>
+    <% for(let i=0; i<msgs.length; i++){ %>
+        <div id="msj" class="rounded-3 text-break">
+            <p><strong><%=msgs[i].usuario%>:</strong><br><%=msgs[i].mensaje%><br><em>Recibido el <%=msgs[i].fecha%></em></p>
         </div>
-    </div> -->
-</div>
-<div class="col-md-12">
-    <label for="msj" class="form-label">Mensaje</label>
-    <input type="text" class="form-control" id="msjInput" placeholder="Ingrese mensaje">
-</div>
-<div id="msjs">
-    
-</div>
+    <% } %>
+<% } %>

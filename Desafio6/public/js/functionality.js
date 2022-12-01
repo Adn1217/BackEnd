@@ -1,5 +1,5 @@
 
-function checkInputs(id){
+function checkInputs(){
     if(titleInput.value === '' || priceInput.value === '' || thumbnailInput.value === ''){
         titleInput.classList.add('errorInput');
         priceInput.classList.add('errorInput');
@@ -17,8 +17,25 @@ function checkInputs(id){
         return true
     }
 }
+
+function checkMsgInputs(){
+    if(userInput.value === '' || msgInput.value === ''){
+        userInput.classList.add('errorInput');
+        msgInput.classList.add('errorInput');
+        results.classList.remove('errorLabel');
+        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+        return false
+    }else{
+        userInput.classList.remove('errorInput');
+        msgInput.classList.remove('errorInput');
+        results.classList.remove('errorLabel');
+        results.innerHTML='';
+        return true
+    }
+}
+
 async function submitForm(id) {
-    let valideInputs = checkInputs(id);
+    let valideInputs = checkInputs();
     if(valideInputs){
         let newProd = {
             title: titleInput.value,
@@ -39,8 +56,6 @@ async function submitForm(id) {
         let data = await response.json();
         !("error" in data) && ([titleInput.value, priceInput.value, thumbnailInput.value] = ['','','']);
         console.log(data);
-        // results.innerHTML=`<h1>Respuesta</h1><p>${JSON.stringify(data)}</p>`;
-        !("error" in data) && (window.location.href = 'http://localhost:8080/productos');
     }
 }
 
@@ -108,8 +123,35 @@ async function deleteOneProduct(id){
         }
 }
 
+async function sendMessage(id) {
+    let valideInputs = checkMsgInputs(id);
+    if(valideInputs){
+        let newMessage = {
+            fecha: new Date().toLocaleString("en-GB"),
+            usuario: userInput.value,
+            mensaje: msgInput.value
+        }
+        let url = 'http://localhost:8080/mensajes';
+        let verb = 'POST';
+        id && (url = url + `/${id}`);
+        id && (verb = 'PUT');
+        let response = await fetch(url, { method: verb,
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newMessage)
+        })
+        let data = await response.json();
+        !("error" in data) && ([msgInput.value] = ['']);
+        console.log(data);
+        socket.emit('messageRequest','msj')
+    }
+}
+
 submitButton.addEventListener('click', () => submitForm())
 getAllButton.addEventListener('click', getAllProducts)
 getOneButton.addEventListener('click', () => getOneProduct(idInput.value))
 updateButton.addEventListener('click', () => updateProduct(idInput.value))
 deleteOneButton.addEventListener('click', () => deleteOneProduct(idInput.value))
+sendMsgButton.addEventListener('click', () => sendMessage())
