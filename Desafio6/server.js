@@ -110,9 +110,9 @@ async function deleteProductById(id) {
     return product
 }
 
-async function deleteCartById(id) {
+async function deleteCartById(id, id_prod) {
     const carts = new Contenedor('./cart.json');
-    const cart = await carts.deleteById(id);
+    const cart = await carts.deleteById(id, id_prod);
     return cart
 }
 
@@ -190,7 +190,6 @@ carrito.get('/:id/productos', (req, res) => {
     const id = req.params.id;
     console.log(id);
     showCartById(parseInt(id));
-    
 })
 
 productos.put('/:id', (req, res) => {
@@ -261,6 +260,35 @@ carrito.delete('/:id', (req, res) => {
     console.log(id);
     doDeleteCartById(parseInt(id));
 })
+
+carrito.delete('/:id/productos/:id_prod', (req, res) => {
+
+    async function doDeleteProductInCartById(id, id_prod) {
+        let deletedProduct = await deleteCartById(id, id_prod);
+        console.log("Producto eliminado: ", deletedProduct);
+        if (!deletedProduct && deletedProduct !== undefined){
+            deletedProduct = {
+                error: "Carrito no encontrado"
+            }
+            res.send(deletedProduct)
+        }else{
+            if (deletedProduct === undefined){
+                deletedProduct = {
+                    error: "Producto no encontrado en el carrito"
+                }
+                res.send(deletedProduct)
+            }else{
+                res.send({eliminado: deletedProduct})
+            }
+        }
+        return deletedProduct;
+    }
+
+    const {id, id_prod} = req.params;
+    console.log(id, id_prod);
+    doDeleteProductInCartById(parseInt(id), parseInt(id_prod));
+})
+
 carrito.post('/', (req, res) => {
     async function doSaveCart(cart) {
         const newCart = await saveCart(cart);

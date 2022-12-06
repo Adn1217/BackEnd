@@ -68,19 +68,30 @@ export default class Contenedor {
     }
   }
 
-  async deleteById(Id) {
+  async deleteById(Id, Id_prod = undefined) {
     try {
       let data = await fs.promises.readFile(this.ruta, "utf-8");
       let id = Id;
-      data = await JSON.parse(data);
-      let prod = data.find((producto) => producto.id === id);
+      let id_prod = Id_prod;
+      let originalData = JSON.parse(data);
+      data = JSON.parse(data);
+      (Id_prod) && (data = data.find((cart) => cart.id === id));
+      (data?.id) ?? (console.log("No existe el carrito con id: ", id));
+      if(data?.id === undefined && Id_prod){
+        return false
+      }
+      console.log(data);
+      let prod = (Id_prod) ? data.productos.find((producto) => producto.id === id_prod) : data.find((producto) => producto.id === id);
       if (prod?.id) {
-        data = data.filter((producto) => producto.id !== id);
-        await fs.promises.writeFile(
-          this.ruta,
-          JSON.stringify(data, null, 2)
-        );
-        console.log(`\nSe elimina el producto con id=${id} (deleteById(${id})): \n`, prod);
+        data = (Id_prod) ? data.productos.filter((producto) => producto.id !== id_prod) : data.filter((producto) => producto.id !== id);
+        Id_prod ?? await fs.promises.writeFile(this.ruta,JSON.stringify(data, null, 2));
+        if (Id_prod){
+          console.log(originalData.find((cart) => cart.id === id).productos)
+          originalData.find((cart) => cart.id === id).productos = data;
+          await fs.promises.writeFile(this.ruta,JSON.stringify(originalData, null, 2));
+          (Id_prod) && console.log(`\nSe elimina el producto con id=${id} del carrrito con id=${id_prod}): \n`, prod);
+        }
+        Id_prod ?? console.log(`\nSe elimina el producto con id=${id}): \n`, prod);
         // console.log("Quedan los productos: ", data);
       } else {
         console.log("No existe el producto con id: ", id);
@@ -90,7 +101,7 @@ export default class Contenedor {
       console.log("Se ha presentado error ", error);
     }
   }
-
+  
   async deleteAll() {
     try {
       let data = await fs.promises.readFile(this.ruta, "utf-8");
