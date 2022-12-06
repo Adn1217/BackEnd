@@ -13,6 +13,7 @@ const __dirname = path.dirname(__filename);
 const { Router } = express;
 const app = express();
 const productos = new Router();
+const carrito = new Router();
 const mensajes = new Router();
 const port = parseInt(process.env.PORT, 10) || 8080;
 
@@ -22,6 +23,7 @@ const io = new IOServer(httpServer);
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 app.use('/productos', productos);
+app.use('/carrito', carrito);
 app.use('/mensajes', mensajes);
 app.set('view engine', 'ejs');
 app.set('views', "./views");
@@ -54,9 +56,21 @@ async function saveMessage(msg) {
     return newMessage
 } 
 
+async function saveCart(cart) {
+    const carrito = new Contenedor('./cart.json');
+    const saved = await carrito.save(cart);
+    return saved
+} 
+
 async function saveAllProducts(prods) {
     const productos = new Contenedor('./productos.json');
     const saved = await productos.saveAll(prods);
+    return saved 
+} 
+
+async function saveAllCarts(carts) {
+    const allCarts = new Contenedor('./productos.json');
+    const saved = await allCarts.saveAll(allCarts);
     return saved 
 } 
 
@@ -64,6 +78,12 @@ async function getProducts() {
     const productos = new Contenedor('./productos.json');
     const allProducts = await productos.getAll();
     return allProducts
+} 
+
+async function getCart() {
+    const carrito = new Contenedor('./cart.json');
+    const cart = await carrito.getAll();
+    return cart
 } 
 
 async function getMessages() {
@@ -78,10 +98,22 @@ async function getProductById(id) {
     return product
 }
 
+async function getCartById(id) {
+    const productos = new Contenedor('./cart.json');
+    const product = await productos.getById(id);
+    return product
+}
+
 async function deleteProductById(id) {
     const productos = new Contenedor('./productos.json');
     const product = await productos.deleteById(id);
     return product
+}
+
+async function deleteCartById(id) {
+    const carts = new Contenedor('./cart.json');
+    const cart = await carts.deleteById(id);
+    return cart
 }
 
 productos.get('/', (req, res) => {
@@ -89,16 +121,28 @@ productos.get('/', (req, res) => {
         const allProducts = await getProducts(); 
         const allMessages = await getMessages();
         console.log('Los productos son: \n', allProducts);
-        res.render('pages/index', {products: allProducts, msgs: allMessages})
+        res.send({products: allProducts, msgs: allMessages})
+        // res.render('pages/index', {products: allProducts, msgs: allMessages})
     }
     showProducts();
+})
+
+carrito.get('/', (req, res) => {
+    async function showCart() {
+        const cart = await getCart(); 
+        console.log('El carrito es: \n', cart);
+        res.send({carrito: cart})
+        // res.render('pages/index', {products: allProducts, msgs: allMessages})
+    }
+    showCart();
 })
 
 mensajes.get('/', (req, res) => {
     async function showMsgs() {
         const allMessages = await getMessages();
         console.log('Los mensajes son: \n', allMessages);
-        res.render('pages/index', {msgs: allMessages})
+        res.sned({msgs: allMessages})
+        // res.render('pages/index', {msgs: allMessages})
     }
     showMsgs();
 })
@@ -130,6 +174,22 @@ productos.get('/:id', (req, res) => {
     const id = req.params.id;
     console.log(id);
     showProductById(parseInt(id));
+    
+})
+
+carrito.get('/:id/productos', (req, res) => {
+    async function showCartById(id) {
+        let cartById = await getCartById(id);
+        if (!cartById){
+            res.send({error:"Carrito no encontrado"});
+        }else{
+            res.send({productoCarrito: cartById.productos});
+            console.log(cartById.productos);
+        }
+    }
+    const id = req.params.id;
+    console.log(id);
+    showCartById(parseInt(id));
     
 })
 
@@ -181,6 +241,70 @@ productos.delete('/:id', (req, res) => {
     console.log(id);
     doDeleteProductById(parseInt(id));
 })
+
+carrito.delete('/:id', (req, res) => {
+
+    async function doDeleteCartById(id) {
+        let deletedCart = await deleteCartById(id);
+        if (!deletedCart){
+            deletedCart = {
+                error: "Carrito no encontrado"
+            }
+            res.send(deletedCart)
+        }else{
+            res.send({eliminado: deletedCart})
+        }
+            return deletedCart;
+        }
+
+    const {id} = req.params;
+    console.log(id);
+    doDeleteCartById(parseInt(id));
+})
+carrito.post('/', (req, res) => {
+    async function doSaveCart(cart) {
+        const newCart = await saveCart(cart);
+        res.send({Guardado: newCart})
+    }
+    const cart = req.body;
+    if (Object.keys(cart).length === 0){
+        res.send({Error: "Carrito no recibido"})
+    }else{
+        console.log('Carrito: ', JSON.stringify(cart));
+        doSaveCart(cart);
+    }
+    
+})
+
+carrito.put('/:id/productos', (req, res) => {
+    async function updateCartById(updatedCart, id) {
+        let cartById = await getCartById(id);
+        if (!cartById){
+            res.send({error: "Carrito no encontrado"});
+        }else{
+            const allCarts = await getCart();
+            const newCarts = allCarts.map((cart) => {
+                if(cart.id === id){
+                    cart = updatedCart;
+                    cart.id = id;
+                    console.log(cart);
+                }
+                return cart;
+            })
+            console.log('La nueva lista de carritos es: ', newCarts);
+            const allSaved = await saveAllCarts(newCarts);
+            if (allSaved === 'ok'){
+                res.send({actualizado: updatedCart})
+            }else{
+                res.send({error: allSaved})
+            }
+        }
+    }
+    const cart = req.body;
+    const id = req.params.id;
+    updateCartById(cart, parseInt(id));
+})
+
 
 mensajes.post('/', (req, res) => {
     async function doSaveMessage(msg) {

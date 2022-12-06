@@ -1,0 +1,33 @@
+[
+  {
+    "fecha": "30/11/2022, 23:21:28",
+    "usuario": "Visovich",
+    "productos": [
+      {
+        "title": "Escuadra",
+        "price": 123.5,
+        "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_955707-MCO44495623436_012021-F.webp",
+        "id": 1
+      },
+      {
+        "title": "Calculadora",
+        "price": 234.56,
+        "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_771821-MCO52197432698_102022-F.webp",
+        "id": 2
+      }
+    ],
+    "id": 1
+  },
+  {
+    "fecha": "30/11/2022, 23:21:28",
+    "usuario": "Visovich",
+    "productos": [
+      {
+        "title": "Escuadra",
+        "price": 123.5,
+        "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_955707-MCO44495623436_012021-F.webp",
+        "id": 1
+      }],
+    "id": 2
+  }
+]
