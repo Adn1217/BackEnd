@@ -46,7 +46,7 @@ socket.on('welcome', data => {
 })
 
 socket.on('productos', prods => {
-    console.log('Productos: ', prods);
+    console.log('Productos: ', prods.productos);
     if (!("error" in prods)){
         results.innerHTML= tableRender(prods.productos);
     }

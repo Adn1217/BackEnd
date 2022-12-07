@@ -125,8 +125,8 @@ async function deleteOneProduct(id){
         }
 }
 
-async function sendMessage(id) {
-    let valideInputs = checkMsgInputs(id);
+async function sendMessage() {
+    let valideInputs = checkMsgInputs();
     if(valideInputs){
         let newMessage = {
             fecha: new Date().toLocaleString("en-GB"),
@@ -135,8 +135,6 @@ async function sendMessage(id) {
         }
         let url = 'http://localhost:8080/mensajes';
         let verb = 'POST';
-        id && (url = url + `/${id}`);
-        id && (verb = 'PUT');
         let response = await fetch(url, { method: verb,
             headers: {
                 Accept: "application/json",
