@@ -4,6 +4,7 @@ let getAllButton = document.getElementById('getAllButton');
 let getOneButton = document.getElementById('getOneButton');
 let updateButton = document.getElementById('updateButton');
 let deleteOneButton = document.getElementById('deleteOneButton');
+let sendMsgButton = document.getElementById('sendMsgButton');
 
 // DIVs
 let results = document.getElementById('results');

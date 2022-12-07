@@ -4,6 +4,7 @@ import {Server as HttpServer} from 'http';
 import {Server as IOServer} from 'socket.io';
 import path from 'path';
 import {fileURLToPath} from 'url';
+import { stringify } from 'querystring';
 
 console.log('\n################INICIO DE SERVIDOR################\n')
 
@@ -44,6 +45,8 @@ io.on('connection', (socket) => {
     })
 })
 
+
+
 async function saveProduct(prod) {
     const productos = new Contenedor('./productos.json');
     const newProductId = await productos.save(prod);
@@ -62,6 +65,12 @@ async function saveCart(cart) {
     return saved
 } 
 
+async function saveProductInCart(cart) {
+    const carrito = new Contenedor('./cart.json');
+    const saved = await carrito.saveProductInCart(cart);
+    return saved
+} 
+
 async function saveAllProducts(prods) {
     const productos = new Contenedor('./productos.json');
     const saved = await productos.saveAll(prods);
@@ -69,8 +78,8 @@ async function saveAllProducts(prods) {
 } 
 
 async function saveAllCarts(carts) {
-    const allCarts = new Contenedor('./productos.json');
-    const saved = await allCarts.saveAll(allCarts);
+    const allCarts = new Contenedor('./cart.json');
+    const saved = await allCarts.saveAll(carts);
     return saved 
 } 
 
@@ -80,7 +89,7 @@ async function getProducts() {
     return allProducts
 } 
 
-async function getCart() {
+async function getCarts() {
     const carrito = new Contenedor('./cart.json');
     const cart = await carrito.getAll();
     return cart
@@ -99,9 +108,9 @@ async function getProductById(id) {
 }
 
 async function getCartById(id) {
-    const productos = new Contenedor('./cart.json');
-    const product = await productos.getById(id);
-    return product
+    const carritos = new Contenedor('./cart.json');
+    const cart = await carritos.getById(id);
+    return cart
 }
 
 async function deleteProductById(id) {
@@ -110,26 +119,43 @@ async function deleteProductById(id) {
     return product
 }
 
-async function deleteCartById(id, id_prod) {
+async function deleteCartById(id_prod, id_cart) {
     const carts = new Contenedor('./cart.json');
-    const cart = await carts.deleteById(id, id_prod);
+    const cart = await carts.deleteById(id_prod, id_cart);
+    return cart
+}
+
+async function deleteProductInCartById(id_prod, id_cart) {
+    const carts = new Contenedor('./cart.json');
+    const cart = await carts.deleteProductInCartById(id_prod, id_cart);
     return cart
 }
 
 productos.get('/', (req, res) => {
+    const isAdmin = true;
+
+    // function onlyAdmin(req, res, next) {
+    //     console.log(next);
+    //     if (isAdmin) { // si es admin
+    //         next;
+    //     } else { // si no es admin, devuelvo el error
+    //         res.status(401).json({error:-1,descripcion:`Ruta ${req.originalUrl} metodo ${req.method} no autorizado`});
+    //     }
+    // }
     async function showProducts() {
         const allProducts = await getProducts(); 
         const allMessages = await getMessages();
         console.log('Los productos son: \n', allProducts);
-        res.send({products: allProducts, msgs: allMessages})
-        // res.render('pages/index', {products: allProducts, msgs: allMessages})
+        // res.send({products: allProducts, msgs: allMessages})
+        res.render('pages/index', {products: allProducts, msgs: allMessages})
     }
+    // onlyAdmin(req, res, showProducts());
     showProducts();
 })
 
 carrito.get('/', (req, res) => {
     async function showCart() {
-        const cart = await getCart(); 
+        const cart = await getCarts(); 
         console.log('El carrito es: \n', cart);
         res.send({carrito: cart})
         // res.render('pages/index', {products: allProducts, msgs: allMessages})
@@ -141,8 +167,8 @@ mensajes.get('/', (req, res) => {
     async function showMsgs() {
         const allMessages = await getMessages();
         console.log('Los mensajes son: \n', allMessages);
-        res.sned({msgs: allMessages})
-        // res.render('pages/index', {msgs: allMessages})
+        res.send({msgs: allMessages})
+        res.render('pages/index', {msgs: allMessages})
     }
     showMsgs();
 })
@@ -263,18 +289,18 @@ carrito.delete('/:id', (req, res) => {
 
 carrito.delete('/:id/productos/:id_prod', (req, res) => {
 
-    async function doDeleteProductInCartById(id, id_prod) {
-        let deletedProduct = await deleteCartById(id, id_prod);
+    async function doDeleteProductInCartById(id_prod, id_cart) {
+        let deletedProduct = await deleteProductInCartById(id_prod, id_cart);
         console.log("Producto eliminado: ", deletedProduct);
         if (!deletedProduct && deletedProduct !== undefined){
             deletedProduct = {
-                error: "Carrito no encontrado"
+                error: `Carrito ${id_cart} no encontrado`
             }
             res.send(deletedProduct)
         }else{
             if (deletedProduct === undefined){
                 deletedProduct = {
-                    error: "Producto no encontrado en el carrito"
+                    error: `Producto ${id_prod} no encontrado en el carrito ${id_cart}`
                 }
                 res.send(deletedProduct)
             }else{
@@ -285,8 +311,9 @@ carrito.delete('/:id/productos/:id_prod', (req, res) => {
     }
 
     const {id, id_prod} = req.params;
+    const id_cart = id;
     console.log(id, id_prod);
-    doDeleteProductInCartById(parseInt(id), parseInt(id_prod));
+    doDeleteProductInCartById(parseInt(id_prod), parseInt(id_cart));
 })
 
 carrito.post('/', (req, res) => {
@@ -295,6 +322,7 @@ carrito.post('/', (req, res) => {
         res.send({Guardado: newCart})
     }
     const cart = req.body;
+
     if (Object.keys(cart).length === 0){
         res.send({Error: "Carrito no recibido"})
     }else{
@@ -304,13 +332,51 @@ carrito.post('/', (req, res) => {
     
 })
 
+carrito.post('/:id/productos', (req, res) => {
+    async function doSaveProductInCart(newProd, id_cart) {
+        const allCarts = await getCarts();
+        const cart = allCarts.find( (cart) => cart.id === id_cart);
+        if(!cart){
+            res.send({Error: `No se encuentra el carrito ${id_cart}`})
+        }else{
+            prod.timestamp = new Date().toLocaleString("en-GB");
+            let prods = [];
+            let newCarts = allCarts.map((carrito) => {
+                if(carrito.id === id_cart){
+                    cart.productos.forEach((prod) => {
+                        prods.push(prod);
+                    });
+                    prods.push(newProd);
+                    carrito.productos = prods;
+                }
+                return carrito;
+            })
+            // console.log(newCarts);
+            const allSaved = await saveAllCarts(newCarts);
+            if (allSaved === 'ok'){
+                res.send({actualizado: cart})
+            }else{
+                res.send({error: allSaved})
+            }
+        }
+    }
+    const prod = req.body;
+    const {id} = req.params;
+    if (Object.keys(prod).length === 0){
+        res.send({Error: "Producto no recibido"})
+    }else{
+        console.log('producto: ', JSON.stringify(prod));
+        doSaveProductInCart(prod, parseInt(id));
+    }
+})
+
 carrito.put('/:id/productos', (req, res) => {
     async function updateCartById(updatedCart, id) {
         let cartById = await getCartById(id);
         if (!cartById){
             res.send({error: "Carrito no encontrado"});
         }else{
-            const allCarts = await getCart();
+            const allCarts = await getCarts();
             const newCarts = allCarts.map((cart) => {
                 if(cart.id === id){
                     cart = updatedCart;

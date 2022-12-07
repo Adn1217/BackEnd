@@ -72,7 +72,7 @@ async function updateProduct(id){
 
 async function getAllProducts(){
         results.classList.remove('errorLabel');
-        let response = await fetch('http://localhost:8080/api/productos/', { method: 'GET',
+        let response = await fetch('http://localhost:8080/productos/', { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
