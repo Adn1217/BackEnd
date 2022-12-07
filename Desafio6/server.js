@@ -220,16 +220,16 @@ carrito.get('/:id/productos', (req, res) => {
 
 productos.put('/:id', (req, res) => {
     async function updateProductById(updatedProd, id) {
-        let productById = await getProductById(id);
+        const allProducts = await getProducts();
+        let productById = allProducts.find((product) => product.id === id) 
         if (!productById){
             res.send({error: "Producto no encontrado"});
         }else{
-            const allProducts = await getProducts();
-            const newAllProducts = allProducts.map((prod) => {
+            let newAllProducts = allProducts.map((prod) => {
                 if(prod.id === id){
                     prod = updatedProd;
                     prod.id = id;
-                    console.log(prod);
+                    // console.log(prod);
                 }
                 return prod;
             })
