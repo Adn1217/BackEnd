@@ -340,19 +340,8 @@ carrito.post('/:id/productos', (req, res) => {
             res.send({Error: `No se encuentra el carrito ${id_cart}`})
         }else{
             prod.timestamp = new Date().toLocaleString("en-GB");
-            let prods = [];
-            let newCarts = allCarts.map((carrito) => {
-                if(carrito.id === id_cart){
-                    cart.productos.forEach((prod) => {
-                        prods.push(prod);
-                    });
-                    prods.push(newProd);
-                    carrito.productos = prods;
-                }
-                return carrito;
-            })
-            // console.log(newCarts);
-            const allSaved = await saveAllCarts(newCarts);
+            cart.productos.push(prod);
+            const allSaved = await saveAllCarts(allCarts);
             if (allSaved === 'ok'){
                 res.send({actualizado: cart})
             }else{

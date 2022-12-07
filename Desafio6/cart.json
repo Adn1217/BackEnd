@@ -14,18 +14,6 @@
         "price": 234.56,
         "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_771821-MCO52197432698_102022-F.webp",
         "id": 2
-      },
-      {
-        "id": "3",
-        "price": "2022",
-        "thumbnail": "zzzzzzzz",
-        "timestamp": "06/12/2022, 23:00:12"
-      },
-      {
-        "id": "3",
-        "price": "2022",
-        "thumbnail": "zzzzzzzz",
-        "timestamp": "06/12/2022, 23:01:11"
       }
     ],
     "id": 1
