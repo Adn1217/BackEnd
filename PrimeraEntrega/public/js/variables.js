@@ -6,11 +6,12 @@ let updateButton = document.getElementById('updateButton');
 let deleteOneButton = document.getElementById('deleteOneButton');
 let getAllCartsButton = document.getElementById('getAllCartsButton');
 let getCartButton = document.getElementById('getCartButton');
-let deleteCartButton = document.getElementById('deleteCartButton');
 let deleteProductInCartButton = document.getElementById('deleteProductInCartButton');
+let deleteCartButton = document.getElementById('deleteCartButton');
 
 // DIVs
 let results = document.getElementById('results');
+let cartResults = document.getElementById('cartResults');
 let resultados = document.getElementById('resultados');
 let chat = document.getElementById('msjs');
 
@@ -23,4 +24,6 @@ let stockInput = document.getElementById('stockInput');
 let thumbnailInput = document.getElementById('thumbnailInput');
 let idInput = document.getElementById('idInput');
 let userInput = document.getElementById('userInput');
+let idCartInput = document.getElementById('idCartInput');
+let idProdInput = document.getElementById('idProdInput');
 let msgInput = document.getElementById('msgInput');
