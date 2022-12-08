@@ -97,13 +97,13 @@ productos.delete('/:id', (req, res) => {
 // RUTAS CARRITOS -----------------------
 
 carrito.get('/', (req, res) => {
-    cartController.showCart();
+    cartController.showCart(res);
 })
 
 carrito.get('/:id/productos', (req, res) => {
     const id = req.params.id;
     console.log(id);
-    cartController.showCartById(parseInt(id));
+    cartController.showCartById(res, parseInt(id));
 })
 
 carrito.post('/', (req, res) => {
@@ -112,7 +112,7 @@ carrito.post('/', (req, res) => {
         res.send({Error: "Carrito no recibido"})
     }else{
         console.log('Carrito: ', JSON.stringify(cart));
-        cartController.doSaveCart(cart);
+        cartController.doSaveCart(res, cart);
     }
 })
 
@@ -123,25 +123,25 @@ carrito.post('/:id/productos', (req, res) => {
         res.send({Error: "Producto no recibido"})
     }else{
         console.log('producto: ', JSON.stringify(prod));
-        cartController.doSaveProductInCart(prod, parseInt(id));
+        cartController.doSaveProductInCart(res, prod, parseInt(id));
     }
 })
 
 carrito.put('/:id/productos', (req, res) => {
     const cart = req.body;
     const id = req.params.id;
-    cartController.updateCartById(cart, parseInt(id));
+    cartController.updateCartById(res, cart, parseInt(id));
 })
 
 carrito.delete('/:id', (req, res) => {
     const {id} = req.params;
-    cartController.doDeleteCartById(parseInt(id));
+    cartController.doDeleteCartById(res, parseInt(id));
 })
 
 carrito.delete('/:id/productos/:id_prod', (req, res) => {
     const {id, id_prod} = req.params;
     const id_cart = id;
-    cartController.doDeleteProductInCartById(parseInt(id_prod), parseInt(id_cart));
+    cartController.doDeleteProductInCartById(res,parseInt(id_prod), parseInt(id_cart));
 })
 
 // RUTAS MENSAJES --------------------------

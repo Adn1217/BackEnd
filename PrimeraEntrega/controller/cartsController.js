@@ -24,9 +24,9 @@ async function getCartById(id) {
     return cart
 }
 
-async function deleteCartById(id_prod, id_cart) {
+async function deleteCartById(id_cart) {
     const carts = new Contenedor('./cart.json');
-    const cart = await carts.deleteById(id_prod, id_cart);
+    const cart = await carts.deleteById(id_cart);
     return cart
 }
 
@@ -36,14 +36,14 @@ async function deleteProductInCartById(id_prod, id_cart) {
     return cart
 }
 
-export async function showCart() {
+export async function showCart(res) {
     const cart = await getCarts(); 
     console.log('El carrito es: \n', cart);
     res.send({carrito: cart})
     // res.render('pages/index', {products: allProducts, msgs: allMessages})
 }
 
-export async function showCartById(id) {
+export async function showCartById(res, id) {
     let cartById = await getCartById(id);
     if (!cartById){
         res.send({error:"Carrito no encontrado"});
@@ -53,8 +53,7 @@ export async function showCartById(id) {
     }
 }
 
-
-export async function doDeleteCartById(id) {
+export async function doDeleteCartById(res, id) {
     let deletedCart = await deleteCartById(id);
     if (!deletedCart){
         deletedCart = {
@@ -67,7 +66,7 @@ export async function doDeleteCartById(id) {
     return deletedCart;
 }
 
-export async function doDeleteProductInCartById(id_prod, id_cart) {
+export async function doDeleteProductInCartById(res, id_prod, id_cart) {
     let deletedProduct = await deleteProductInCartById(id_prod, id_cart);
     console.log("Producto eliminado: ", deletedProduct);
     if (!deletedProduct && deletedProduct !== undefined){
@@ -88,20 +87,20 @@ export async function doDeleteProductInCartById(id_prod, id_cart) {
     return deletedProduct;
 }
 
-export async function doSaveCart(cart) {
+export async function doSaveCart(res, cart) {
     const newCart = await saveCart(cart);
     res.send({Guardado: newCart})
 }
 
 
-export async function doSaveProductInCart(newProd, id_cart) {
+export async function doSaveProductInCart(res, newProd, id_cart) {
     const allCarts = await getCarts();
     const cart = allCarts.find( (cart) => cart.id === id_cart);
     if(!cart){
         res.send({Error: `No se encuentra el carrito ${id_cart}`})
     }else{
-        prod.timestamp = new Date().toLocaleString("en-GB");
-        cart.productos.push(prod);
+        newProd.timestamp = new Date().toLocaleString("en-GB");
+        cart.productos.push(newProd);
         const allSaved = await saveAllCarts(allCarts);
         if (allSaved === 'ok'){
             res.send({actualizado: cart})
@@ -111,8 +110,7 @@ export async function doSaveProductInCart(newProd, id_cart) {
     }
 }
 
-
-export async function updateCartById(updatedCart, id) {
+export async function updateCartById(res, updatedCart, id) {
     let cartById = await getCartById(id);
     if (!cartById){
         res.send({error: "Carrito no encontrado"});
