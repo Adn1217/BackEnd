@@ -6,12 +6,6 @@ async function saveCart(cart) {
     return saved
 } 
 
-// async function saveProductInCart(cart) {
-//     const carrito = new Contenedor('./cart.json');
-//     const saved = await carrito.saveProductInCart(cart);
-//     return saved
-// } 
-
 async function saveAllCarts(carts) {
     const allCarts = new Contenedor('./cart.json');
     const saved = await allCarts.saveAll(carts);

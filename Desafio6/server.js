@@ -53,29 +53,21 @@ io.on('connection', (socket) => {
     })
 })
 
+const isAdmin = true;
+
+async function onlyAdmin(req, res, next) {
+    if (isAdmin) { 
+        next;
+    } else { 
+        res.status(401).json({error:-1,descripcion:`Ruta ${req.originalUrl} metodo ${req.method} no autorizado`});
+    }
+}
+
 app.get('/', (req, res) => {
     prdController.showProducts(res);
-// onlyAdmin(req, res, showProducts());
 })
 
-carrito.get('/', (req, res) => {
-    cartController.showCart();
-})
-
-mensajes.get('/', async (req, res) => {
-    msgController.showMsgs(res);
-    // res.send({msgs: allMessages})
-})
-
-productos.post('/', (req, res) => {
-    const product = req.body;
-    if (Object.keys(product).length === 0){
-        res.send({Error: "Producto no recibido"})
-    }else{
-        console.log('Producto', product);
-        prdController.doSaveProduct(res, product);
-    }
-})
+// RUTRAS PRODUCTOS ----------------------
 
 productos.get('/:id?', async(req, res) => {
     if(Object.keys(req.query).length > 0 || req.params.id){
@@ -87,35 +79,31 @@ productos.get('/:id?', async(req, res) => {
     }
 })
 
-carrito.get('/:id/productos', (req, res) => {
-    const id = req.params.id;
-    console.log(id);
-    cartController.showCartById(parseInt(id));
+productos.post('/', (req, res) => {
+    onlyAdmin(req, res, prdController.doSaveProduct(req.body, res));
 })
 
 productos.put('/:id', (req, res) => {
     const prod = req.body;
     const id = req.params.id;
-    prdController.updateProductById(res, prod, parseInt(id));
+    onlyAdmin(req, res, prdController.updateProductById(res, prod, parseInt(id)));
 })
 
 productos.delete('/:id', (req, res) => {
     const {id} = req.params;
-    console.log(id);
-    prdController.doDeleteProductById(res, parseInt(id));
+    onlyAdmin(req, res, prdController.doDeleteProductById(res, parseInt(id)));
 })
 
-carrito.delete('/:id', (req, res) => {
-    const {id} = req.params;
-    console.log(id);
-    cartController.doDeleteCartById(parseInt(id));
+// RUTAS CARRITOS -----------------------
+
+carrito.get('/', (req, res) => {
+    cartController.showCart();
 })
 
-carrito.delete('/:id/productos/:id_prod', (req, res) => {
-    const {id, id_prod} = req.params;
-    const id_cart = id;
-    console.log(id, id_prod);
-    cartController.doDeleteProductInCartById(parseInt(id_prod), parseInt(id_cart));
+carrito.get('/:id/productos', (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    cartController.showCartById(parseInt(id));
 })
 
 carrito.post('/', (req, res) => {
@@ -145,6 +133,23 @@ carrito.put('/:id/productos', (req, res) => {
     cartController.updateCartById(cart, parseInt(id));
 })
 
+carrito.delete('/:id', (req, res) => {
+    const {id} = req.params;
+    cartController.doDeleteCartById(parseInt(id));
+})
+
+carrito.delete('/:id/productos/:id_prod', (req, res) => {
+    const {id, id_prod} = req.params;
+    const id_cart = id;
+    cartController.doDeleteProductInCartById(parseInt(id_prod), parseInt(id_cart));
+})
+
+// RUTAS MENSAJES --------------------------
+
+mensajes.get('/', async (req, res) => {
+    msgController.showMsgs(res);
+    // res.send({msgs: allMessages})
+})
 
 mensajes.post('/', (req, res) => {
     const msg = req.body;
@@ -155,6 +160,8 @@ mensajes.post('/', (req, res) => {
         msgController.doSaveMessage(res, msg);
     }
 })
+
+//----------------------------------------------
 
 const server = httpServer.listen(port, () => {
     console.log(`Servidor escuchando en el puerto ${port}`);

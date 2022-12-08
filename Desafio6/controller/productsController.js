@@ -1,15 +1,5 @@
 import Contenedor from '../Contenedor.class.js';
 import * as msgController from './messagesController.js'
-// const isAdmin = true;
-
-// function onlyAdmin(req, res, next) {
-//     console.log(next);
-//     if (isAdmin) { // si es admin
-//         next;
-//     } else { // si no es admin, devuelvo el error
-//         res.status(401).json({error:-1,descripcion:`Ruta ${req.originalUrl} metodo ${req.method} no autorizado`});
-//     }
-// }
 
 
 export async function getProducts() {
@@ -50,9 +40,14 @@ export async function showProducts(res) {
     res.render('pages/index', {products: allProducts, msgs: allMessages})
 }
 
-export async function doSaveProduct(res, prod) {
-    const newProd = await saveProduct(prod); 
-    res.send({Guardado: newProd})
+export async function doSaveProduct(product, res) {
+    if (Object.keys(product).length === 0){
+        res.send({Error: "Producto no recibido"})
+    }else{
+        console.log('Producto', product);
+        const newProd = await saveProduct(product); 
+        res.send({Guardado: newProd})
+    }
 }
 
 export async function showProductById(res, id) {
