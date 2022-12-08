@@ -40,8 +40,11 @@ async function submitForm(id) {
     let valideInputs = checkInputs();
     if(valideInputs){
         let newProd = {
+            code: codeInput.value,
             title: titleInput.value,
+            description: descriptionInput.value,
             price: priceInput.value,
+            stock: stockInput.value,
             thumbnail: thumbnailInput.value
         }
         let url = 'http://localhost:8080/productos';
@@ -63,7 +66,7 @@ async function submitForm(id) {
             results.classList.remove('errorLabel');
             socket.emit("productRequest", "msj");
             idInput.value = '';
-            [titleInput.value, priceInput.value, thumbnailInput.value] = ['','',''];
+            [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','',''];
         }
         console.log(prod);
     }

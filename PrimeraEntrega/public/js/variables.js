@@ -13,7 +13,10 @@ let chat = document.getElementById('msjs');
 
 // INPUTs
 let titleInput = document.getElementById('titleInput');
+let descriptionInput = document.getElementById('descriptionInput');
+let codeInput = document.getElementById('codeInput');
 let priceInput = document.getElementById('priceInput');
+let stockInput = document.getElementById('stockInput');
 let thumbnailInput = document.getElementById('thumbnailInput');
 let idInput = document.getElementById('idInput');
 let userInput = document.getElementById('userInput');

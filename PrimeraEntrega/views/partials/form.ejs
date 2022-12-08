@@ -1,0 +1,40 @@
+<fieldset class="container">
+    <legend>Formulario</legend>
+    <div class="col-2">
+        <label for="title" class="form-label"><strong>Producto</strong></label>
+        <input type="text" class="form-control" id="titleInput" placeholder="Ingrese título producto">
+    </div>
+    <div class="col-4">
+        <label for="title" class="form-label"><strong>Descripción</strong></label>
+        <textarea type="text" class="form-control" id="descriptionInput" placeholder="Ingrese descripción del producto" rows="2" maxlength="150"></textarea>
+    </div>
+    <div class="col-2">
+        <label for="title" class="form-label"><strong>Código</strong></label>
+        <input type="text" class="form-control" id="codeInput" placeholder="Ingrese código producto">
+    </div>
+    <div class="col-2">
+        <label for="price" class="form-label"><strong>Precio</strong></label>
+        <input type="number" min="0" class="form-control" id="priceInput" placeholder="Ingrese precio producto">
+    </div>
+    <div class="col-1">
+        <label for="title" class="form-label"><strong>Stock</strong></label>
+        <input type="number" min="0" class="form-control" id="stockInput" placeholder="Stock">
+    </div>
+    <div class="col-4">
+        <label for="thumbnail" class="form-label"><strong>Imagen [url]</strong></label>
+        <textarea type="text" class="form-control" id="thumbnailInput" placeholder="Ingrese url de imagen de producto" rows="2" maxlength="200"></textarea>
+    </div>
+    <button id="submitButton" type="button" class="btn btn-success">Save</button>
+    <div class="col-1">
+        <label for="id" class="form-label"><strong>Id</strong></label>
+        <input type="number" min="1" max="999" class="form-control" id="idInput" placeholder="id">
+    </div>
+</fieldset>
+<div class="container" id="buttons">
+    <button id="getOneButton" type="button" class="btn btn-secondary">GetById</button>
+    <button id="updateButton" type="button" class="btn btn-warning">UpdateById</button>
+    <button id="deleteOneButton" type="button" class="btn btn-danger">DeleteById</button>
+    <div>
+        <button id="getAllButton" type="button" class="btn btn-primary" >GetAll</button>
+    </div>
+</div>

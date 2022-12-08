@@ -11,6 +11,14 @@
     /* width: 100%; */
 }
 
+fieldset label {
+    margin: 1rem 0 1rem 0.75rem;
+}
+
+fieldset div {
+    min-width: 14rem
+}
+
 .errorLabel{
     color: red;
 }
@@ -20,13 +28,16 @@
 }
 
 img {
-    width: 8rem;
-    height: 8rem;
+    min-width: 8rem;
+    min-height: 8rem;
+    max-width: 10rem;
+    max-height: 10rem;
 }
 
 td {
     /* text-align: center; */
     vertical-align: middle;
+    max-width: 10rem;
 }
 
 #server {
