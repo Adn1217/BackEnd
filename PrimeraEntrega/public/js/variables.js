@@ -4,7 +4,10 @@ let getAllButton = document.getElementById('getAllButton');
 let getOneButton = document.getElementById('getOneButton');
 let updateButton = document.getElementById('updateButton');
 let deleteOneButton = document.getElementById('deleteOneButton');
-let sendMsgButton = document.getElementById('sendMsgButton');
+let getAllCartsButton = document.getElementById('getAllCartsButton');
+let getCartButton = document.getElementById('getCartButton');
+let deleteCartButton = document.getElementById('deleteCartButton');
+let deleteProductInCartButton = document.getElementById('deleteProductInCartButton');
 
 // DIVs
 let results = document.getElementById('results');

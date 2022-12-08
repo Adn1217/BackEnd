@@ -19,6 +19,28 @@ fieldset div {
     min-width: 14rem
 }
 
+fieldset > div {
+    display: inline-block;
+    max-width: 45%;
+    vertical-align: top;
+}
+
+#productForm {
+    border-right: 1px dashed;
+    border-color: gray;
+    padding-right: 15px;
+}
+
+#cartForm {
+    padding-left: 10px;
+}
+
+#cartInputs > div{
+    display: inline-block;
+    margin-left: 10px;
+    min-width: 7rem;
+}
+
 .errorLabel{
     color: red;
 }
