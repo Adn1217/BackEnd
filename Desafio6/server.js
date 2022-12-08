@@ -40,6 +40,12 @@ io.on('connection', (socket) => {
         const allProducts = await prdController.getProducts();
         io.sockets.emit('productos', {productos: allProducts});
     })
+    
+    // socket.on('oneProductRequest', async (id) => {
+    //     const product = await prdController.getProductById(id);
+    //     console.log(product);
+    //     io.sockets.emit('productos', {productos: product});
+    // })
 
     socket.on('messageRequest', async () => {
         const allMsgs = await msgController.getMessages();
@@ -47,7 +53,7 @@ io.on('connection', (socket) => {
     })
 })
 
-productos.get('/', (req, res) => {
+app.get('/', (req, res) => {
     prdController.showProducts(res);
 // onlyAdmin(req, res, showProducts());
 })
@@ -71,11 +77,14 @@ productos.post('/', (req, res) => {
     }
 })
 
-productos.get('/:id', (req, res) => {
-    const id = req.params.id;
-    console.log(id);
-    prdController.showProductById(parseInt(id));
-    
+productos.get('/:id?', async(req, res) => {
+    if(Object.keys(req.query).length > 0 || req.params.id){
+        const id = req.query.id || req.params.id
+        prdController.showProductById(res, parseInt(id));
+    }else{
+        let allProducts = await prdController.getProducts()
+        res.send(allProducts);
+    }
 })
 
 carrito.get('/:id/productos', (req, res) => {
@@ -87,13 +96,13 @@ carrito.get('/:id/productos', (req, res) => {
 productos.put('/:id', (req, res) => {
     const prod = req.body;
     const id = req.params.id;
-    prdController.updateProductById(prod, parseInt(id));
+    prdController.updateProductById(res, prod, parseInt(id));
 })
 
 productos.delete('/:id', (req, res) => {
     const {id} = req.params;
     console.log(id);
-    prdController.doDeleteProductById(parseInt(id));
+    prdController.doDeleteProductById(res, parseInt(id));
 })
 
 carrito.delete('/:id', (req, res) => {

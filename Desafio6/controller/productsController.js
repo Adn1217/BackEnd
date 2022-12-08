@@ -30,7 +30,7 @@ async function saveAllProducts(prods) {
     return saved 
 } 
 
-async function getProductById(id) {
+export async function getProductById(id) {
     const productos = new Contenedor('./productos.json');
     const product = await productos.getById(id);
     return product
@@ -46,7 +46,7 @@ export async function showProducts(res) {
     const allProducts = await getProducts(); 
     const allMessages = await msgController.getMessages();
     console.log('Los productos son: \n', allProducts);
-    // res.send({products: allProducts, msgs: allMessages})
+    // res.send({products: allProducts})
     res.render('pages/index', {products: allProducts, msgs: allMessages})
 }
 
@@ -55,7 +55,7 @@ export async function doSaveProduct(res, prod) {
     res.send({Guardado: newProd})
 }
 
-export async function showProductById(id) {
+export async function showProductById(res, id) {
     let productById = await getProductById(id);
     if (!productById){
         res.send({error:"Producto no encontrado"});
@@ -65,7 +65,7 @@ export async function showProductById(id) {
     }
 }
 
-export async function updateProductById(updatedProd, id) {
+export async function updateProductById(res, updatedProd, id) {
     const allProducts = await getProducts();
     let productById = allProducts.find((product) => product.id === id) 
     if (!productById){
@@ -89,7 +89,7 @@ export async function updateProductById(updatedProd, id) {
     }
 }
 
-export async function doDeleteProductById(id) {
+export async function doDeleteProductById(res, id) {
     let deletedProduct = await deleteProductById(id);
     if (!deletedProduct){
         deletedProduct = {
