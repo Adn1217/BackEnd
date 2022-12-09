@@ -1,8 +1,11 @@
 
 function checkInputs(){
-    if(titleInput.value === '' || priceInput.value === '' || thumbnailInput.value === ''){
+    if(titleInput.value === '' || codeInput.value === '' || priceInput.value === ''
+       || stockInput.value === ''|| thumbnailInput.value === ''){
         titleInput.classList.add('errorInput');
+        codeInput.classList.add('errorInput');
         priceInput.classList.add('errorInput');
+        stockInput.classList.add('errorInput');
         thumbnailInput.classList.add('errorInput');
         results.classList.add('errorLabel');
         results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
