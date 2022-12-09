@@ -6,21 +6,30 @@ function tableRender(prods){
     !(prods.id) ? prods.forEach((element) => {
         htmlTableRows += `<tr>
                     <td>${element.id}</td>
+                    <td>${element.code}</td>
                     <td>${element.title}</td>
-                    <td>${element.price}</td>
+                    <td>${element.description}</td>
+                    <td>$${element.price}</td>
+                    <td>${element.stock}</td>
                     <td><img src="${element.thumbnail}" alt="Imagen de producto ${element.id}"></td>
                     </tr>`
     }) : (
         htmlTableRows += `<tr>
                     <td>${prods.id}</td>
+                    <td>${prods.code}</td>
                     <td>${prods.title}</td>
-                    <td>${prods.price}</td>
+                    <td>${prods.description}</td>
+                    <td>$${prods.price}</td>
+                    <td>${prods.stock}</td>
                     <td><img src="${prods.thumbnail}" alt="Imagen de producto ${prods.id}"></td>
                     </tr>`)
 
     htmlTableHeaders = `<th>Id</th>
+                        <th>Código</th>
                         <th>Nombre</th>
+                        <th>Descripción</th>
                         <th>Precio</th>
+                        <th>Stock</th>
                         <th>Imagen</th>`
 
     let htmlTable = `
