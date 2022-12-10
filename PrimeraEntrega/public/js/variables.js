@@ -22,8 +22,11 @@ let codeInput = document.getElementById('codeInput');
 let priceInput = document.getElementById('priceInput');
 let stockInput = document.getElementById('stockInput');
 let thumbnailInput = document.getElementById('thumbnailInput');
+let productRolRadioButton = document.getElementById('productRolRadioButton');
+let cartRolRadioButton = document.getElementById('cartRolRadioButton');
 let idInput = document.getElementById('idInput');
 let userInput = document.getElementById('userInput');
 let idCartInput = document.getElementById('idCartInput');
 let idProdInput = document.getElementById('idProdInput');
 let msgInput = document.getElementById('msgInput');
+

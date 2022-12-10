@@ -48,7 +48,8 @@ async function submitForm(id) {
             description: descriptionInput.value,
             price: priceInput.value,
             stock: stockInput.value,
-            thumbnail: thumbnailInput.value
+            thumbnail: thumbnailInput.value,
+            rol: productRolRadioButton.checked // Se agrega para probar roles en Front
         }
         let url = 'http://localhost:8080/productos';
         let verb = 'POST';
@@ -69,7 +70,7 @@ async function submitForm(id) {
             results.classList.remove('errorLabel');
             socket.emit("productRequest", "msj");
             idInput.value = '';
-            [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','',''];
+            [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
         }
         console.log(prod);
     }
@@ -137,7 +138,8 @@ async function deleteOneProduct(id){
             let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
                 headers: {
                     Accept: "application/json",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Auth: productRolRadioButton.checked
                 }
             })
             let prod = await response.json();
@@ -157,21 +159,21 @@ async function deleteOneProduct(id){
 
 //---------CARTS FORM----------------------------------
 async function getAllCarts(){
-        cartResults.classList.remove('errorLabel');
-        idCartInput.classList.remove('errorInput');
-        idProdInput.classList.remove('errorInput');
-        let response = await fetch('http://localhost:8080/carrito/?', { method: 'GET',
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-        let carts = await response.json();
-        console.log("Carritos: ",carts)
-        // results.innerHTML= tableRender(carts);
-        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carritos: <br></strong>${JSON.stringify(carts)}</p>`;
-        idCartInput.value = '';
-        idProdInput.value = '';
+    cartResults.classList.remove('errorLabel');
+    idCartInput.classList.remove('errorInput');
+    idProdInput.classList.remove('errorInput');
+    let response = await fetch('http://localhost:8080/carrito/?', { method: 'GET',
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        }
+    })
+    let carts = await response.json();
+    console.log("Carritos: ",carts)
+    // results.innerHTML= tableRender(carts);
+    cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carritos: <br></strong>${JSON.stringify(carts)}</p>`;
+    idCartInput.value = '';
+    idProdInput.value = '';
 }
 
 

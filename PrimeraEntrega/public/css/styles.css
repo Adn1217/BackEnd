@@ -41,6 +41,18 @@ fieldset > div {
     min-width: 7rem;
 }
 
+#productRolSelection div, #cartRolSelection div{
+    display: inline-block;
+}
+
+#productRolSelection label, #cartRolSelection label{
+    margin: 0;
+}
+
+#productRolSelection input, #cartRolSelection input{
+    margin: 0 1rem 0 1rem;
+}
+
 .errorLabel{
     color: red;
 }
