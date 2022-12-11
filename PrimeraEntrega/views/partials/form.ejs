@@ -2,6 +2,11 @@
     <legend>Formulario</legend>
     <div id="productForm" class="col-6">
         <h4>Productos</h4>
+        <div id="productRolSelection" class="form-check-inline form-switch">
+            <label class="form-check-label">Usuario</label>
+            <input id="productRolRadioButton" class="form-check-input" type="checkbox">
+            <label class="form-check-label">Administrador</label>
+        </div>
         <div class="col-6">
             <label for="title" class="form-label"><strong>Producto</strong></label>
             <input type="text" class="form-control" id="titleInput" placeholder="Ingrese título producto">
@@ -24,7 +29,7 @@
         </div>
         <div class="col-12">
             <label for="thumbnail" class="form-label"><strong>Imagen [url]</strong></label>
-            <textarea type="text" class="form-control" id="thumbnailInput" placeholder="Ingrese url de imagen de producto" rows="2" maxlength="200"></textarea>
+            <textarea type="text" class="form-control" id="thumbnailInput" placeholder="Ingrese url de imagen de producto" rows="3" maxlength="200"></textarea>
         </div>
         <button id="submitButton" type="button" class="btn btn-success">Save</button>
         <div class="col-3">
@@ -35,7 +40,16 @@
     <div id="cartForm" class="col-6">
         <h4>Carritos</h4>
         <p>Se implementan para facilitar la prueba de los carritos:</p>
+        <div id="cartRolSelection" class="form-check-inline form-switch">
+            <label class="form-check-label">Usuario</label>
+            <input id="cartRolRadioButton" class="form-check-input" type="checkbox">
+            <label class="form-check-label">Administrador</label>
+        </div>
         <div id="cartInputs">
+            <div class="col-6">
+                <label for="title" class="form-label"><strong>Usuario</strong></label>
+                <input type="text" class="form-control" id="cartUserInput" placeholder="Ingrese usuario">
+            </div>
             <div class="col-1">
                 <label for="title" class="form-label"><strong>Id_cart</strong></label>
                 <input type="text" class="form-control" id="idCartInput" placeholder="Id carrito">
@@ -45,12 +59,15 @@
                 <input type="text" class="form-control" id="idProdInput" placeholder="Id producto">
             </div>
         </div>
-        <button id="getAllCartsButton" type="button" class="btn btn-primary" >GetAllCarts</button>
-        <button id="getCartButton" type="button" class="btn btn-secondary">GetProductsInCartById</button>
-        <button id="deleteProductInCartButton" type="button" class="btn btn-danger">DeleteProductInCart</button>
-        <button id="deleteCartButton" type="button" class="btn btn-danger">DeleteCartById</button>
-        <div id="cartResults">
-
+        <div id="cartButtons">
+            <button id="getAllCartsButton" type="button" class="btn btn-primary" >GetAllCarts</button>
+            <button id="saveCartButton" type="button" class="btn btn-success" >SaveCart</button>
+            <button id="saveProdInCartButton" type="button" class="btn btn-warning" >SaveProductInCart</button>
+            <button id="getCartButton" type="button" class="btn btn-secondary">GetProductsInCartById</button>
+            <button id="deleteProductInCartButton" type="button" class="btn btn-danger">DeleteProductInCart</button>
+            <button id="deleteCartButton" type="button" class="btn btn-danger">DeleteCartById</button>
+        </div>
+        <div class="container" id="cartResults">
         </div>
     </div>
 </fieldset>

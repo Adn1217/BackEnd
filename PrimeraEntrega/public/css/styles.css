@@ -41,6 +41,29 @@ fieldset > div {
     min-width: 7rem;
 }
 
+#cartInputs div:first-child {
+    display: block;
+    min-width: 10rem;
+}
+
+#cartResults {
+    /* white-space: normal; */
+    word-wrap: normal;
+    word-break: break-all;
+}
+
+#productRolSelection div, #cartRolSelection div{
+    display: inline-block;
+}
+
+#productRolSelection label, #cartRolSelection label{
+    margin: 0;
+}
+
+#productRolSelection input, #cartRolSelection input{
+    margin: 0 1rem 0 1rem;
+}
+
 .errorLabel{
     color: red;
 }

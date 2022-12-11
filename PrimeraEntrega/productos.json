@@ -6,7 +6,8 @@
     "price": 123.5,
     "stock": 500,
     "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_955707-MCO44495623436_012021-F.webp",
-    "id": 1
+    "id": 1,
+    "timestamp": "04/12/2022, 20:31:08"
   },
   {
     "title": "Calculadora",
@@ -15,7 +16,8 @@
     "price": 234.56,
     "stock": 2500,
     "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_771821-MCO52197432698_102022-F.webp",
-    "id": 2
+    "id": 2,
+    "timestamp": "4/12/2022, 19:21:38"
   },
   {
     "title": "Globo Terraqueo",
@@ -24,15 +26,17 @@
     "price": 345.67,
     "stock": 50,
     "thumbnail": "https://panamericana.vteximg.com.br/arquivos/ids/190161-1600-1600/globo-terraqueo-politico-40-cm-1-7701016736787.jpg?v=636251722565900000",
-    "id": 3
+    "id": 3,
+    "timestamp": "04/12/2022, 19:23:17"
   },
   {
-    "code": "Prd5599",
-    "title": "Mouse",
-    "description": "Mouse óptico inalambrico",
-    "price": "60000",
-    "stock": "100",
-    "thumbnail": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCkeRSCJMtett5iZ2wumK4IJjiQpoRHxM7Eg&usqp=CAU",
-    "id": 4
+    "code": "Prd0689",
+    "title": "Cojín",
+    "description": "Un cojín delicioso. Pruebalo.",
+    "price": "50000",
+    "stock": "15",
+    "thumbnail": "https://ebani.com.co/wp-content/uploads/2022/03/Cojin-Relieve-Afelpado-Corto-en-una-cara-Ebani-Colombia-Tienda-online-de-decoracion-y-mobiliario-ARMA-TU-HOGAR.png",
+    "id": 4,
+    "timestamp": "04/12/2022, 20:20:21"
   }
 ]

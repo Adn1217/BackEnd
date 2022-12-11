@@ -52,11 +52,13 @@ io.on('connection', (socket) => {
     })
 })
 
-const isAdmin = true;
+// const isAdmin = true;
 
-async function onlyAdmin(req, res, next) {
-    if (isAdmin) { 
-        next;
+async function onlyAdmin(req, res, next, params) {
+    const isAdmin = req.headers.auth; //Solo para poder probarlo desde el Front.
+    // console.log(String(isAdmin).toLowerCase() == "true");
+    if (String(isAdmin).toLowerCase() == "true") { 
+        next(...params);
     } else { 
         res.status(401).json({error:-1,descripcion:`Ruta ${req.originalUrl} metodo ${req.method} no autorizado`});
     }
@@ -79,18 +81,19 @@ productos.get('/:id?', async(req, res) => {
 })
 
 productos.post('/', (req, res) => {
-    onlyAdmin(req, res, prdController.doSaveProduct(req.body, res));
+    onlyAdmin(req, res, prdController.doSaveProduct, [req.body, res]);
 })
 
-productos.put('/:id', (req, res) => {
+
+productos.put('/:id', (req, res) => { 
     const prod = req.body;
     const id = req.params.id;
-    onlyAdmin(req, res, prdController.updateProductById(res, prod, parseInt(id)));
+    onlyAdmin(req, res, prdController.updateProductById, [res, prod, parseInt(id)]);
 })
 
 productos.delete('/:id', (req, res) => {
     const {id} = req.params;
-    onlyAdmin(req, res, prdController.doDeleteProductById(res, parseInt(id)));
+    onlyAdmin(req, res, prdController.doDeleteProductById, [res, parseInt(id)]);
 })
 
 // RUTAS CARRITOS -----------------------
@@ -111,7 +114,7 @@ carrito.post('/', (req, res) => {
         res.send({Error: "Carrito no recibido"})
     }else{
         console.log('Carrito: ', JSON.stringify(cart));
-        cartController.doSaveCart(res, cart);
+        onlyAdmin(req, res, cartController.doSaveCart, [res, cart]);
     }
 })
 
@@ -122,25 +125,25 @@ carrito.post('/:id/productos', (req, res) => {
         res.send({Error: "Producto no recibido"})
     }else{
         console.log('producto: ', JSON.stringify(prod));
-        cartController.doSaveProductInCart(res, prod, parseInt(id));
+        onlyAdmin(req, res,cartController.doSaveProductInCart, [res, prod, parseInt(id)]);
     }
 })
 
-carrito.put('/:id/productos', (req, res) => {
+carrito.put('/:id/productos', (req, res) => {// No se expone a Front.
     const cart = req.body;
     const id = req.params.id;
-    cartController.updateCartById(res, cart, parseInt(id));
+    onlyAdmin(req, res,cartController.updateCartById, [res, cart, parseInt(id)]);
 })
 
 carrito.delete('/:id', (req, res) => {
     const {id} = req.params;
-    cartController.doDeleteCartById(res, parseInt(id));
+    onlyAdmin(req, res, cartController.doDeleteCartById, [res, parseInt(id)]);
 })
 
 carrito.delete('/:id/productos/:id_prod', (req, res) => {
     const {id, id_prod} = req.params;
     const id_cart = id;
-    cartController.doDeleteProductInCartById(res,parseInt(id_prod), parseInt(id_cart));
+    onlyAdmin(req, res, cartController.doDeleteProductInCartById, [res,parseInt(id_prod), parseInt(id_cart)]);
 })
 
 // RUTAS MENSAJES --------------------------
