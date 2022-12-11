@@ -46,6 +46,12 @@ fieldset > div {
     min-width: 10rem;
 }
 
+#cartResults {
+    /* white-space: normal; */
+    word-wrap: normal;
+    word-break: break-all;
+}
+
 #productRolSelection div, #cartRolSelection div{
     display: inline-block;
 }

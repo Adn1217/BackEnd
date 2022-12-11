@@ -51,7 +51,6 @@ async function submitForm(id) {
             price: priceInput.value,
             stock: stockInput.value,
             thumbnail: thumbnailInput.value,
-            rol: productRolRadioButton.checked // Se agrega para probar roles en Front
         }
         let url = 'http://localhost:8080/productos';
         let verb = 'POST';
@@ -60,7 +59,8 @@ async function submitForm(id) {
         let response = await fetch(url, { method: verb,
             headers: {
                 Accept: "application/json",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                Auth: productRolRadioButton.checked
             },
             body: JSON.stringify(newProd)
         })
@@ -169,16 +169,7 @@ async function saveCart(user){
     }else{
         let newCart = {
             usuario: user,
-            productos: [
-                {
-                code: codeInput.value,
-                title: titleInput.value,
-                description: descriptionInput.value,
-                price: priceInput.value,
-                stock: stockInput.value,
-                thumbnail: thumbnailInput.value,
-                }
-            ]
+            productos: []
         }
         cartResults.classList.remove('errorLabel');
         cartUserInput.classList.remove('errorInput');

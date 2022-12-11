@@ -29,7 +29,7 @@
         </div>
         <div class="col-12">
             <label for="thumbnail" class="form-label"><strong>Imagen [url]</strong></label>
-            <textarea type="text" class="form-control" id="thumbnailInput" placeholder="Ingrese url de imagen de producto" rows="2" maxlength="200"></textarea>
+            <textarea type="text" class="form-control" id="thumbnailInput" placeholder="Ingrese url de imagen de producto" rows="3" maxlength="200"></textarea>
         </div>
         <button id="submitButton" type="button" class="btn btn-success">Save</button>
         <div class="col-3">
@@ -59,14 +59,15 @@
                 <input type="text" class="form-control" id="idProdInput" placeholder="Id producto">
             </div>
         </div>
-        <button id="saveCartButton" type="button" class="btn btn-success" >SaveCart</button>
-        <button id="saveProdInCartButton" type="button" class="btn btn-success" >SaveProductInCart</button>
-        <button id="getAllCartsButton" type="button" class="btn btn-primary" >GetAllCarts</button>
-        <button id="getCartButton" type="button" class="btn btn-secondary">GetProductsInCartById</button>
-        <button id="deleteProductInCartButton" type="button" class="btn btn-danger">DeleteProductInCart</button>
-        <button id="deleteCartButton" type="button" class="btn btn-danger">DeleteCartById</button>
-        <div id="cartResults">
-
+        <div id="cartButtons">
+            <button id="getAllCartsButton" type="button" class="btn btn-primary" >GetAllCarts</button>
+            <button id="saveCartButton" type="button" class="btn btn-success" >SaveCart</button>
+            <button id="saveProdInCartButton" type="button" class="btn btn-warning" >SaveProductInCart</button>
+            <button id="getCartButton" type="button" class="btn btn-secondary">GetProductsInCartById</button>
+            <button id="deleteProductInCartButton" type="button" class="btn btn-danger">DeleteProductInCart</button>
+            <button id="deleteCartButton" type="button" class="btn btn-danger">DeleteCartById</button>
+        </div>
+        <div class="container" id="cartResults">
         </div>
     </div>
 </fieldset>

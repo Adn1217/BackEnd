@@ -55,10 +55,9 @@ io.on('connection', (socket) => {
 // const isAdmin = true;
 
 async function onlyAdmin(req, res, next, params) {
-    const isAdmin = req.body.rol ?? req.headers.auth; //Solo para poder probarlo desde el Front.
+    const isAdmin = req.headers.auth; //Solo para poder probarlo desde el Front.
     // console.log(String(isAdmin).toLowerCase() == "true");
     if (String(isAdmin).toLowerCase() == "true") { 
-        delete req?.body.rol  //Solo para poder probarlo desde el Front.
         next(...params);
     } else { 
         res.status(401).json({error:-1,descripcion:`Ruta ${req.originalUrl} metodo ${req.method} no autorizado`});
@@ -85,7 +84,8 @@ productos.post('/', (req, res) => {
     onlyAdmin(req, res, prdController.doSaveProduct, [req.body, res]);
 })
 
-productos.put('/:id', (req, res) => {
+
+productos.put('/:id', (req, res) => { 
     const prod = req.body;
     const id = req.params.id;
     onlyAdmin(req, res, prdController.updateProductById, [res, prod, parseInt(id)]);
@@ -129,7 +129,7 @@ carrito.post('/:id/productos', (req, res) => {
     }
 })
 
-carrito.put('/:id/productos', (req, res) => {
+carrito.put('/:id/productos', (req, res) => {// No se expone a Front.
     const cart = req.body;
     const id = req.params.id;
     onlyAdmin(req, res,cartController.updateCartById, [res, cart, parseInt(id)]);
