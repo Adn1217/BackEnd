@@ -179,7 +179,7 @@ async function saveCart(user){
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Auth: cartRolRadioButton.checked
+                Auth: true 
             },
             body: JSON.stringify(newCart)
         })
@@ -212,7 +212,7 @@ async function saveProdInCart(idCart){
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
-                Auth: cartRolRadioButton.checked
+                Auth: true
             },
             body: JSON.stringify(newProd)
         })
@@ -296,7 +296,7 @@ async function deleteOneProductInCart(idCart, idProd){
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                    Auth: cartRolRadioButton.checked
+                    Auth: true
                 }
             })
             let prod = await response.json();
@@ -328,7 +328,7 @@ async function deleteOneCart(id){
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                    Auth: cartRolRadioButton.checked
+                    Auth: true
                 }
             })
             let cart = await response.json();
