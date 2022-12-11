@@ -41,6 +41,11 @@ fieldset > div {
     min-width: 7rem;
 }
 
+#cartInputs div:first-child {
+    display: block;
+    min-width: 10rem;
+}
+
 #productRolSelection div, #cartRolSelection div{
     display: inline-block;
 }

@@ -46,6 +46,10 @@
             <label class="form-check-label">Administrador</label>
         </div>
         <div id="cartInputs">
+            <div class="col-6">
+                <label for="title" class="form-label"><strong>Usuario</strong></label>
+                <input type="text" class="form-control" id="cartUserInput" placeholder="Ingrese usuario">
+            </div>
             <div class="col-1">
                 <label for="title" class="form-label"><strong>Id_cart</strong></label>
                 <input type="text" class="form-control" id="idCartInput" placeholder="Id carrito">
@@ -55,6 +59,8 @@
                 <input type="text" class="form-control" id="idProdInput" placeholder="Id producto">
             </div>
         </div>
+        <button id="saveCartButton" type="button" class="btn btn-success" >SaveCart</button>
+        <button id="saveProdInCartButton" type="button" class="btn btn-success" >SaveProductInCart</button>
         <button id="getAllCartsButton" type="button" class="btn btn-primary" >GetAllCarts</button>
         <button id="getCartButton" type="button" class="btn btn-secondary">GetProductsInCartById</button>
         <button id="deleteProductInCartButton" type="button" class="btn btn-danger">DeleteProductInCart</button>

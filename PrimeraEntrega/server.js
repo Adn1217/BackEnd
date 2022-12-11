@@ -56,8 +56,8 @@ io.on('connection', (socket) => {
 
 async function onlyAdmin(req, res, next, params) {
     const isAdmin = req.body.rol ?? req.headers.auth; //Solo para poder probarlo desde el Front.
-    console.log(String(isAdmin) == "true");
-    if (String(isAdmin) == "true") { 
+    // console.log(String(isAdmin).toLowerCase() == "true");
+    if (String(isAdmin).toLowerCase() == "true") { 
         delete req?.body.rol  //Solo para poder probarlo desde el Front.
         next(...params);
     } else { 

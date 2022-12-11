@@ -48,5 +48,29 @@
       }
     ],
     "id": 2
+  },
+  {
+    "usuario": "Adrian Fernández",
+    "productos": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "price": "",
+        "stock": "",
+        "thumbnail": ""
+      },
+      {
+        "code": "Prd6687",
+        "title": "Mesa",
+        "description": "La Mesa de tus sueños",
+        "price": "150000",
+        "stock": "10",
+        "thumbnail": "urlImg",
+        "timestamp": "10/12/2022, 19:29:02"
+      }
+    ],
+    "id": 3,
+    "timestamp": "10/12/2022, 18:53:59"
   }
 ]

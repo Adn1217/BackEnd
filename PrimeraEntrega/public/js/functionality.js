@@ -12,7 +12,9 @@ function checkInputs(){
         return false
     }else{
         titleInput.classList.remove('errorInput');
+        codeInput.classList.remove('errorInput');
         priceInput.classList.remove('errorInput');
+        stockInput.classList.remove('errorInput');
         thumbnailInput.classList.remove('errorInput');
         idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
@@ -86,78 +88,158 @@ async function updateProduct(id){
 }
 
 async function getAllProducts(){
+    results.classList.remove('errorLabel');
+    let response = await fetch('http://localhost:8080/productos/', { method: 'GET',
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        }
+    })
+    let prods = await response.json();
+    console.log("productos: ",prods)
+    results.innerHTML= tableRender(prods);
+    // console.log(data);
+    // results.innerHTML=`<h1>Respuesta</h1><p><strong>Productos: <br></strong>${JSON.stringify(data)}</p>`;
+}
+
+async function getOneProduct(id){
+    if (id === ''){
+        idInput.classList.add('errorInput');
+        results.classList.add('errorLabel');
+        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+    }else{
+        idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
-        let response = await fetch('http://localhost:8080/productos/', { method: 'GET',
+        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             }
         })
-        let prods = await response.json();
-        console.log("productos: ",prods)
-        results.innerHTML= tableRender(prods);
-        // console.log(data);
-        // results.innerHTML=`<h1>Respuesta</h1><p><strong>Productos: <br></strong>${JSON.stringify(data)}</p>`;
-}
-
-async function getOneProduct(id){
-        if (id === ''){
-            idInput.classList.add('errorInput');
+        let prod = await response.json();
+        if (("error" in prod)){
             results.classList.add('errorLabel');
-            results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
         }else{
-            idInput.classList.remove('errorInput');
             results.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                }
-            })
-            let prod = await response.json();
-            if (("error" in prod)){
-                results.classList.add('errorLabel');
-                results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
-            }else{
-                results.classList.remove('errorLabel');
-                results.innerHTML= tableRender(prod.producto);
-            }
-            console.log(prod);
-            // socket.emit('oneProductRequest', parseInt(id));
+            results.innerHTML= tableRender(prod.producto);
         }
+        console.log(prod);
+        // socket.emit('oneProductRequest', parseInt(id));
+    }
 }
 
 async function deleteOneProduct(id){
-        if (id === ''){
-            idInput.classList.add('errorInput');
-            results.classList.add('errorLabel');
-            results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-        }else{
-            idInput.classList.remove('errorInput');
-            results.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Auth: productRolRadioButton.checked
-                }
-            })
-            let prod = await response.json();
-            if (("error" in prod)){
-                console.log("Error", prod);
-                results.classList.add('errorLabel');
-                results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
-            }else{
-                console.log("Producto eliminado: ", prod);
-                results.classList.remove('errorLabel');
-                socket.emit("productRequest", "msj");
-                idInput.value = '';
+    if (id === ''){
+        idInput.classList.add('errorInput');
+        results.classList.add('errorLabel');
+        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+    }else{
+        idInput.classList.remove('errorInput');
+        results.classList.remove('errorLabel');
+        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: productRolRadioButton.checked
             }
+        })
+        let prod = await response.json();
+        if (("error" in prod)){
+            console.log("Error", prod);
+            results.classList.add('errorLabel');
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+        }else{
+            console.log("Producto eliminado: ", prod);
+            results.classList.remove('errorLabel');
+            socket.emit("productRequest", "msj");
+            idInput.value = '';
         }
+    }
 }
 
 
 //---------CARTS FORM----------------------------------
+
+async function saveCart(user){
+    if(user===''){
+        cartUserInput.classList.add('errorInput');
+        cartResults.classList.add('errorLabel');
+        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+    }else{
+        let newCart = {
+            usuario: user,
+            productos: [
+                {
+                code: codeInput.value,
+                title: titleInput.value,
+                description: descriptionInput.value,
+                price: priceInput.value,
+                stock: stockInput.value,
+                thumbnail: thumbnailInput.value,
+                }
+            ]
+        }
+        cartResults.classList.remove('errorLabel');
+        cartUserInput.classList.remove('errorInput');
+        idCartInput.classList.remove('errorInput');
+        idProdInput.classList.remove('errorInput');
+        let response = await fetch('http://localhost:8080/carrito/?', { method: 'POST',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: cartRolRadioButton.checked
+            },
+            body: JSON.stringify(newCart)
+        })
+        let carts = await response.json();
+        console.log("Nuevo carrito: ",carts)
+        // results.innerHTML= tableRender(carts);
+        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>NuevoCarrito: <br></strong>${JSON.stringify(carts)}</p>`;
+        cartUserInput.value = '';
+        idCartInput.value = '';
+        idProdInput.value = '';
+    }
+}
+
+async function saveProdInCart(idCart){
+    let valideInputs = checkInputs();
+    if((valideInputs && idCart !== '')){
+        let newProd = {
+                code: codeInput.value,
+                title: titleInput.value,
+                description: descriptionInput.value,
+                price: priceInput.value,
+                stock: stockInput.value,
+                thumbnail: thumbnailInput.value,
+                }
+        cartResults.classList.remove('errorLabel');
+        cartUserInput.classList.remove('errorInput');
+        idCartInput.classList.remove('errorInput');
+        idProdInput.classList.remove('errorInput');
+        let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos`, { method: 'POST',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: cartRolRadioButton.checked
+            },
+            body: JSON.stringify(newProd)
+        })
+        let carts = await response.json();
+        console.log("Nuevo carrito: ",carts);
+        // results.innerHTML= tableRender(carts);
+        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>CarritoActualizado: <br></strong>${JSON.stringify(carts)}</p>`;
+        cartUserInput.value = '';
+        idCartInput.value = '';
+        idProdInput.value = '';
+        [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
+    }else{
+        idCartInput.classList.add('errorInput');
+        cartResults.classList.add('errorLabel');
+        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+    }
+}
+
 async function getAllCarts(){
     cartResults.classList.remove('errorLabel');
     idCartInput.classList.remove('errorInput');
@@ -174,8 +256,8 @@ async function getAllCarts(){
     cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carritos: <br></strong>${JSON.stringify(carts)}</p>`;
     idCartInput.value = '';
     idProdInput.value = '';
+    [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
 }
-
 
 async function getOneCart(id){
         if (id === ''){
@@ -222,7 +304,8 @@ async function deleteOneProductInCart(idCart, idProd){
             let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos/${idProd}`, { method: 'DELETE',
                 headers: {
                     Accept: "application/json",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Auth: cartRolRadioButton.checked
                 }
             })
             let prod = await response.json();
@@ -253,14 +336,15 @@ async function deleteOneCart(id){
             let response = await fetch(`http://localhost:8080/carrito/${id}`, { method: 'DELETE',
                 headers: {
                     Accept: "application/json",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    Auth: cartRolRadioButton.checked
                 }
             })
             let cart = await response.json();
             if (("error" in cart)){
                 console.log("Error", cart);
                 cartResults.classList.add('errorLabel');
-                carResults.innerHTML=`<h1>Error</h1>${JSON.stringify(cart)}</p>`;
+                cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(cart)}</p>`;
             }else{
                 console.log("Carrito eliminado: ", cart);
                 results.classList.remove('errorLabel');
@@ -306,6 +390,8 @@ deleteOneButton.addEventListener('click', () => deleteOneProduct(idInput.value))
 
 //------CARTS FORM-----------------------------------
 
+saveCartButton.addEventListener('click', () => saveCart(cartUserInput.value))
+saveProdInCartButton.addEventListener('click', () => saveProdInCart(idCartInput.value))
 getAllCartsButton.addEventListener('click', getAllCarts)
 getCartButton.addEventListener('click', () => getOneCart(idCartInput.value))
 deleteProductInCartButton.addEventListener('click', () => deleteOneProductInCart(idCartInput.value, idProdInput.value));
