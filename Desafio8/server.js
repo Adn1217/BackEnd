@@ -1,5 +1,4 @@
 import Contenedor from './Contenedor.class.js';
-import Contenedor2 from './Contenedor2.class.js';
 import * as options from './db/options/ecommerceDBs.js';
 import express from 'express';
 import {Server as HttpServer} from 'http';
@@ -45,47 +44,53 @@ io.on('connection', (socket) => {
 })
 
 async function saveProduct(prod) {
-    const productos = new Contenedor2(options.prdOptions);
+    const productos = new Contenedor(options.prdOptions);
     await productos.createTable('mensajes');
     const newProductId = await productos.save('productos', prod);
     return newProductId
 } 
 
 async function saveMessage(msg) {
-    const messages = new Contenedor2(options.msgOptions);
+    const messages = new Contenedor(options.msgOptions);
     // await messages.createTable('mensajes');
     const newMessage = await messages.save('mensajes', msg);
     return newMessage
 } 
 
+async function doUpdate(prod) {
+    const productos = new Contenedor(options.prdOptions);
+    const updated = await productos.update('productos', prod);
+    return updated
+} 
+
 async function saveAllProducts(prods) {
-    const productos = new Contenedor('./productos.json');
+    const productos = new Contenedor(options.prdOptions);
     const saved = await productos.saveAll(prods);
     return saved 
 } 
 
 async function getProducts() {
-    const productos = new Contenedor2(options.prdOptions);
+    const productos = new Contenedor(options.prdOptions);
     const allProducts = await productos.getAll('productos');
     return allProducts
 } 
 
 async function getMessages() {
-    const messages = new Contenedor2(options.msgOptions);
+    const messages = new Contenedor(options.msgOptions);
     await messages.createTable('mensajes');
     const allMessages = await messages.getAll('mensajes');
     return allMessages
 } 
 
 async function getProductById(id) {
-    const productos = new Contenedor2(options.prdOptions);
+    const productos = new Contenedor(options.prdOptions);
     const product = await productos.getById('productos', id);
     return product
 }
 
 async function deleteProductById(id) {
-    const productos = new Contenedor('./productos.json');
-    const product = await productos.deleteById(id);
+    const productos = new Contenedor(options.prdOptions);
+    const product = await productos.deleteById('productos', id);
     return product
 }
 
@@ -113,8 +118,8 @@ productos.get('/:id?', async(req, res) => {
             console.log(productById);
         }       
     }else{
-        const productos = new Contenedor('./productos.json');
-        const allProducts = await productos.getAll();
+        const productos = new Contenedor(options.prdOptions);
+        const allProducts = await productos.getAll('productos');
         res.send(allProducts);
     }
 })
@@ -142,41 +147,18 @@ productos.post('/', (req, res) => {
     }
 })
 
-// productos.get('/:id', (req, res) => {
-//     async function showProductById(id) {
-//         let productById = await getProductById(id);
-//         if (productById.length === 0){
-//             res.send({error:"Producto no encontrado"});
-//         }else{
-//             res.send({producto: productById.producto});
-//             console.log(productById);
-//         }
-//     }
-//     const id = req.params.id;
-//     showProductById(parseInt(id));
-// })
-
 productos.put('/:id', (req, res) => {
     async function updateProductById(updatedProd, id) {
         let productById = await getProductById(id);
-        if (!productById){
+        if (!productById || productById === 0){
             res.send({error: "Producto no encontrado"});
         }else{
-            const allProducts = await getProducts();
-            const newAllProducts = allProducts.map((prod) => {
-                if(prod.id === id){
-                    prod = updatedProd;
-                    prod.id = id;
-                    console.log(prod);
-                }
-                return prod;
-            })
-            console.log('La nueva lista es: ', newAllProducts);
-            const allSaved = await saveAllProducts(newAllProducts);
-            if (allSaved === 'ok'){
+               updatedProd.id = id;
+               const updated = await doUpdate(updatedProd);
+            if (updated === 'ok'){
                 res.send({actualizado: updatedProd})
             }else{
-                res.send({error: allSaved})
+                res.send({error: updated})
             }
         }
     }
@@ -189,7 +171,7 @@ productos.delete('/:id', (req, res) => {
 
     async function doDeleteProductById(id) {
         let deletedProduct = await deleteProductById(id);
-        if (!deletedProduct){
+        if (!deletedProduct || deletedProduct === 0){
             deletedProduct = {
                 error: "Producto no encontrado"
             }
@@ -198,10 +180,9 @@ productos.delete('/:id', (req, res) => {
             res.send({eliminado: deletedProduct})
         }
             return deletedProduct;
-        }
+    }
 
     const {id} = req.params;
-    console.log(id);
     doDeleteProductById(parseInt(id));
 })
 

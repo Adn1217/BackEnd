@@ -1,6 +1,6 @@
 
-function checkInputs(){
-    if(titleInput.value === '' || priceInput.value === '' || thumbnailInput.value === ''){
+function checkInputs(idValid){
+    if(titleInput.value === '' || priceInput.value === '' || thumbnailInput.value === '' || !idValid){
         titleInput.classList.add('errorInput');
         priceInput.classList.add('errorInput');
         thumbnailInput.classList.add('errorInput');
@@ -36,9 +36,9 @@ function checkMsgInputs(){
     }
 }
 
-async function submitForm(id) {
-    let valideInputs = checkInputs();
-    if(valideInputs){
+async function submitForm(id, idValid = true) {
+    let valideInputs = checkInputs(idValid);
+    if(valideInputs && idValid){
         let newProd = {
             title: titleInput.value,
             price: priceInput.value,
@@ -71,12 +71,14 @@ async function submitForm(id) {
     
 
 async function updateProduct(id){
+    let idValid = false;
     if (id === ''){
         idInput.classList.add('errorInput');
     }else{
+        idValid = true;
         idInput.classList.remove('errorInput');
     }
-    await submitForm(id);
+    await submitForm(id, idValid);
 }
 
 async function getAllProducts(){
@@ -100,7 +102,7 @@ async function getOneProduct(id){
     }else{
         idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
+        let response = await fetch(`http://localhost:8080/productos/${id}?`, { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
@@ -128,7 +130,7 @@ async function deleteOneProduct(id){
         idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
         results.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/api/productos/${id}`, { method: 'DELETE',
+        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
@@ -136,14 +138,15 @@ async function deleteOneProduct(id){
         })
         let prod = await response.json();
         if (("error" in prod)){
+            console.log("Error", prod);
             results.classList.add('errorLabel');
             results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
         }else{
+            console.log(`Se ha eliminado el producto con id=${id}`);
             results.classList.remove('errorLabel');
-            results.innerHTML= tableRender(prod.producto);
+            socket.emit("productRequest", "msj");
+            idInput.value = '';
         }
-        console.log(prod);
-        // socket.emit('oneProductRequest', parseInt(id));
     }
 }
 
