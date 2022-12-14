@@ -45,14 +45,15 @@ io.on('connection', (socket) => {
 })
 
 async function saveProduct(prod) {
-    const productos = new Contenedor('./productos.json');
-    const newProductId = await productos.save(prod);
+    const productos = new Contenedor2(options.prdOptions);
+    await productos.createTable('mensajes');
+    const newProductId = await productos.save('productos', prod);
     return newProductId
 } 
 
 async function saveMessage(msg) {
     const messages = new Contenedor2(options.msgOptions);
-    await messages.createTable('mensajes');
+    // await messages.createTable('mensajes');
     const newMessage = await messages.save('mensajes', msg);
     return newMessage
 } 
@@ -64,8 +65,8 @@ async function saveAllProducts(prods) {
 } 
 
 async function getProducts() {
-    const productos = new Contenedor('./productos.json');
-    const allProducts = await productos.getAll();
+    const productos = new Contenedor2(options.prdOptions);
+    const allProducts = await productos.getAll('productos');
     return allProducts
 } 
 
@@ -77,8 +78,8 @@ async function getMessages() {
 } 
 
 async function getProductById(id) {
-    const productos = new Contenedor('./productos.json');
-    const product = await productos.getById(id);
+    const productos = new Contenedor2(options.prdOptions);
+    const product = await productos.getById('productos', id);
     return product
 }
 
@@ -88,7 +89,7 @@ async function deleteProductById(id) {
     return product
 }
 
-productos.get('/', (req, res) => {
+app.get('/', (req, res) => {
     async function showProducts() {
         const allProducts = await getProducts(); 
         const allMessages = await getMessages();
@@ -96,6 +97,26 @@ productos.get('/', (req, res) => {
         res.render('pages/index', {products: allProducts, msgs: allMessages})
     }
     showProducts();
+})
+
+// RUTRAS PRODUCTOS ----------------------
+
+productos.get('/:id?', async(req, res) => {
+    if(Object.keys(req.query).length > 0 || req.params.id){
+        const id = req.query.id || req.params.id
+        let productById = await getProductById(id);
+        if (productById.length === 0){
+            console.log(productById);
+            res.send({error:"Producto no encontrado"});
+        }else{
+            res.send({producto: productById});
+            console.log(productById);
+        }       
+    }else{
+        const productos = new Contenedor('./productos.json');
+        const allProducts = await productos.getAll();
+        res.send(allProducts);
+    }
 })
 
 mensajes.get('/', (req, res) => {
@@ -110,7 +131,7 @@ mensajes.get('/', (req, res) => {
 productos.post('/', (req, res) => {
     async function doSaveProduct(prod) {
         const newProd = await saveProduct(prod); 
-        res.send({Guardado: newProd})
+        res.send({IdGardado: newProd[0]})
     }
     const product = req.body;
     if (Object.keys(product).length === 0){
@@ -121,21 +142,19 @@ productos.post('/', (req, res) => {
     }
 })
 
-productos.get('/:id', (req, res) => {
-    async function showProductById(id) {
-        let productById = await getProductById(id);
-        if (!productById){
-            res.send({error:"Producto no encontrado"});
-        }else{
-            res.send({producto: productById});
-            console.log(productById);
-        }
-    }
-    const id = req.params.id;
-    console.log(id);
-    showProductById(parseInt(id));
-    
-})
+// productos.get('/:id', (req, res) => {
+//     async function showProductById(id) {
+//         let productById = await getProductById(id);
+//         if (productById.length === 0){
+//             res.send({error:"Producto no encontrado"});
+//         }else{
+//             res.send({producto: productById.producto});
+//             console.log(productById);
+//         }
+//     }
+//     const id = req.params.id;
+//     showProductById(parseInt(id));
+// })
 
 productos.put('/:id', (req, res) => {
     async function updateProductById(updatedProd, id) {
@@ -189,7 +208,7 @@ productos.delete('/:id', (req, res) => {
 mensajes.post('/', (req, res) => {
     async function doSaveMessage(msg) {
         const newMsg = await saveMessage(msg); 
-        res.send({Guardado: newMsg})
+        res.send({idGuardado: newMsg[0]})
     }
     const msg = req.body;
     if (Object.keys(msg).length === 0){

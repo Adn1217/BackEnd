@@ -55,11 +55,20 @@ async function submitForm(id) {
             },
             body: JSON.stringify(newProd)
         })
-        let data = await response.json();
-        !("error" in data) && ([titleInput.value, priceInput.value, thumbnailInput.value] = ['','','']);
-        console.log(data);
+        let prod = await response.json();
+        if (("error" in prod)){
+            results.classList.add('errorLabel');
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+        }else{
+            results.classList.remove('errorLabel');
+            socket.emit("productRequest", "msj");
+            idInput.value = '';
+            [titleInput.value, priceInput.value, thumbnailInput.value] = ['','','','','',''];
+        }
+        console.log(prod);
     }
 }
+    
 
 async function updateProduct(id){
     if (id === ''){
@@ -72,57 +81,70 @@ async function updateProduct(id){
 
 async function getAllProducts(){
         results.classList.remove('errorLabel');
-        let response = await fetch('http://localhost:8080/api/productos/', { method: 'GET',
+        let response = await fetch('http://localhost:8080/productos/?', { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             }
         })
-        let data = await response.json();
-        // console.log(data);
-        results.innerHTML=`<h1>Respuesta</h1><p><strong>Productos: <br></strong>${JSON.stringify(data)}</p>`;
+        let prods = await response.json();
+        console.log("productos: ",prods)
+        results.innerHTML= tableRender(prods);
 }
 
 async function getOneProduct(id){
-        if (id === ''){
-            idInput.classList.add('errorInput');
+    if (id === ''){
+        idInput.classList.add('errorInput');
+        results.classList.add('errorLabel');
+        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+    }else{
+        idInput.classList.remove('errorInput');
+        results.classList.remove('errorLabel');
+        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+        let prod = await response.json();
+        if (("error" in prod)){
             results.classList.add('errorLabel');
-            results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
         }else{
-            idInput.classList.remove('errorInput');
             results.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/api/productos/${id}`, { method: 'GET',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                }
-            })
-            let data = await response.json();
-            console.log(data);
-            results.innerHTML=`<h1>Respuesta</h1>${JSON.stringify(data)}</p>`;
+            results.innerHTML= tableRender(prod.producto);
         }
+        console.log(prod);
+        // socket.emit('oneProductRequest', parseInt(id));
+    }
 }
 
 async function deleteOneProduct(id){
-        if (id === ''){
-            idInput.classList.add('errorInput');
+    if (id === ''){
+        idInput.classList.add('errorInput');
+        results.classList.add('errorLabel');
+        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+    }else{
+        idInput.classList.remove('errorInput');
+        results.classList.remove('errorLabel');
+        results.classList.remove('errorLabel');
+        let response = await fetch(`http://localhost:8080/api/productos/${id}`, { method: 'DELETE',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+        let prod = await response.json();
+        if (("error" in prod)){
             results.classList.add('errorLabel');
-            results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
         }else{
-            idInput.classList.remove('errorInput');
             results.classList.remove('errorLabel');
-            results.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/api/productos/${id}`, { method: 'DELETE',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                }
-            })
-            let data = await response.json();
-            console.log(data);
-            results.innerHTML=`<h1>Respuesta</h1><p><strong>Producto eliminado: <br></strong>${JSON.stringify(data)}</p>`;
-            idInput.value = '';
+            results.innerHTML= tableRender(prod.producto);
         }
+        console.log(prod);
+        // socket.emit('oneProductRequest', parseInt(id));
+    }
 }
 
 async function sendMessage(id) {
