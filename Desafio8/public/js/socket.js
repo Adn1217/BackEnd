@@ -48,8 +48,12 @@ function chatRender(msgs){
 
 socket.on('welcome', data => {
     console.log(data)
-    socket.emit('productRequest','msj')
+    socket.emit('tablesRequest')
 })
+
+socket.on('ready', () => 
+    socket.emit('productRequest','msj')
+)
 
 socket.on('productos', prods => {
     console.log('Productos: ', prods?.productos || prods);

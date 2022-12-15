@@ -1,10 +1,6 @@
-import * as fs from "fs";
 import knex from 'knex';
 
 export default class contenedor {
-//   constructor(ubicacion) {
-//     this.ruta = ubicacion;
-//   }
   
   constructor(options) {
     this.knex = knex(options);
@@ -13,21 +9,41 @@ export default class contenedor {
   async createTable(tableName){
     const exists = await this.knex.schema.hasTable(tableName)
     if(!exists && tableName === 'productos'){
-        await this.knex.schema.createTable(tableName, table => {
-          table.increments('id').primary()
-          table.string('title', 50).notNullable()
-          table.float('price')
-          table.string('thumbnail', 200).notNullable()
-        })
+      await this.knex.schema.createTable(tableName, table => {
+      table.increments('id').primary()
+      table.string('title', 50).notNullable()
+      table.float('price')
+      table.string('thumbnail', 200).notNullable()
+      })
+      let initialProds = [
+      {
+        "title": "Escuadra",
+        "price": 123.5,
+        "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_955707-MCO44495623436_012021-F.webp",
+        "id": 1
+      },
+      {
+        "title": "Calculadora",
+        "price": 234.56,
+        "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_771821-MCO52197432698_102022-F.webp",
+        "id": 2
+      },
+      {
+        "title": "Globo Terraqueo",
+        "price": 345.67,
+        "thumbnail": "https://panamericana.vteximg.com.br/arquivos/ids/190161-1600-1600/globo-terraqueo-politico-40-cm-1-7701016736787.jpg?v=636251722565900000",
+        "id": 3
+      }]
+      return await this.knex(tableName).insert(initialProds);
     }else if(!exists && tableName === 'mensajes'){
-        await this.knex.schema.createTable(tableName, table => {
-          table.increments('id').primary()
-          table.string('fecha', 20).notNullable()
-          table.string('usuario', 50).notNullable()
-          table.string('mensaje', 200).notNullable()
-        })
+      return await this.knex.schema.createTable(tableName, table => {
+      table.increments('id').primary()
+      table.string('fecha', 20).notNullable()
+      table.string('usuario', 50).notNullable()
+      table.string('mensaje', 200).notNullable()
+    })
+    //this.knex.destroy();
     }
-  // this.knex.destroy();
   }
 
   async save(tableName, prods){

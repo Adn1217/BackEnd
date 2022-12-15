@@ -28,9 +28,15 @@ app.set('view engine', 'ejs');
 app.set('views', "./views");
 app.use(express.static(__dirname + '/public'));
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
+ 
     console.log('Usuario Conectado');
     socket.emit('welcome', 'Usuario conectado');
+    
+    socket.on('tablesRequest', async () => {
+        await createTables();
+        io.sockets.emit('ready');
+    })
 
     socket.on('productRequest', async () => {
         const allProducts = await getProducts();
@@ -43,16 +49,21 @@ io.on('connection', (socket) => {
     })
 })
 
+async function createTables(){
+    const BD1 = new Contenedor(options.msgOptions);
+    await BD1.createTable('mensajes');
+    const BD2 = new Contenedor(options.prdOptions);
+    await BD2.createTable('productos');
+}
+
 async function saveProduct(prod) {
     const productos = new Contenedor(options.prdOptions);
-    await productos.createTable('mensajes');
     const newProductId = await productos.save('productos', prod);
     return newProductId
 } 
 
 async function saveMessage(msg) {
     const messages = new Contenedor(options.msgOptions);
-    // await messages.createTable('mensajes');
     const newMessage = await messages.save('mensajes', msg);
     return newMessage
 } 
@@ -65,7 +76,7 @@ async function doUpdate(prod) {
 
 async function saveAllProducts(prods) {
     const productos = new Contenedor(options.prdOptions);
-    const saved = await productos.saveAll(prods);
+    const saved = await productos.saveAll('productos', prods);
     return saved 
 } 
 
@@ -77,7 +88,6 @@ async function getProducts() {
 
 async function getMessages() {
     const messages = new Contenedor(options.msgOptions);
-    await messages.createTable('mensajes');
     const allMessages = await messages.getAll('mensajes');
     return allMessages
 } 
