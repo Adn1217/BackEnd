@@ -1,0 +1,64 @@
+.btn {
+    margin: 10px;
+    min-width: 100px;
+}
+#buttons{
+    margin-top: 20px;
+}
+
+#results{
+    margin-left: auto;
+    /* width: 100%; */
+}
+
+.errorLabel{
+    color: red;
+}
+
+.errorInput{
+    border-color: red !important;
+}
+
+img {
+    width: 8rem;
+    height: 8rem;
+}
+
+td {
+    /* text-align: center; */
+    vertical-align: middle;
+}
+
+#server {
+    display: inline;
+    width: 50%
+}
+
+#chat input{
+    display: inline;
+    width: 50%;
+    margin: 10px 0px 10px 0px;
+}
+
+#chat label{
+    width: 10%;
+}
+
+#server span {
+    display: inline;
+    width: 2.5rem;
+}
+
+#server input {
+    width: 30%;
+}
+
+#msj {
+    border-style: solid;
+    border-width: 1px;
+    border-color: green;
+    /* border-radius: 10%; */
+    padding: 0 1rem 0 1rem;
+    margin-bottom: 1rem;
+    background-color: lightskyblue;
+}
