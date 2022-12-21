@@ -1,0 +1,43 @@
+
+0) Correr motor de Mongo:
+
+CMD 1:
+
+monogod --dbpath "C:\Users\adn12\Documents\Cursos\CoderHouse\Backend\Desafio9\BD"
+
+CMD 2:
+
+mongosh
+
+show dbs;
+
+0.1) Crear BD:
+
+use ecommerce;
+
+0.2) Crear colecciones
+
+db.createCollection("productos");
+
+db.createCollection("mensajes");
+
+
+1 y 2) Agregar 10 documentos en cada colección de acuerdo con las claves de producto utilizadas en desafio anterior:
+
+db.mensajes.insertMany([{fecha: "2022-12-21 20:34", usuario: "Adrian Fernández", mensaje: "Hola, cómo estas?"},{fecha: "2022-12-21 20:36", usuario: "Alejandra Fernández", mensaje: "Bien y tu?"},{fecha: "2022-12-21 20:37", usuario: "Adrian Fernández", mensaje: "Bien, gracias"},{fecha: "2022-12-21 20:36", usuario: "Alejandra Fernández", mensaje: "¿Al fin ya averiguaste cómo se usa Mongo?"},{fecha: "2022-12-21 20:38", usuario: "Adrian Fernández", mensaje: "Estoy en eso"},{fecha: "2022-12-21 20:39", usuario: "Alejandra Fernández", mensaje: "¿Y como vas con el reto?"},{fecha: "2022-12-21 20:40", usuario: "Adrian Fernández", mensaje: "Atrasado XD"},{fecha: "2022-12-21 20:41", usuario: "Alejandra Fernández", mensaje: "¡Tú puedes!"},{fecha: "2022-12-21 20:426", usuario: "Adrian Fernández", mensaje: "¡Síi!"},{fecha: "2022-12-21 23:52", usuario: "Adrian Fernández", mensaje: "¡Ya terminé! ¡Sí se pudo!"},{fecha: "2022-12-21 20:45", usuario: "Alejandra Fernández", mensaje: "¡Que bien!"}])
+db.productos.insertMany([{title: "Mesa", price: 450, thumbnail: "url1"}, {title: "Cama", price: 750, thumbnail: "url2"}, {title: "Silla", price: 350, thumbnail: "url3"},{title: "Televisor", price: 1500, thumbnail: "url4"},{title: "Sofá", price: 1200, thumbnail: "url5"},{title: "Comedor", price: 1000, thumbnail: "url6"},{title: "Computador", price: 4500, thumbnail: "url7"},{title: "Mecedora", price: 420, thumbnail: "url8"},{title: "Nevera", price: 3200, thumbnail: "url9"},{title: "Equipo de Sonido", price: 2500, thumbnail: "url10"}])
+
+
+3) Listar productos en cada colección:
+
+db.mensajes.find()
+db.productos.find()
+
+4) Mostrar cantidad de documentos almacenados en cada colección:
+
+db.mensajes.estimatedDocumentCount();
+db.productos.estimatedDocumentCount();
+
+5) CRUD
+	a) Agregar un producto más en la colección de productos:
+		db.productos.insertOne({title: "Lavadora", price: 2500, thumbnail: "url11"})
