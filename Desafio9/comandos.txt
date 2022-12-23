@@ -3,7 +3,7 @@
 
 CMD 1:
 
-monogod --dbpath "C:\Users\adn12\Documents\Cursos\CoderHouse\Backend\Desafio9\BD"
+mongod --dbpath "C:\Users\adn12\Documents\Cursos\CoderHouse\Backend\Desafio9\BD\"
 
 CMD 2:
 
@@ -25,7 +25,7 @@ db.createCollection("mensajes");
 1 y 2) Agregar 10 documentos en cada colección de acuerdo con las claves de producto utilizadas en desafio anterior:
 
 db.mensajes.insertMany([{fecha: "2022-12-21 20:34", usuario: "Adrian Fernández", mensaje: "Hola, cómo estas?"},{fecha: "2022-12-21 20:36", usuario: "Alejandra Fernández", mensaje: "Bien y tu?"},{fecha: "2022-12-21 20:37", usuario: "Adrian Fernández", mensaje: "Bien, gracias"},{fecha: "2022-12-21 20:36", usuario: "Alejandra Fernández", mensaje: "¿Al fin ya averiguaste cómo se usa Mongo?"},{fecha: "2022-12-21 20:38", usuario: "Adrian Fernández", mensaje: "Estoy en eso"},{fecha: "2022-12-21 20:39", usuario: "Alejandra Fernández", mensaje: "¿Y como vas con el reto?"},{fecha: "2022-12-21 20:40", usuario: "Adrian Fernández", mensaje: "Atrasado XD"},{fecha: "2022-12-21 20:41", usuario: "Alejandra Fernández", mensaje: "¡Tú puedes!"},{fecha: "2022-12-21 20:426", usuario: "Adrian Fernández", mensaje: "¡Síi!"},{fecha: "2022-12-21 23:52", usuario: "Adrian Fernández", mensaje: "¡Ya terminé! ¡Sí se pudo!"},{fecha: "2022-12-21 20:45", usuario: "Alejandra Fernández", mensaje: "¡Que bien!"}])
-db.productos.insertMany([{title: "Mesa", price: 450, thumbnail: "url1"}, {title: "Cama", price: 750, thumbnail: "url2"}, {title: "Silla", price: 350, thumbnail: "url3"},{title: "Televisor", price: 1500, thumbnail: "url4"},{title: "Sofá", price: 1200, thumbnail: "url5"},{title: "Comedor", price: 1000, thumbnail: "url6"},{title: "Computador", price: 4500, thumbnail: "url7"},{title: "Mecedora", price: 420, thumbnail: "url8"},{title: "Nevera", price: 3200, thumbnail: "url9"},{title: "Equipo de Sonido", price: 2500, thumbnail: "url10"}])
+db.productos.insertMany([{title: "Mesa", price: 450, thumbnail: "url1", stock: 23}, {title: "Cama", price: 750, thumbnail: "url2", stock: 17}, {title: "Silla", price: 350, thumbnail: "url3", stock: 29},{title: "Televisor", price: 1500, thumbnail: "url4", stock: 33},{title: "Sofá", price: 1200, thumbnail: "url5", stock: 41},{title: "Comedor", price: 1000, thumbnail: "url6", stock: 0},{title: "Computador", price: 4500, thumbnail: "url7", stock: 2},{title: "Mecedora", price: 420, thumbnail: "url8", stock: 11},{title: "Nevera", price: 3200, thumbnail: "url9", stock: 34},{title: "Equipo de Sonido", price: 2500, thumbnail: "url10", stock: 10}])
 
 
 3) Listar productos en cada colección:
@@ -40,4 +40,43 @@ db.productos.estimatedDocumentCount();
 
 5) CRUD
 	a) Agregar un producto más en la colección de productos:
-		db.productos.insertOne({title: "Lavadora", price: 2500, thumbnail: "url11"})
+		db.productos.insertOne({title: "Lavadora", price: 2500, thumbnail: "url11", stock: 21});
+	b)
+		I) Consultar productos con precio menor a 1000:
+			db.productos.find({ price: { $lt: 1000 } });
+		II) Consultar productos con precio entre 1000 y 3000:
+			db.productos.find({ $and: [{price: { $lt: 3000}}, {price:{$gt: 1000}}] })
+		III) Consultar productos con precio mayor a 3000:
+			db.productos.find({ price: { $gt: 3000 } });
+		IV) Consoltar solo el nombre del tercer producto más barato:
+			db.productos.find({},{title: 1}).sort({price: 1}).skip(2).limit(1);
+	c) Actualizar todos los productos sumando 100 al stock:
+		 db.productos.updateMany({},{$inc: {stock: 100}});
+	d) Actualizar stock a cero de todos los productos con precio mayor a 4000:
+		db.productos.updateMany({price: {$gt: 4000}},{$set: {stock: 0}});
+	e) Eliminar todos los productos con precio menor a 1000:
+		db.productos.deleteMany({price: {$lt: 1000}});
+
+6) Crear un usuario de solo lectura "pepe" con contraseña "asd456"
+	use admin
+	db.createUser({user:"pepe", pwd: "asd456", roles:[{role: "read", db: "ecommerce"}]})
+	Prueba: 
+	CMD1: 
+		Ctrl + C
+		mongod --auth --dbpath "C:\Users\adn12\Documents\Cursos\CoderHouse\Backend\Desafio9\BD\"
+		CMD2:
+		Exit
+		mongosh -u pepe -p asd456
+		use ecommerce
+		ecommerce> db.productos.find({title: "Televisor"});
+		[                                                                                                                         
+			{                                             
+				_id: ObjectId("63a62151883be78426ed31be"),                                                                              
+				title: 'Televisor',                                                                                                     
+				price: 1500,                                                                                                            
+				thumbnail: 'url4',                                                                                                      
+				stock: 133                                                                                                            
+			}
+		]
+		ecommerce> db.productos.insertOne({title: "Producto de Pepe", price: 500, thumbnail: "url11", stock: 1});               
+		MongoServerError: not authorized on ecommerce to execute command { insert: "productos", documents: [ { title: "Producto de Pepe", price: 500, thumbnail: "url11", stock: 1, _id: ObjectId('63a6226df1467c9e49e97790') } ], ordered: true, lsid: { id: UUID("3b0c5fb1-d5f6-4ca9-82c2-cbb17749a57a") }, $db: "ecommerce" }
