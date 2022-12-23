@@ -3,7 +3,7 @@
 
 CMD 1:
 
-monogod --dbpath "C:\Users\adn12\Documents\Cursos\CoderHouse\Backend\Desafio9\BD"
+mongod --dbpath "C:\Users\adn12\Documents\Cursos\CoderHouse\Backend\Desafio9\BD\"
 
 CMD 2:
 
@@ -40,7 +40,7 @@ db.productos.estimatedDocumentCount();
 
 5) CRUD
 	a) Agregar un producto más en la colección de productos:
-		db.productos.insertOne({title: "Lavadora", price: 2500, thumbnail: "url11"});
+		db.productos.insertOne({title: "Lavadora", price: 2500, thumbnail: "url11", stock: 21});
 	b)
 		I) Consultar productos con precio menor a 1000:
 			db.productos.find({ price: { $lt: 1000 } });
@@ -55,4 +55,28 @@ db.productos.estimatedDocumentCount();
 	d) Actualizar stock a cero de todos los productos con precio mayor a 4000:
 		db.productos.updateMany({price: {$gt: 4000}},{$set: {stock: 0}});
 	e) Eliminar todos los productos con precio menor a 1000:
-		db.productos.deleteMany({price: {$lt: 1000}}) 
+		db.productos.deleteMany({price: {$lt: 1000}});
+
+6) Crear un usuario de solo lectura "pepe" con contraseña "asd456"
+	use admin
+	db.createUser({user:"pepe", pwd: "asd456", roles:[{role: "read", db: "ecommerce"}]})
+	Prueba: 
+	CMD1: 
+		Ctrl + C
+		mongod --auth --dbpath "C:\Users\adn12\Documents\Cursos\CoderHouse\Backend\Desafio9\BD\"
+		CMD2:
+		Exit
+		mongosh -u pepe -p asd456
+		use ecommerce
+		ecommerce> db.productos.find({title: "Televisor"});
+		[                                                                                                                         
+			{                                             
+				_id: ObjectId("63a62151883be78426ed31be"),                                                                              
+				title: 'Televisor',                                                                                                     
+				price: 1500,                                                                                                            
+				thumbnail: 'url4',                                                                                                      
+				stock: 133                                                                                                            
+			}
+		]
+		ecommerce> db.productos.insertOne({title: "Producto de Pepe", price: 500, thumbnail: "url11", stock: 1});               
+		MongoServerError: not authorized on ecommerce to execute command { insert: "productos", documents: [ { title: "Producto de Pepe", price: 500, thumbnail: "url11", stock: 1, _id: ObjectId('63a6226df1467c9e49e97790') } ], ordered: true, lsid: { id: UUID("3b0c5fb1-d5f6-4ca9-82c2-cbb17749a57a") }, $db: "ecommerce" }
