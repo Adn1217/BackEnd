@@ -64,7 +64,7 @@ db.productos.estimatedDocumentCount();
 	CMD1: 
 		Ctrl + C
 		mongod --auth --dbpath "C:\Users\adn12\Documents\Cursos\CoderHouse\Backend\Desafio9\BD\"
-		CMD2:
+	CMD2:
 		Exit
 		mongosh -u pepe -p asd456
 		use ecommerce
