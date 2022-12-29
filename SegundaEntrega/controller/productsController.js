@@ -14,27 +14,33 @@ export async function getProducts() {
 async function saveProduct(prod) {
     const productos = new ContenedorArchivo('./productos.json');
     const newProductId = await productos.save(prod);
-    const productosMongoAtlas = new ContenedorMongoAtlas('./productos.json');
+    const productosMongoAtlas = new ContenedorMongoAtlas('products');
     const newProductIdMongoAtlas = await productosMongoAtlas.save(prod);
-    return newProductId
+    return newProductIdMongoAtlas
 } 
 
 async function saveAllProducts(prods) {
     const productos = new ContenedorArchivo('./productos.json');
     const saved = await productos.saveAll(prods);
+    const productosMongoAtlas = new ContenedorMongoAtlas('products');
+    const savedMongoAtlas = await productosMongoAtlas.saveAll(prods);
     return saved 
 } 
 
 export async function getProductById(id) {
     const productos = new ContenedorArchivo('./productos.json');
     const product = await productos.getById(id);
-    return product
+    const productosMongoAtlas = new ContenedorMongoAtlas('products');
+    const productMongoAtlas = await productosMongoAtlas.getById(id);
+    return productMongoAtlas
 }
 
 async function deleteProductById(id) {
     const productos = new ContenedorArchivo('./productos.json');
     const product = await productos.deleteById(id);
-    return product
+    const productosMongoAtlas = new ContenedorMongoAtlas('products');
+    const productMongoAtlas = await productosMongoAtlas.deleteById(id);
+    return productMongoAtlas
 }
 
 export async function showProducts(res) {
@@ -67,9 +73,9 @@ export async function showProductById(res, id) {
 
 export async function updateProductById(res, updatedProd, id) {
     const allProducts = await getProducts();
-    let productById = allProducts.find((product) => product.id === id) 
+    let productById = allProducts.find((product) => product.id === parseInt(id)) 
     if (!productById){
-        res.send({error: "Producto no encontrado"});
+        // res.send({error: "Producto no encontrado"});
     }else{
         let newAllProducts = allProducts.map((prod) => {
             if(prod.id === id){
@@ -81,11 +87,20 @@ export async function updateProductById(res, updatedProd, id) {
         })
         console.log('La nueva lista es: ', newAllProducts);
         const allSaved = await saveAllProducts(newAllProducts);
-        if (allSaved === 'ok'){
-            res.send({actualizado: updatedProd})
-        }else{
-            res.send({error: allSaved})
-        }
+        // if (allSaved === 'ok'){
+        //     res.send({actualizado: updatedProd})
+        // }else{
+        //     res.send({error: allSaved})
+        // }
+    }
+    
+    const productosMongoAtlas = new ContenedorMongoAtlas('products');
+    const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
+    console.log(productMongoAtlas);
+    if (productMongoAtlas){
+        res.send({actualizado: updatedProd})
+    }else{
+        res.send({error: "No se pudo actualizar el producto"})
     }
 }
 

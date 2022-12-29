@@ -43,6 +43,7 @@ export default class ContenedorArchivo {
   }
 
   async getById(Id) {
+    Id = parseInt(Id);
     try {
       let data = await fs.promises.readFile(this.ruta);
       let id = Id;
@@ -70,6 +71,7 @@ export default class ContenedorArchivo {
   }
 
   async deleteById(Id) {
+    Id = parseInt(Id);
     try {
       let data = await fs.promises.readFile(this.ruta, "utf-8");
       let id = Id;

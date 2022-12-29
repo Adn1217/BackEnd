@@ -37,11 +37,12 @@ app.use('/mensajes', mensajes);
 app.set('view engine', 'ejs');
 app.set('views', "./views");
 app.use(express.static(__dirname + '/public'));
+mongoAtlasConnect('ecommerce');
 
 io.on('connection', (socket) => {
     console.log('Usuario Conectado');
     socket.emit('welcome', 'Usuario conectado');
-    mongoAtlasConnect('ecommerce');
+    // mongoAtlasConnect('ecommerce');
 
     socket.on('productRequest', async () => {
         const allProducts = await prdController.getProducts();
@@ -94,7 +95,7 @@ app.get('/', (req, res) => {
 productos.get('/:id?', async(req, res) => {
     if(Object.keys(req.query).length > 0 || req.params.id){
         const id = req.query.id || req.params.id
-        prdController.showProductById(res, parseInt(id));
+        prdController.showProductById(res, id);
     }else{
         let allProducts = await prdController.getProducts()
         res.send(allProducts);
@@ -109,12 +110,12 @@ productos.post('/', (req, res) => {
 productos.put('/:id', (req, res) => { 
     const prod = req.body;
     const id = req.params.id;
-    onlyAdmin(req, res, prdController.updateProductById, [res, prod, parseInt(id)]);
+    onlyAdmin(req, res, prdController.updateProductById, [res, prod, id]);
 })
 
 productos.delete('/:id', (req, res) => {
     const {id} = req.params;
-    onlyAdmin(req, res, prdController.doDeleteProductById, [res, parseInt(id)]);
+    onlyAdmin(req, res, prdController.doDeleteProductById, [res, id]);
 })
 
 // RUTAS CARRITOS -----------------------

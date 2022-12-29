@@ -15,7 +15,7 @@ function tableRender(prods){
                     </tr>`
     }) : (
         htmlTableRows += `<tr>
-                    <td>${prods.id || prods._id}</td>
+                    <td>${prods.id || prods._id.substring(18,24)}</td>
                     <td>${prods.code}</td>
                     <td>${prods.title}</td>
                     <td>${prods.description}</td>
@@ -26,7 +26,7 @@ function tableRender(prods){
 
     htmlTableHeaders = `<th>Id</th>
                         <th>Código</th>
-                        <th>Nombre</th>
+                        <th>Producto</th>
                         <th>Descripción</th>
                         <th>Precio</th>
                         <th>Stock</th>
