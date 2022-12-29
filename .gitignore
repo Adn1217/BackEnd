@@ -2,3 +2,4 @@ Servidor/
 node_modules
 Instaladores/
 MongoDB/
+config.js
