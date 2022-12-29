@@ -1,0 +1,112 @@
+[
+  {
+    "title": "Escuadra",
+    "code": "prd5542",
+    "description": "Este producto es ideal para el dibujo técnico",
+    "price": 123.5,
+    "stock": 500,
+    "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_955707-MCO44495623436_012021-F.webp",
+    "id": 1,
+    "timestamp": "04/12/2022, 20:31:08"
+  },
+  {
+    "title": "Calculadora",
+    "code": "prd5543",
+    "description": "Este producto facilita la matemática",
+    "price": 234.56,
+    "stock": 2500,
+    "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_771821-MCO52197432698_102022-F.webp",
+    "id": 2,
+    "timestamp": "4/12/2022, 19:21:38"
+  },
+  {
+    "title": "Globo Terraqueo",
+    "code": "prd5544",
+    "description": "Este producto permite conocer la geografía mundial",
+    "price": 345.67,
+    "stock": 50,
+    "thumbnail": "https://panamericana.vteximg.com.br/arquivos/ids/190161-1600-1600/globo-terraqueo-politico-40-cm-1-7701016736787.jpg?v=636251722565900000",
+    "id": 3,
+    "timestamp": "04/12/2022, 19:23:17"
+  },
+  {
+    "code": "Prd0689",
+    "title": "Cojín",
+    "description": "Un cojín delicioso. Pruebalo.",
+    "price": "50000",
+    "stock": "15",
+    "thumbnail": "https://ebani.com.co/wp-content/uploads/2022/03/Cojin-Relieve-Afelpado-Corto-en-una-cara-Ebani-Colombia-Tienda-online-de-decoracion-y-mobiliario-ARMA-TU-HOGAR.png",
+    "id": 4,
+    "timestamp": "04/12/2022, 20:20:21"
+  },
+  {
+    "code": "5555",
+    "title": "prueba",
+    "description": "descPrueba",
+    "price": "2222",
+    "stock": "111",
+    "thumbnail": "urlPrueba",
+    "id": 5,
+    "timestamp": "28/12/2022, 19:35:50"
+  },
+  {
+    "code": "5555",
+    "title": "prueba",
+    "description": "descPrueba",
+    "price": "2222",
+    "stock": "111",
+    "thumbnail": "urlPrueba",
+    "id": 6,
+    "timestamp": "28/12/2022, 19:35:50"
+  },
+  {
+    "code": "99as9",
+    "title": "Prueba2",
+    "description": "DescPrueba2",
+    "price": "9999",
+    "stock": "19",
+    "thumbnail": "urlPrueba2",
+    "id": 7,
+    "timestamp": "28/12/2022, 19:51:57"
+  },
+  {
+    "code": "99as9",
+    "title": "Prueba2",
+    "description": "DescPrueba2",
+    "price": "9999",
+    "stock": "19",
+    "thumbnail": "urlPrueba2",
+    "id": 8,
+    "timestamp": "28/12/2022, 19:51:57"
+  },
+  {
+    "code": "99as2",
+    "title": "Prueba3",
+    "description": "DescPrueba3",
+    "price": "9999",
+    "stock": "2",
+    "thumbnail": "urlPrueba3",
+    "id": 9,
+    "timestamp": "28/12/2022, 19:52:57"
+  },
+  {
+    "code": "888",
+    "title": "pooo",
+    "description": "777",
+    "price": "9999",
+    "stock": "9999",
+    "thumbnail": "yuf",
+    "id": 10,
+    "timestamp": "28/12/2022, 20:01:07"
+  },
+  {
+    "code": "9999",
+    "title": "Prueba7",
+    "description": "Prueba7",
+    "price": "99",
+    "stock": "99",
+    "thumbnail": "urlPrueba7",
+    "id": 11,
+    "timestamp": "28/12/2022, 20:12:57"
+  }
+]
