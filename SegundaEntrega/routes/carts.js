@@ -2,10 +2,17 @@ import express from 'express';
 import * as cartController from '../controller/cartsController.js';
 
 const { Router } = express;
-const app = express();
-const carrito = new Router();
+export const carrito = new Router();
 
-app.use('/carrito', carrito);
+async function onlyAdmin(req, res, next, params) {
+    const isAdmin = req.headers.auth; //Solo para poder probarlo desde el Front.
+    // console.log(String(isAdmin).toLowerCase() == "true");
+    if (String(isAdmin).toLowerCase() == "true") { 
+        next(...params);
+    } else { 
+        res.status(401).json({error:-1,descripcion:`Ruta ${req.originalUrl} metodo ${req.method} no autorizado`});
+    }
+}
 
 carrito.get('/', (req, res) => {
     cartController.showCart(res);
@@ -54,5 +61,3 @@ carrito.delete('/:id/productos/:id_prod', (req, res) => {
     const id_cart = id;
     onlyAdmin(req, res, cartController.doDeleteProductInCartById, [res,parseInt(id_prod), parseInt(id_cart)]);
 })
-
-module.exports = carrito;

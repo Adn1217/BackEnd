@@ -88,5 +88,15 @@
     "thumbnail": "urlPrueba3",
     "id": 9,
     "timestamp": "28/12/2022, 19:52:57"
+  },
+  {
+    "code": "rras",
+    "title": "Prd",
+    "description": "ActPrd",
+    "price": "1212",
+    "stock": "929",
+    "thumbnail": "urlPrd",
+    "id": 10,
+    "timestamp": "29/12/2022, 20:19:51"
   }
 ]

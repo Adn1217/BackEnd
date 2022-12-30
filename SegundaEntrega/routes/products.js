@@ -1,12 +1,18 @@
 import express from 'express';
-import * as prdController from './controller/productsController.js';
+import * as prdController from '../controller/productsController.js';
 
 const { Router } = express;
-const app = express();
-const productos = new Router();
+export const productos = new Router();
 
-app.use('/productos', productos);
-
+async function onlyAdmin(req, res, next, params) {
+    const isAdmin = req.headers.auth; //Solo para poder probarlo desde el Front.
+    // console.log(String(isAdmin).toLowerCase() == "true");
+    if (String(isAdmin).toLowerCase() == "true") { 
+        next(...params);
+    } else { 
+        res.status(401).json({error:-1,descripcion:`Ruta ${req.originalUrl} metodo ${req.method} no autorizado`});
+    }
+}
 
 productos.get('/:id?', async(req, res) => {
     if(Object.keys(req.query).length > 0 || req.params.id){
@@ -33,5 +39,3 @@ productos.delete('/:id', (req, res) => {
     const {id} = req.params;
     onlyAdmin(req, res, prdController.doDeleteProductById, [res, id]);
 })
-
-module.exports = productos;

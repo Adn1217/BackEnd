@@ -1,13 +1,8 @@
 import express from 'express';
-import * as msgController from './controller/messagesController.js';
+import * as msgController from '../controller/messagesController.js';
 
 const { Router } = express;
-const app = express();
-const mensajes = new Router();
-
-app.use(express.urlencoded({extended: true}))
-app.use(express.json());
-app.use('/mensajes', mensajes);
+export const mensajes = new Router();
 
 mensajes.get('/', async (req, res) => {
     msgController.showMsgs(res);
@@ -23,5 +18,3 @@ mensajes.post('/', (req, res) => {
         msgController.doSaveMessage(res, msg);
     }
 })
-
-module.exports = mensajes;
