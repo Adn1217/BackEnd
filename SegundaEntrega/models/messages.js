@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-const msgsCollection = 'productos';
+const msgsCollection = 'messages';
 const msgsSchema = new mongoose.Schema({
-        user: String,
-        msg: String,
+        usuario: String,
+        mensaje: String,
       });
 
 export const msgsModel = mongoose.model(msgsCollection, msgsSchema);

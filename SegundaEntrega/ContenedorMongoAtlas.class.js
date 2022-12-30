@@ -1,7 +1,8 @@
 import * as fs from "fs";
 import { ObjectId } from "mongodb";
-import mongoose from "mongoose";
 import {productsModel} from './models/products.js';
+import {msgsModel} from './models/messages.js';
+import {cartsModel} from './models/carts.js';
 
 export default class ContenedorMongoAtlas {
   constructor(collection) {
@@ -9,8 +10,15 @@ export default class ContenedorMongoAtlas {
   }
 
   async save(elemento) {
+    let newElement;
     try {
-      const newElement = new productsModel(elemento);
+      if (this.collection === 'products'){
+        newElement = new productsModel(elemento);
+      }else if (this.collection === 'messages'){
+        newElement = new msgsModel(elemento);
+      }else{
+        newElement = new cartsModel(elemento);
+      }
       let data = await newElement.save();
       console.log(data);
       return elemento;
@@ -39,7 +47,14 @@ export default class ContenedorMongoAtlas {
 
   async getAll() {
     try {
-      let data = await productsModel.find();
+      let data;
+      if (this.collection === 'products'){
+        data = await productsModel.find();
+      }else if (this.collection === 'messages'){
+        data = await msgsModel.find();
+      }else{
+        data = await cartsModel.find();
+      }
       console.log(data);
       return data;
     } catch (error) {
