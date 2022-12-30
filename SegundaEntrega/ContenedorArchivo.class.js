@@ -50,7 +50,7 @@ export default class ContenedorArchivo {
       data = await JSON.parse(data);
       let prod = data.find((producto) => producto.id === id);
       if (prod?.id) {
-        // console.log("El producto es: ", prod);
+        console.log("El producto es: ", prod);
         return prod;
       } else {
         return null;
