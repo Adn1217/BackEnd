@@ -90,23 +90,13 @@
     "timestamp": "28/12/2022, 19:52:57"
   },
   {
-    "code": "888",
-    "title": "pooo",
-    "description": "777",
-    "price": "9999",
-    "stock": "9999",
-    "thumbnail": "yuf",
+    "code": "rras",
+    "title": "Prd",
+    "description": "ActPrd",
+    "price": "1212",
+    "stock": "929",
+    "thumbnail": "urlPrd",
     "id": 10,
-    "timestamp": "28/12/2022, 20:01:07"
-  },
-  {
-    "code": "9999",
-    "title": "Prueba7",
-    "description": "Prueba7",
-    "price": "99",
-    "stock": "99",
-    "thumbnail": "urlPrueba7",
-    "id": 11,
-    "timestamp": "28/12/2022, 20:12:57"
+    "timestamp": "29/12/2022, 20:19:51"
   }
 ]

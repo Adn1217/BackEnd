@@ -22,10 +22,38 @@ async function saveProduct(prod) {
 async function saveAllProducts(prods) {
     const productos = new ContenedorArchivo('./productos.json');
     const saved = await productos.saveAll(prods);
-    const productosMongoAtlas = new ContenedorMongoAtlas('products');
-    const savedMongoAtlas = await productosMongoAtlas.saveAll(prods);
     return saved 
-} 
+}
+
+async function saveProductByIdFile(res, updatedProd, id){
+    id = parseInt(id);
+    const productos = new ContenedorArchivo('./productos.json');
+    const allProducts = await productos.getAll();
+    let actualizadoArchivo = {actualizadoArchivo: updatedProd};
+    let productById = allProducts.find((product) => product.id === id) 
+    if (!productById){
+        actualizadoArchivo = {error: "Producto no encontrado"};
+        // res.send({error: "Producto no encontrado"});
+    }else{
+        let newAllProducts = allProducts.map((prod) => {
+            if(prod.id === id){
+                prod = updatedProd;
+                prod.id = id;
+                // console.log(prod);
+            }
+            return prod;
+        })
+        console.log('La nueva lista es: ', newAllProducts);
+        const allSaved = await saveAllProducts(newAllProducts);
+        if (allSaved === 'ok'){
+            // res.send({actualizado: updatedProd})
+        }else{
+            actualizadoArchivo = {error: allSaved};
+            // res.send({error: allSaved})
+        }
+    }
+    console.log("Actualizado en Archivo: ", actualizadoArchivo)
+}
 
 export async function getProductById(id) {
     const productos = new ContenedorArchivo('./productos.json');
@@ -72,35 +100,15 @@ export async function showProductById(res, id) {
 }
 
 export async function updateProductById(res, updatedProd, id) {
-    const allProducts = await getProducts();
-    let productById = allProducts.find((product) => product.id === parseInt(id)) 
-    if (!productById){
-        // res.send({error: "Producto no encontrado"});
-    }else{
-        let newAllProducts = allProducts.map((prod) => {
-            if(prod.id === id){
-                prod = updatedProd;
-                prod.id = id;
-                // console.log(prod);
-            }
-            return prod;
-        })
-        console.log('La nueva lista es: ', newAllProducts);
-        const allSaved = await saveAllProducts(newAllProducts);
-        // if (allSaved === 'ok'){
-        //     res.send({actualizado: updatedProd})
-        // }else{
-        //     res.send({error: allSaved})
-        // }
-    }
-    
+    await saveProductByIdFile(res, updatedProd, id);
     const productosMongoAtlas = new ContenedorMongoAtlas('products');
     const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
-    console.log(productMongoAtlas);
     if (productMongoAtlas){
-        res.send({actualizado: updatedProd})
+        console.log("Se ha actualizado el producto: \n", productMongoAtlas);
+        res.send({actualizadoMongo: productMongoAtlas})
     }else{
-        res.send({error: "No se pudo actualizar el producto"})
+        console.log("Producto no actualizado");
+        res.send({error: "Producto no encontrado"})
     }
 }
 

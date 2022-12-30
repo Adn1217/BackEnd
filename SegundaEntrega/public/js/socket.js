@@ -47,9 +47,13 @@ function tableRender(prods){
 function chatRender(msgs){
     let htmlChat = '';
     userInput.setAttribute('disabled', '');
+
+
     msgs.forEach((msg) => {
+        // let fecha = msg.fecha || new Date(msg._id.getTimestamp()).toLocaleString();
+        let fecha = msg.fecha || msg._id;
         htmlChat += `<div id="msj" class="rounded-3">
-                        <p><strong>${msg.usuario}:</strong><br>${msg.mensaje}<br><em>Recibido el ${msg.fecha}</em></p>
+                        <p><strong>${msg.usuario}:</strong><br>${msg.mensaje}<br><em>Recibido el ${fecha}</em></p>
                     </div>`
     })
     return htmlChat;

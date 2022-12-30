@@ -1,7 +1,8 @@
 import * as fs from "fs";
 import { ObjectId } from "mongodb";
-import mongoose from "mongoose";
 import {productsModel} from './models/products.js';
+import {msgsModel} from './models/messages.js';
+import {cartsModel} from './models/carts.js';
 
 export default class ContenedorMongoAtlas {
   constructor(collection) {
@@ -9,8 +10,15 @@ export default class ContenedorMongoAtlas {
   }
 
   async save(elemento) {
+    let newElement;
     try {
-      const newElement = new productsModel(elemento);
+      if (this.collection === 'products'){
+        newElement = new productsModel(elemento);
+      }else if (this.collection === 'messages'){
+        newElement = new msgsModel(elemento);
+      }else{
+        newElement = new cartsModel(elemento);
+      }
       let data = await newElement.save();
       console.log(data);
       return elemento;
@@ -39,7 +47,14 @@ export default class ContenedorMongoAtlas {
 
   async getAll() {
     try {
-      let data = await productsModel.find();
+      let data;
+      if (this.collection === 'products'){
+        data = await productsModel.find();
+      }else if (this.collection === 'messages'){
+        data = await msgsModel.find();
+      }else{
+        data = await cartsModel.find();
+      }
       console.log(data);
       return data;
     } catch (error) {
@@ -51,19 +66,11 @@ export default class ContenedorMongoAtlas {
   }
 
   async deleteById(Id) {
+    
     try {
       let prod = await productsModel.deleteOne({_id: ObjectId(Id)});
       console.log(prod);
-      // let data = await fs.promises.readFile(this.ruta, "utf-8");
-      // let id = Id;
-      // data = await JSON.parse(data);
-      // let prod = data.find((producto) => producto.id === id);
       if (prod[0]?._id) {
-      //   data = data.filter((producto) => producto.id !== id);
-      //   await fs.promises.writeFile(
-      //     this.ruta,
-      //     JSON.stringify(data, null, 2)
-      //   );
         console.log(`\nSe elimina el producto con _id=${Id} (deleteById(${Id})): \n`, prod);
         // console.log("Quedan los productos: ", data);
       } else {
@@ -77,10 +84,8 @@ export default class ContenedorMongoAtlas {
   
   async updateById(elemento, id) {
     try {
-      const newElement = new productsModel(elemento);
-      let data = await newElement.updateOne({_id: ObjectId(id)});
-      console.log(data);
-      return elemento;
+      let data = await productsModel.findByIdAndUpdate(id, elemento );
+      return data;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
