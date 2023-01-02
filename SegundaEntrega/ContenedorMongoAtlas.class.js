@@ -20,7 +20,7 @@ export default class ContenedorMongoAtlas {
         newElement = new cartsModel(elemento);
       }
       let data = await newElement.save();
-      console.log(data);
+      // console.log(data);
       return elemento;
     } catch (error) {
       console.log("Se ha presentado error ", error);
@@ -55,7 +55,8 @@ export default class ContenedorMongoAtlas {
       }else{
         data = await cartsModel.find();
       }
-      console.log(data);
+      // console.log(data);
+      // console.log(new Date(data[0]._id.getTimestamp()).toLocaleDateString());
       return data;
     } catch (error) {
       console.log("Se ha presentado error ", error);

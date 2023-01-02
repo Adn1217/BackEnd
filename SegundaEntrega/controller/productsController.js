@@ -74,7 +74,7 @@ async function deleteProductById(id) {
 export async function showProducts(res) {
     const allProducts = await getProducts(); 
     const allMessages = await msgController.getMessages();
-    console.log('Los productos son: \n', allProducts);
+    // console.log('Los productos son: \n', allProducts);
     // res.send({products: allProducts})
     res.render('pages/index', {products: allProducts, msgs: allMessages})
 }

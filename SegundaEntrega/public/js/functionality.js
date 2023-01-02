@@ -96,7 +96,7 @@ async function getAllProducts(){
         }
     })
     let prods = await response.json();
-    console.log("productos: ",prods)
+    // console.log("productos: ",prods)
     results.innerHTML= tableRender(prods);
     // console.log(data);
     // results.innerHTML=`<h1>Respuesta</h1><p><strong>Productos: <br></strong>${JSON.stringify(data)}</p>`;
@@ -368,7 +368,7 @@ async function sendMessage() {
         })
         let data = await response.json();
         !("error" in data) && ([msgInput.value] = ['']);
-        console.log(data);
+        // console.log(data);
         socket.emit('messageRequest','msj')
     }
 }

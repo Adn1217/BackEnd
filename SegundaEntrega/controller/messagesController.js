@@ -13,13 +13,14 @@ export async function getMessages() {
     const messages = new ContenedorArchivo('./mensajes.json');
     const allMessages = await messages.getAll();
     const messagesMongoAtlas = new ContenedorMongoAtlas('messages');
-    const allMessagesMongoAtlas = await messagesMongoAtlas.getAll();
+    let allMessagesMongoAtlas = await messagesMongoAtlas.getAll();
+    (allMessagesMongoAtlas[0]?.fecha) ?? (allMessagesMongoAtlas = allMessagesMongoAtlas.map( (msg) => ({...msg._doc, fecha: new Date(msg._id.getTimestamp()).toLocaleString('en-GB')})))
     return allMessagesMongoAtlas;
 } 
 
 export async function showMsgs(res) {
     const allMessages = await getMessages();
-    console.log('Los mensajes son: \n', allMessages);
+    // console.log('Los mensajes son: \n', allMessages);
     res.render('pages/index', {msgs: allMessages})
 }
 
