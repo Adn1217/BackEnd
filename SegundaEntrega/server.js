@@ -55,10 +55,6 @@ io.on('connection', (socket) => {
         // (allMsgs[0].fecha) ?? (
         //     allMsgs.forEach( msg => ({...msg, fecha: new Date(msg._id.getTimestamp()).toLocaleString('en-GB')})
         // ));
-        // if (allMsgs[0].fecha == undefined){
-        //     allMsgs = allMsgs.map( (msg) => ({...msg._doc, fecha: new Date(msg._id.getTimestamp()).toLocaleString('en-GB')}))
-        //     console.log('AQUI: ,', allMsgs);
-        // }
         io.sockets.emit('mensajes', {msgs: allMsgs});
     })
 })

@@ -97,8 +97,8 @@ export default class ContenedorArchivo {
   async deleteProductInCartById(Id_prod, Id_cart = undefined) {
     try {
       let data = await fs.promises.readFile(this.ruta, "utf-8");
-      let id_prod = Id_prod;
-      let id_cart = Id_cart;
+      let id_prod = parseInt(Id_prod);
+      let id_cart = parseInt(Id_cart);
       let originalData = JSON.parse(data);
       data = JSON.parse(data);
       (id_cart) && (data = data.find((cart) => cart.id === id_cart));

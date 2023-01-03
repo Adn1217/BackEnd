@@ -10,8 +10,8 @@ export default class ContenedorMongoAtlas {
   }
 
   async save(elemento) {
-    let newElement;
     try {
+      let newElement;
       if (this.collection === 'products'){
         newElement = new productsModel(elemento);
       }else if (this.collection === 'messages'){
@@ -20,8 +20,8 @@ export default class ContenedorMongoAtlas {
         newElement = new cartsModel(elemento);
       }
       let data = await newElement.save();
-      // console.log(data);
-      return elemento;
+      console.log('Guardado: ', data);
+      return data;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
@@ -32,11 +32,16 @@ export default class ContenedorMongoAtlas {
 
   async getById(Id) {
     try {
-      let prod = await productsModel.find({_id: ObjectId(Id)});
-      console.log(prod);
-      if (prod[0]?._id) {
-        // console.log("El producto es: ", prod);
-        return prod;
+      let element;
+      if (this.collection === 'products'){
+        element = await productsModel.find({_id: ObjectId(Id)});
+      }else{
+        element = await cartsModel.find({_id: ObjectId(Id)});
+      }
+      console.log(element);
+      if (element[0]?._id) {
+        // console.log("El elemento  es: ", element);
+        return element[0];
       } else {
         return null;
       }
@@ -67,17 +72,21 @@ export default class ContenedorMongoAtlas {
   }
 
   async deleteById(Id) {
-    
+    let element; 
     try {
-      let prod = await productsModel.deleteOne({_id: ObjectId(Id)});
-      console.log(prod);
-      if (prod[0]?._id) {
-        console.log(`\nSe elimina el producto con _id=${Id} (deleteById(${Id})): \n`, prod);
+      if (this.collection === 'products'){
+        element = await productsModel.deleteOne({_id: ObjectId(Id)});
+      }else{
+        element = await cartsModel.deleteOne({_id: ObjectId(Id)});
+      }
+      console.log(element);
+      if (element[0]?.acknowledged) {
+        console.log(`\nSe elimina el elemento con _id=${Id} (deleteById(${Id})): \n`, element);
         // console.log("Quedan los productos: ", data);
       } else {
-        console.log("No existe el producto con id: ", Id);
+        console.log("No se ha podido eliminar el elemento ", Id);
       }
-      return prod;
+      return element;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
@@ -97,49 +106,29 @@ export default class ContenedorMongoAtlas {
 
   async deleteProductInCartById(Id_prod, Id_cart = undefined) {
     try {
-      let data = await fs.promises.readFile(this.ruta, "utf-8");
       let id_prod = Id_prod;
       let id_cart = Id_cart;
-      let originalData = JSON.parse(data);
-      data = JSON.parse(data);
-      (id_cart) && (data = data.find((cart) => cart.id === id_cart));
-      (data?.id) ?? (console.log("No existe el carrito con id: ", id_cart));
-      if(data?.id === undefined && Id_cart){
-        return false
-      }
-      console.log(data);
-      let prod = (id_cart) ? data.productos.find((producto) => producto.id === id_prod) : data.find((producto) => producto.id === id_prod);
-      if (prod?.id) {
-        data = (id_cart) ? data.productos.filter((producto) => producto.id !== id_prod) : data.filter((producto) => producto.id !== id_prod);
-        (id_cart) ?? await fs.promises.writeFile(this.ruta,JSON.stringify(data, null, 2));
-        if (id_cart){
-          console.log(originalData.find((cart) => cart.id === id_cart).productos)
-          originalData.find((cart) => cart.id === id_cart).productos = data;
-          await fs.promises.writeFile(this.ruta,JSON.stringify(originalData, null, 2));
-          console.log(`\nSe elimina el producto con id=${id_prod} del carrrito con id=${id_cart}: \n`, prod);
+      let cart = await cartsModel.find({_id: ObjectId(id_cart)});
+      cart = cart[0];
+      console.log(cart);
+      if(cart?._id === undefined) {
+          console.log("No existe el carrito con id: ", id_cart);
+          return false;
+      }else{
+        let cartProd = cart.productos.find((prod) => prod.id === parseInt(id_prod))
+        if (cartProd){
+          let deletedProd = cart.productos.splice(cartProd,1);
+          await cart.save();
+          console.log(`Se elimina el producto con id= ${id_prod} del carrito con id=${id_cart}`);
+          return deletedProd;
+        }else{
+          console.log(`No existe el producto con id= ${id_prod} en el carrito con id=${id_cart}`);
+          return undefined;
         }
-        id_cart ?? console.log(`\nSe elimina el producto con id=${id_prod}): \n`, prod);
-        // console.log("Quedan los productos: ", data);
-      } else {
-        console.log("No existe el producto con id: ", id_prod);
       }
-      return prod;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
   }
   
-  async deleteAll() {
-    try {
-      let data = await fs.promises.readFile(this.ruta, "utf-8");
-      if (!data) {
-        console.log("No hay productos");
-      } else {
-        await fs.promises.writeFile(this.ruta, "[]");
-        console.log("Se han borrado los productos ", data);
-      }
-    } catch (error) {
-      console.log("Se ha presentado error ", error);
-    }
-  }
 }

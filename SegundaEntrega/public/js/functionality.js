@@ -184,7 +184,7 @@ async function saveCart(user){
             body: JSON.stringify(newCart)
         })
         let carts = await response.json();
-        console.log("Nuevo carrito: ",carts)
+        console.log("Nuevo carrito: ", carts)
         // results.innerHTML= tableRender(carts);
         cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>NuevoCarrito: <br></strong>${JSON.stringify(carts)}</p>`;
         cartUserInput.value = '';
