@@ -110,16 +110,18 @@ export default class ContenedorMongoAtlas {
       let id_cart = Id_cart;
       let cart = await cartsModel.find({_id: ObjectId(id_cart)});
       cart = cart[0];
-      console.log(cart);
+      console.log('Carrito encontrado: ',  cart);
       if(cart?._id === undefined) {
           console.log("No existe el carrito con id: ", id_cart);
           return false;
       }else{
-        let cartProd = cart.productos.find((prod) => prod.id === parseInt(id_prod))
-        if (cartProd){
-          let deletedProd = cart.productos.splice(cartProd,1);
-          await cart.save();
-          console.log(`Se elimina el producto con id= ${id_prod} del carrito con id=${id_cart}`);
+        let cartProd = await cartsModel.find({'productos._id': ObjectId(id_prod)})
+        console.log('Producto encontrado :',cartProd);
+        if (cartProd && cartProd.length === 1){
+          cartProd = cartProd[0];
+          let deletedProd = cartProd.productos.splice(cartProd.productos.find( prod => prod._id === ObjectId(id_prod)),1)
+          await cartProd.save();
+          console.log(`Se elimina el producto con id = ${id_prod} del carrito con id = ${id_cart}`);
           return deletedProd;
         }else{
           console.log(`No existe el producto con id= ${id_prod} en el carrito con id=${id_cart}`);

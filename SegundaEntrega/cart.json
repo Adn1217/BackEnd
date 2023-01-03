@@ -1,17 +1,8 @@
 [
   {
-    "_id": "63b392b1fea1b00d1ce6e27a",
     "usuario": "Alejandra Fernández",
-    "productos": [],
-    "timestamp": "30/11/2022, 23:21:28",
-    "__v": 2
-  },
-  {
-    "_id": "63b392b1fea1b00d1ce6e27b",
-    "usuario": "Adrian Fernández",
     "productos": [
       {
-        "_id": "63b3c72e00b654a6d14b1d8f",
         "title": "Escuadra",
         "code": "prd5542",
         "description": "Este producto es ideal para el dibujo técnico",
@@ -21,7 +12,31 @@
         "id": 1
       },
       {
-        "_id": "63b3c72e00b654a6d14b1d90",
+        "title": "Calculadora",
+        "code": "prd5543",
+        "description": "Este producto facilita la matemática",
+        "price": 234.56,
+        "stock": 2500,
+        "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_771821-MCO52197432698_102022-F.webp",
+        "id": 2
+      }
+    ],
+    "id": 1,
+    "timestamp": "30/11/2022, 23:21:28"
+  },
+  {
+    "usuario": "Adrian Fernández",
+    "productos": [
+      {
+        "title": "Escuadra",
+        "code": "prd5542",
+        "description": "Este producto es ideal para el dibujo técnico",
+        "price": 123.5,
+        "stock": 500,
+        "thumbnail": "https://http2.mlstatic.com/D_NQ_NP_2X_955707-MCO44495623436_012021-F.webp",
+        "id": 1
+      },
+      {
         "title": "Globo Terraqueo",
         "code": "prd5544",
         "description": "Este producto permite conocer la geografía mundial",
@@ -31,28 +46,13 @@
         "id": 3
       }
     ],
+    "id": 2,
     "timestamp": "30/11/2022, 23:11:03"
   },
   {
-    "_id": "63b392b1fea1b00d1ce6e27c",
     "usuario": "Estefano Pelinga",
     "productos": [],
+    "id": 3,
     "timestamp": "10/12/2022, 19:48:21"
-  },
-  {
-    "_id": "63b3be622f43c1fa609c42b0",
-    "usuario": "Adrian Fernández",
-    "productos": [
-      {
-        "title": "PrdPrueba",
-        "code": "Prd9283",
-        "description": "DescPrueba",
-        "price": 9000,
-        "stock": 29,
-        "thumbnail": "urlPrueba",
-        "_id": "63b3c72e00b654a6d14b1d91"
-      }
-    ],
-    "__v": 0
   }
 ]

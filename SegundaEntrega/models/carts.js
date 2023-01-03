@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const cartsCollection = 'carts';
 const productsSchema = new mongoose.Schema({
-  id: Number,
   title: String,
   code: String,
   description: String,
