@@ -38,7 +38,7 @@ fieldset > div {
 #cartInputs > div{
     display: inline-block;
     margin-left: 10px;
-    min-width: 7rem;
+    min-width: 10rem;
 }
 
 #cartInputs div:first-child {

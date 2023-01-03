@@ -51,16 +51,15 @@ function chatRender(msgs){
 
     msgs.forEach((msg) => {
         // let fecha = msg.fecha || new Date(msg._id.getTimestamp()).toLocaleString();
-        let fecha = msg.fecha || msg._id;
         htmlChat += `<div id="msj" class="rounded-3">
-                        <p><strong>${msg.usuario}:</strong><br>${msg.mensaje}<br><em>Recibido el ${fecha}</em></p>
+                        <p><strong>${msg.usuario}:</strong><br>${msg.mensaje}<br><em>Recibido el ${msg.fecha}</em></p>
                     </div>`
     })
     return htmlChat;
 }
 
 socket.on('welcome', data => {
-    console.log(data)
+    // console.log(data)
     socket.emit('productRequest','msj')
 })
 
@@ -72,7 +71,7 @@ socket.on('productos', prods => {
 })
 
 socket.on('mensajes', msgs => {
-    console.log('mensajes: ', msgs);
+    console.log('mensajes: ', msgs.msgs);
     if (!("error" in msgs)){
         chat.innerHTML= chatRender(msgs.msgs);
     }

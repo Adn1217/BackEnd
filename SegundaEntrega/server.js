@@ -51,7 +51,10 @@ io.on('connection', (socket) => {
     // })
 
     socket.on('messageRequest', async () => {
-        const allMsgs = await msgController.getMessages();
+        let allMsgs = await msgController.getMessages();
+        // (allMsgs[0].fecha) ?? (
+        //     allMsgs.forEach( msg => ({...msg, fecha: new Date(msg._id.getTimestamp()).toLocaleString('en-GB')})
+        // ));
         io.sockets.emit('mensajes', {msgs: allMsgs});
     })
 })

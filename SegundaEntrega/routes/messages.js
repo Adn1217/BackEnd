@@ -14,7 +14,7 @@ mensajes.post('/', (req, res) => {
     if (Object.keys(msg).length === 0){
         res.send({Error: "Mensage no recibido"})
     }else{
-        console.log('Mensaje: ', msg);
+        // console.log('Mensaje: ', msg);
         msgController.doSaveMessage(res, msg);
     }
 })

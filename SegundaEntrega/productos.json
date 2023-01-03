@@ -98,5 +98,25 @@
     "thumbnail": "urlPrd",
     "id": 10,
     "timestamp": "29/12/2022, 20:19:51"
+  },
+  {
+    "code": "909",
+    "title": "Prueab",
+    "description": "DescPrueba",
+    "price": "000",
+    "stock": "929",
+    "thumbnail": "urlPrubeba",
+    "id": 11,
+    "timestamp": "02/01/2023, 21:54:11"
+  },
+  {
+    "code": "90909",
+    "title": "Prd",
+    "description": "descPrd",
+    "price": "9999",
+    "stock": "0000",
+    "thumbnail": "urlPRD",
+    "id": 12,
+    "timestamp": "02/01/2023, 22:48:04"
   }
 ]
