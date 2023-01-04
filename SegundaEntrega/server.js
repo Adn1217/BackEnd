@@ -4,12 +4,18 @@ import {Server as HttpServer} from 'http';
 import {Server as IOServer} from 'socket.io';
 import path from 'path';
 import {fileURLToPath} from 'url';
-import {getURL} from './config.js';
+import {getURL, firebaseConfig, serviceAccount} from './config.js';
 import * as prdController from './controller/productsController.js';
 import * as msgController from './controller/messagesController.js';
 import {mensajes} from './routes/messages.js';
 import {productos} from './routes/products.js';
 import {carrito} from './routes/carts.js';
+// import { initializeApp } from "firebase/app";
+// import { getAnalytics } from "firebase/analytics"
+import admin from 'firebase-admin';
+import { loadMocktoFireBase } from './loadMockToFirebase.js';
+// const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
 
 mongoose.set('strictQuery', false);
 
@@ -33,6 +39,10 @@ app.set('view engine', 'ejs');
 app.set('views', "./views");
 app.use(express.static(__dirname + '/public'));
 mongoAtlasConnect('ecommerce');
+firebaseConnect();
+
+export const dbFS = admin.firestore();
+// loadMocktoFireBase(['products']);
 
 io.on('connection', (socket) => {
     console.log('Usuario Conectado');
@@ -44,12 +54,6 @@ io.on('connection', (socket) => {
         io.sockets.emit('productos', {productos: allProducts});
     })
     
-    // socket.on('oneProductRequest', async (id) => {
-    //     const product = await prdController.getProductById(id);
-    //     console.log(product);
-    //     io.sockets.emit('productos', {productos: product});
-    // })
-
     socket.on('messageRequest', async () => {
         let allMsgs = await msgController.getMessages();
         // (allMsgs[0].fecha) ?? (
@@ -69,6 +73,17 @@ async function mongoAtlasConnect(db){
         console.log("Se ha conectado exitosamente a MongoAtlas");
     }catch(error){
         console.log("Se ha presentado el siguiente error al intentar conectarse a MongoAtlas: ", error);
+    }
+}
+
+function firebaseConnect(){
+    try{
+        admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+        });
+        console.log("Se ha conectado exitosamente a FireBase")
+    }catch(error){
+        console.log("Se ha presentado error al intentar conectar con Firebase: ", error)
     }
 }
 

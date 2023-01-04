@@ -1,12 +1,15 @@
 import ContenedorArchivo from '../ContenedorArchivo.class.js';
 import ContenedorMongoAtlas from '../ContenedorMongoAtlas.class.js';
+import ContenedorFirebase from '../ContenedorFirebase.class.js';
 
 export async function saveMessage(msg) {
-    const messages = new ContenedorArchivo('./mensajes.json');
-    const newMessage = await messages.save(msg);
+    const messagesFirebase = new ContenedorFirebase('messages');
+    const newMessageFirebase = await messagesFirebase.save(msg);
     const messagesMongoAtlas = new ContenedorMongoAtlas('messages');
     const newMessageMongoAtlas = await messagesMongoAtlas.save(msg);
-    return newMessageMongoAtlas;
+    const messages = new ContenedorArchivo('./mensajes.json');
+    const newMessage = await messages.save(msg);
+    return newMessageFirebase;
 } 
 
 export async function getMessages() {
@@ -15,7 +18,9 @@ export async function getMessages() {
     const messagesMongoAtlas = new ContenedorMongoAtlas('messages');
     let allMessagesMongoAtlas = await messagesMongoAtlas.getAll();
     (allMessagesMongoAtlas[0]?.fecha) ?? (allMessagesMongoAtlas = allMessagesMongoAtlas.map( (msg) => ({...msg._doc, fecha: new Date(msg._id.getTimestamp()).toLocaleString('en-GB')})))
-    return allMessagesMongoAtlas;
+    const messagesFirebase = new ContenedorFirebase('messages');
+    const allMessagesFirebase = await messagesFirebase.getAll();
+    return allMessagesFirebase;
 } 
 
 export async function showMsgs(res) {

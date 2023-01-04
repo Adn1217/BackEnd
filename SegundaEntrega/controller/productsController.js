@@ -1,5 +1,6 @@
 import ContenedorArchivo from '../ContenedorArchivo.class.js';
 import ContenedorMongoAtlas from '../ContenedorMongoAtlas.class.js';
+import ContenedorFirebase from '../ContenedorFirebase.class.js';
 import * as msgController from './messagesController.js'
 
 
@@ -8,15 +9,19 @@ export async function getProducts() {
     const allProducts = await productos.getAll();
     const productosMongoAtlas = new ContenedorMongoAtlas('products');
     const allProductsMongoAtlas = await productosMongoAtlas.getAll();
-    return allProductsMongoAtlas
+    const productosFirebase = new ContenedorFirebase('products');
+    const allProductsFirebase = await productosFirebase.getAll();
+    return allProductsFirebase
 } 
 
 async function saveProduct(prod) {
-    const productos = new ContenedorArchivo('./productos.json');
-    const newProductId = await productos.save(prod);
     const productosMongoAtlas = new ContenedorMongoAtlas('products');
     const newProductIdMongoAtlas = await productosMongoAtlas.save(prod);
-    return newProductIdMongoAtlas
+    const productosFirebase = new ContenedorFirebase('products');
+    const newProductIdFirebase = await productosFirebase.save(prod);
+    const productos = new ContenedorArchivo('./productos.json');
+    const newProductId = await productos.save(prod);
+    return newProductIdFirebase
 } 
 
 async function saveAllProducts(prods) {
@@ -60,15 +65,19 @@ export async function getProductById(id) {
     const product = await productos.getById(id);
     const productosMongoAtlas = new ContenedorMongoAtlas('products');
     const productMongoAtlas = await productosMongoAtlas.getById(id);
-    return productMongoAtlas
+    const productosFirebase = new ContenedorFirebase('products');
+    const productFirebase = await productosFirebase.getById(id);
+    return productFirebase
 }
 
 async function deleteProductById(id) {
+    const productosFirebase = new ContenedorFirebase('products');
+    const productFirebase = await productosFirebase.deleteById(id);
+    // const productosMongoAtlas = new ContenedorMongoAtlas('products');
+    // const productMongoAtlas = await productosMongoAtlas.deleteById(id);
     const productos = new ContenedorArchivo('./productos.json');
     const product = await productos.deleteById(id);
-    const productosMongoAtlas = new ContenedorMongoAtlas('products');
-    const productMongoAtlas = await productosMongoAtlas.deleteById(id);
-    return productMongoAtlas
+    return productFirebase
 }
 
 export async function showProducts(res) {
@@ -100,16 +109,27 @@ export async function showProductById(res, id) {
 }
 
 export async function updateProductById(res, updatedProd, id) {
-    await saveProductByIdFile(res, updatedProd, id);
-    const productosMongoAtlas = new ContenedorMongoAtlas('products');
-    const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
-    if (productMongoAtlas){
-        console.log("Se ha actualizado el producto: \n", productMongoAtlas);
-        res.send({actualizadoMongo: productMongoAtlas})
+
+    const productosFirebase = new ContenedorFirebase('products');
+    const productFirebase = await productosFirebase.updateById(updatedProd,id);
+    if (productFirebase){
+        console.log("Se ha actualizado el producto: \n", productFirebase);
+        res.send({actualizadoFirebase: productFirebase})
     }else{
         console.log("Producto no actualizado");
         res.send({error: "Producto no encontrado"})
     }
+
+    // const productosMongoAtlas = new ContenedorMongoAtlas('products');
+    // const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
+    // if (productMongoAtlas){
+    //     console.log("Se ha actualizado el producto: \n", productMongoAtlas);
+    //     // res.send({actualizadoMongo: productMongoAtlas})
+    // }else{
+    //     console.log("Producto no actualizado");
+    //     // res.send({error: "Producto no encontrado"})
+    // }
+    await saveProductByIdFile(res, updatedProd, id);
 }
 
 export async function doDeleteProductById(res, id) {
