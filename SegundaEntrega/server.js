@@ -4,7 +4,7 @@ import {Server as HttpServer} from 'http';
 import {Server as IOServer} from 'socket.io';
 import path from 'path';
 import {fileURLToPath} from 'url';
-import {getURL, firebaseConfig, serviceAccount} from './config.js';
+import {getURL, serviceAccount} from './config.js';
 import * as prdController from './controller/productsController.js';
 import * as msgController from './controller/messagesController.js';
 import {mensajes} from './routes/messages.js';
