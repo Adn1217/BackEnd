@@ -28,25 +28,5 @@
     "thumbnail": "https://panamericana.vteximg.com.br/arquivos/ids/190161-1600-1600/globo-terraqueo-politico-40-cm-1-7701016736787.jpg?v=636251722565900000",
     "id": 3,
     "timestamp": "04/12/2022, 19:23:17"
-  },
-  {
-    "code": "Prd0689",
-    "title": "Cojín",
-    "description": "Un cojín delicioso. Pruebalo.",
-    "price": "50000",
-    "stock": "15",
-    "thumbnail": "https://ebani.com.co/wp-content/uploads/2022/03/Cojin-Relieve-Afelpado-Corto-en-una-cara-Ebani-Colombia-Tienda-online-de-decoracion-y-mobiliario-ARMA-TU-HOGAR.png",
-    "id": 4,
-    "timestamp": "04/12/2022, 20:20:21"
-  },
-  {
-    "code": "Prd9999",
-    "title": "PrdPrb",
-    "description": "DescPrb",
-    "price": "9900",
-    "stock": "90",
-    "thumbnail": "urlPrb",
-    "id": 6,
-    "timestamp": "03/01/2023, 19:00:09"
   }
 ]

@@ -40,7 +40,7 @@ carrito.post('/:id/productos', (req, res) => {
     if (Object.keys(prod).length === 0){
         res.send({Error: "Producto no recibido"})
     }else{
-        console.log('producto: ', JSON.stringify(prod));
+        console.log('ProductoEnFront: ', JSON.stringify(prod));
         onlyAdmin(req, res,cartController.doSaveProductInCart, [res, prod, id]);
     }
 })

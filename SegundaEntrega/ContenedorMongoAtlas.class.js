@@ -19,7 +19,7 @@ export default class ContenedorMongoAtlas {
         newElement = new cartsModel(elemento);
       }
       let data = await newElement.save();
-      console.log('Guardado: ', data);
+      console.log('GuardadoMongo: ', data);
       return data;
     } catch (error) {
       console.log("Se ha presentado error ", error);
@@ -91,8 +91,13 @@ export default class ContenedorMongoAtlas {
   
   async updateById(elemento, id) {
     try {
-      let data = await productsModel.findByIdAndUpdate(id, elemento );
-      return data;
+      let element;
+      if (this.collection === 'products'){
+        element = await productsModel.findByIdAndUpdate(ObjectId(id), elemento );
+      }else{
+        element = await cartsModel.findByIdAndUpdate(ObjectId(id), elemento );
+      }
+      return element;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
@@ -100,7 +105,7 @@ export default class ContenedorMongoAtlas {
     //   mongoose.disconnect();
     // }
   }
-
+  
   async deleteProductInCartById(Id_prod, Id_cart = undefined) {
     try {
       let id_prod = Id_prod;

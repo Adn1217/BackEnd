@@ -1,13 +1,10 @@
 import { ObjectId } from "mongodb";
-import {productsModel} from './models/products.js';
-import {msgsModel} from './models/messages.js';
 import {cartsModel} from './models/carts.js';
 import {dbFS} from './server.js';
-import {doc, getDoc} from 'firebase/firestore';
+// import {doc, getDoc} from 'firebase/firestore';
 
 export default class ContenedorFirebase {
   constructor(collection) {
-    // this.dbFS = admin.firestore();
     this.collection = collection;
     this.query = dbFS.collection(this.collection);
   }
@@ -15,7 +12,7 @@ export default class ContenedorFirebase {
   async save(elemento) {
     try {
       let data = await this.query.add(elemento);
-      console.log('Guardado: ', data.id);
+      console.log('GuardadoFirebase: ', data.id);
       return data.id;
     } catch (error) {
       console.log("Se ha presentado error ", error);
@@ -30,8 +27,8 @@ export default class ContenedorFirebase {
       
       let data = await this.query.doc(Id).get();
       let doc = data.data();
-      doc.id = data.id;
       if(data.id){
+        doc.id = data.id;
         // console.log('Documento extraidos de Firebase ', doc);
         return doc;
       }else {
@@ -95,27 +92,30 @@ export default class ContenedorFirebase {
     // }
   }
 
-  async deleteProductInCartById(Id_prod, Id_cart = undefined) {
+  async deleteProductInCartById(Id_prod, Id_cart= undefined) {
     try {
       let id_prod = Id_prod;
       let id_cart = Id_cart;
-      let cart = await cartsModel.find({_id: ObjectId(id_cart)});
-      cart = cart[0];
-      console.log('Carrito encontrado: ',  cart);
-      if(cart?._id === undefined) {
-          console.log("No existe el carrito con id: ", id_cart);
+      let data = await this.query.doc(Id_cart).get();
+      let cart = data?.data();
+      console.log('Carrito encontrado en Firebase: ',  cart);
+      if(!cart) {
+          console.log("No existe en Firebase el carrito con id: ", id_cart);
           return false;
       }else{
-        let cartProd = await cartsModel.find({'productos._id': ObjectId(id_prod)})
-        console.log('Producto encontrado :',cartProd);
-        if (cartProd && cartProd.length === 1){
-          cartProd = cartProd[0];
-          let deletedProd = cartProd.productos.splice(cartProd.productos.find( prod => prod._id === ObjectId(id_prod)),1)
-          await cartProd.save();
-          console.log(`Se elimina el producto con id = ${id_prod} del carrito con id = ${id_cart}`);
+        let cartProd = cart.productos.find((prod) => prod.id === parseInt(id_prod))
+        console.log('Producto encontrado en Firebase :',cartProd);
+        if (cartProd){
+          let deletedProd = cart.productos.splice(
+            cart.productos.find( (prod, index) => {
+            prod._id === parseInt(id_prod)
+            return index
+          }),1)
+          await this.query.doc(Id_cart).update(cart);
+          console.log(`Se elimina en Firebase el producto con id = ${id_prod} del carrito con id = ${id_cart}`);
           return deletedProd;
         }else{
-          console.log(`No existe el producto con id= ${id_prod} en el carrito con id=${id_cart}`);
+          console.log(`No existe en Firebase el producto con id= ${id_prod} en el carrito con id=${id_cart}`);
           return undefined;
         }
       }

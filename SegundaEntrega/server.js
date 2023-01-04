@@ -13,7 +13,7 @@ import {carrito} from './routes/carts.js';
 // import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics"
 import admin from 'firebase-admin';
-import { loadMocktoFireBase } from './loadMockToFirebase.js';
+import { loadMocktoFireBase } from './functions.js';
 // const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 
@@ -42,7 +42,7 @@ mongoAtlasConnect('ecommerce');
 firebaseConnect();
 
 export const dbFS = admin.firestore();
-// loadMocktoFireBase(['products']);
+// loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks.
 
 io.on('connection', (socket) => {
     console.log('Usuario Conectado');
