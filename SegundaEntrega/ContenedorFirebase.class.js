@@ -2,25 +2,21 @@ import { ObjectId } from "mongodb";
 import {productsModel} from './models/products.js';
 import {msgsModel} from './models/messages.js';
 import {cartsModel} from './models/carts.js';
+import {dbFS} from './server.js';
+import {doc, getDoc} from 'firebase/firestore';
 
-export default class ContenedorMongoAtlas {
+export default class ContenedorFirebase {
   constructor(collection) {
+    // this.dbFS = admin.firestore();
     this.collection = collection;
+    this.query = dbFS.collection(this.collection);
   }
 
   async save(elemento) {
     try {
-      let newElement;
-      if (this.collection === 'products'){
-        newElement = new productsModel(elemento);
-      }else if (this.collection === 'messages'){
-        newElement = new msgsModel(elemento);
-      }else{
-        newElement = new cartsModel(elemento);
-      }
-      let data = await newElement.save();
-      console.log('Guardado: ', data);
-      return data;
+      let data = await this.query.add(elemento);
+      console.log('Guardado: ', data.id);
+      return data.id;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
@@ -31,35 +27,32 @@ export default class ContenedorMongoAtlas {
 
   async getById(Id) {
     try {
-      let element;
-      if (this.collection === 'products'){
-        element = await productsModel.find({_id: ObjectId(Id)});
-      }else{
-        element = await cartsModel.find({_id: ObjectId(Id)});
-      }
-      console.log(element);
-      if (element[0]?._id) {
-        // console.log("El elemento  es: ", element);
-        return element[0];
-      } else {
+      
+      let data = await this.query.doc(Id).get();
+      let doc = data.data();
+      doc.id = data.id;
+      if(data.id){
+        // console.log('Documento extraidos de Firebase ', doc);
+        return doc;
+      }else {
         return null;
       }
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
   }
-
+  
   async getAll() {
     try {
-      let data;
-      if (this.collection === 'products'){
-        data = await productsModel.find();
-      }else if (this.collection === 'messages'){
-        data = await msgsModel.find();
-      }else{
-        data = await cartsModel.find();
-      }
-      return data;
+      let data = await this.query.get();
+      let docs = data.docs.map((doc) => {
+        let id = doc.id;
+        let element = doc.data();
+        element.id = id
+        return element;
+      })
+      // console.log('Documentos extraidos de Firebase ', docs);
+      return docs;
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } 
@@ -69,30 +62,31 @@ export default class ContenedorMongoAtlas {
   }
 
   async deleteById(Id) {
-    let element; 
     try {
-      if (this.collection === 'products'){
-        element = await productsModel.deleteOne({_id: ObjectId(Id)});
-      }else{
-        element = await cartsModel.deleteOne({_id: ObjectId(Id)});
-      }
-      console.log(element);
-      if (element[0]?.acknowledged) {
-        console.log(`\nSe elimina el elemento con _id=${Id} (deleteById(${Id})): \n`, element);
+      let data = await this.query.doc(Id).get();
+      if (data?.data()) {
+        await this.query.doc(Id).delete();
+        console.log(`\nSe elimina el elemento con _id=${Id} (deleteById(${Id})): \n`, data?.data());
         // console.log("Quedan los productos: ", data);
       } else {
-        console.log("No se ha podido eliminar el elemento ", Id);
+        console.log(`El elemento ${Id} no existe`, Id);
       }
-      return element;
+      return data?.data();
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
   }
   
-  async updateById(elemento, id) {
+  async updateById(element, id) {
     try {
-      let data = await productsModel.findByIdAndUpdate(id, elemento );
-      return data;
+      let data = await this.query.doc(id).get();
+      if (data?.data()){
+        await this.query.doc(id).update(element);
+        console.log("Elemento editado" ,data?.data())
+      }else{
+        console.log(`El elemento ${id} no existe`);
+      }
+      return data?.data();
     } catch (error) {
       console.log("Se ha presentado error ", error);
     }
