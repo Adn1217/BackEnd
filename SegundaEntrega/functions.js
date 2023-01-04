@@ -2,6 +2,18 @@ import {collection, addDoc, getFirestore} from 'firebase/firestore';
 import fs from 'fs'
 import { dbFS } from './server.js';
 
+export function calculateId(elemento, data){
+    let id = 0;
+    let idMax = id;
+    data.forEach((elemento) => {
+        elemento.id > idMax && (idMax = elemento.id);
+    });
+    id = idMax + 1;
+    elemento.id = id;
+    console.log('ElementoWithId', elemento)
+    return elemento
+}
+
 export async function loadMocktoFireBase(colecciones){
 
     for (let i = 0; i < colecciones.length;i++){

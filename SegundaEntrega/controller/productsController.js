@@ -92,7 +92,7 @@ export async function doSaveProduct(product, res) {
     if (Object.keys(product).length === 0){
         res.send({Error: "Producto no recibido"})
     }else{
-        console.log('Producto', product);
+        console.log('ProductoFront', product);
         const newProd = await saveProduct(product); 
         res.send({Guardado: newProd})
     }
@@ -120,15 +120,15 @@ export async function updateProductById(res, updatedProd, id) {
         res.send({error: "Producto no encontrado"})
     }
 
-    // const productosMongoAtlas = new ContenedorMongoAtlas('products');
-    // const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
-    // if (productMongoAtlas){
-    //     console.log("Se ha actualizado el producto: \n", productMongoAtlas);
-    //     // res.send({actualizadoMongo: productMongoAtlas})
-    // }else{
-    //     console.log("Producto no actualizado");
-    //     // res.send({error: "Producto no encontrado"})
-    // }
+    const productosMongoAtlas = new ContenedorMongoAtlas('products');
+    const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
+    if (productMongoAtlas){
+        console.log("Se ha actualizado en Mongo el producto: \n", productMongoAtlas);
+        // res.send({actualizadoMongo: productMongoAtlas})
+    }else{
+        console.log("Producto no actualizado en Mongo");
+        // res.send({error: "Producto no encontrado"})
+    }
     await saveProductByIdFile(res, updatedProd, id);
 }
 
