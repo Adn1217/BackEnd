@@ -1,5 +1,3 @@
-import { ObjectId } from "mongodb";
-import {cartsModel} from './models/carts.js';
 import {dbFS} from './server.js';
 // import {doc, getDoc} from 'firebase/firestore';
 
@@ -106,11 +104,8 @@ export default class ContenedorFirebase {
         let cartProd = cart.productos.find((prod) => prod.id === parseInt(id_prod))
         console.log('Producto encontrado en Firebase :',cartProd);
         if (cartProd){
-          let deletedProd = cart.productos.splice(
-            cart.productos.find( (prod, index) => {
-            prod._id === parseInt(id_prod)
-            return index
-          }),1)
+          let index  = cart.productos.findIndex( (prod) => prod.id === parseInt(id_prod));
+          let deletedProd = cart.productos.splice(index,1)
           await this.query.doc(Id_cart).update(cart);
           console.log(`Se elimina en Firebase el producto con id = ${id_prod} del carrito con id = ${id_cart}`);
           return deletedProd;
