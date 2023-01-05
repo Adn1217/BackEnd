@@ -121,7 +121,8 @@ export default class ContenedorMongoAtlas {
         console.log('Producto encontrado :',cartProd);
         if (cartProd && cartProd.length === 1){
           cartProd = cartProd[0];
-          let deletedProd = cartProd.productos.splice(cartProd.productos.find( prod => prod._id === ObjectId(id_prod)),1)
+          let index  = cartProd.productos.findIndex( (prod) => prod._id === ObjectId(id_prod));
+          let deletedProd = cartProd.productos.splice(index,1)
           await cartProd.save();
           console.log(`Se elimina el producto con id = ${id_prod} del carrito con id = ${id_cart}`);
           return deletedProd;
