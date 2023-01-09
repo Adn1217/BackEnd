@@ -2,6 +2,13 @@ import ContenedorArchivo from '../ContenedorArchivo.class.js';
 import ContenedorMongoAtlas from '../ContenedorMongoAtlas.class.js';
 import ContenedorFirebase from '../ContenedorFirebase.class.js';
 
+
+export async function saveNormalizedMessage(msg){
+    const normMessagesFirebase = new ContenedorFirebase('normMsgs');
+    const newNormMessageFirebase = await normMessagesFirebase.save(msg);
+    return newNormMessageFirebase;
+}
+
 export async function saveMessage(msg) {
     const messagesFirebase = new ContenedorFirebase('messages');
     const newMessageFirebase = await messagesFirebase.save(msg);
@@ -31,5 +38,10 @@ export async function showMsgs(res) {
 
 export async function doSaveMessage(res, msg) {
     const newMsg = await saveMessage(msg); 
+    res.send({Guardado: newMsg})
+}
+
+export async function doSaveNormMessage(res, msg) {
+    const newMsg = await saveNormalizedMessage(msg); 
     res.send({Guardado: newMsg})
 }

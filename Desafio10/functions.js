@@ -1,4 +1,3 @@
-import {collection, addDoc, getFirestore} from 'firebase/firestore';
 import fs from 'fs'
 import { dbFS } from './server.js';
 

@@ -46,7 +46,10 @@ function tableRender(prods){
 
 function chatRender(msgs){
     let htmlChat = '';
-    userInput.setAttribute('disabled', '');
+    const userInputFields = [userIdInput, userInput, userLastnameInput, userAgeInput, userAliasInput, userAvatarInput];
+    userInputFields.forEach ((field) => {
+        field.setAttribute('disabled', '');
+    })
 
 
     msgs.forEach((msg) => {

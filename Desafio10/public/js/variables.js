@@ -11,6 +11,9 @@ let getAllCartsButton = document.getElementById('getAllCartsButton');
 let getCartButton = document.getElementById('getCartButton');
 let deleteProductInCartButton = document.getElementById('deleteProductInCartButton');
 let deleteCartButton = document.getElementById('deleteCartButton');
+let addMsgButton = document.getElementById('addMsgButton');
+let sendNormMsgButton = document.getElementById('sendNormMsgButton');
+let sendMsgButton = document.getElementById('sendMsgButton');
 
 // DIVs
 let results = document.getElementById('results');
@@ -31,8 +34,8 @@ let cartUserInput = document.getElementById('cartUserInput')
 let idInput = document.getElementById('idInput');
 let idCartInput = document.getElementById('idCartInput');
 let idProdInput = document.getElementById('idProdInput');
-let userInput = document.getElementById('userInput');
 let userIdInput = document.getElementById('userIdInput');
+let userInput = document.getElementById('userInput');
 let userLastnameInput = document.getElementById('userLastnameInput');
 let userAgeInput = document.getElementById('userAgeInput');
 let userAliasInput = document.getElementById('userAliasInput');

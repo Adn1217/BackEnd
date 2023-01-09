@@ -1,4 +1,3 @@
-
 function checkInputs(){
     if(titleInput.value === '' || codeInput.value === '' || priceInput.value === ''
        || stockInput.value === ''|| thumbnailInput.value === ''){
@@ -23,16 +22,23 @@ function checkInputs(){
     }
 }
 
-function checkMsgInputs(){
-    if(userInput.value === '' || msgInput.value === ''){
-        userInput.classList.add('errorInput');
-        msgInput.classList.add('errorInput');
-        results.classList.remove('errorLabel');
+function checkMsgInputs(fields){
+    
+    let invalide = false;
+    fields.forEach((field) => {
+            if (field.value === ''){
+                field.classList.add('errorInput');
+                invalide = true;
+            }
+        })
+    if(invalide){
+        results.classList.add('errorLabel');
         results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
         return false
     }else{
-        userInput.classList.remove('errorInput');
-        msgInput.classList.remove('errorInput');
+        fields.forEach((field) => {
+            field.classList.remove('errorInput');
+        })
         if (results.classList.contains("errorLabel")) {
             results.classList.remove("errorLabel");
             results.innerHTML = "";
@@ -361,7 +367,8 @@ async function deleteOneCart(id){
 
 //-----------MESSAGES----------------------------------------
 async function sendMessage() {
-    let valideInputs = checkMsgInputs();
+    const fields = [userInput, msgInput];
+    let valideInputs = checkMsgInputs(fields);
     if(valideInputs){
         let newMessage = {
             fecha: new Date().toLocaleString("en-GB"),
@@ -369,6 +376,48 @@ async function sendMessage() {
             mensaje: msgInput.value
         }
         let url = 'http://localhost:8080/mensajes';
+        let verb = 'POST';
+        let response = await fetch(url, { method: verb,
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newMessage)
+        })
+        let data = await response.json();
+        !("error" in data) && ([msgInput.value] = ['']);
+        // console.log(data);
+        socket.emit('messageRequest','msj')
+    }
+}
+
+function createMessage() {
+    let newMessage = {
+        type: 'msgList',
+        messages: [
+            {
+                author: {
+                    id: userIdInput.value,
+                    nombre: userInput.value,
+                    apellido: userLastnameInput.value,
+                    edad: userAgeInput.value,
+                    alias: userAliasInput.value,
+                    avatar: userAvatarInput.value
+                },
+                fecha: new Date().toLocaleString("en-GB"),
+                mensaje: msgInput.value
+            }
+        ] 
+    } 
+    return newMessage
+}
+
+async function sendNormalizedMessage() {
+    const fields = [userIdInput, userInput, userLastnameInput, userAgeInput, userAliasInput, userAvatarInput, msgInput];
+    let valideInputs = checkMsgInputs(fields);
+    if(valideInputs){
+        let newMessage = createMessage();
+        let url = 'http://localhost:8080/mensajes/normalized';
         let verb = 'POST';
         let response = await fetch(url, { method: verb,
             headers: {
@@ -400,4 +449,5 @@ deleteProductInCartButton.addEventListener('click', () => deleteOneProductInCart
 deleteCartButton.addEventListener('click', () => deleteOneCart(idCartInput.value))
 
 //-------MESSAGES------------------------------------
+sendNormMsgButton.addEventListener('click', () => sendNormalizedMessage())
 sendMsgButton.addEventListener('click', () => sendMessage())

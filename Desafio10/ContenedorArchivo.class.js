@@ -13,9 +13,9 @@ export default class ContenedorArchivo {
       data !== [] && (data = JSON.parse(data))
       if (!data || data.length === 0) {
         console.log("No hay datos.");
-      }else{
-        elementoWithId = calculateId(elemento, data);
       }
+      elementoWithId = calculateId(elemento, data);
+      console.log('elementoWithId', elementoWithId);
       elementoWithId.timestamp = new Date().toLocaleString("en-GB");
       if (elementoWithId.length > 1){
         await fs.promises.writeFile(this.ruta,JSON.stringify([...elementoWithId], null, 2));

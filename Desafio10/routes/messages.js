@@ -18,3 +18,13 @@ mensajes.post('/', (req, res) => {
         msgController.doSaveMessage(res, msg);
     }
 })
+
+mensajes.post('/normalized', (req, res) => {
+    const msg = req.body;
+    if (Object.keys(msg).length === 0){
+        res.send({Error: "Mensage no recibido"})
+    }else{
+        // console.log('Mensaje: ', msg);
+        msgController.doSaveNormMessage(res, msg);
+    }
+})
