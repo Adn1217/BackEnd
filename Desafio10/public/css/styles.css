@@ -97,7 +97,7 @@ td {
 }
 
 #chat label{
-    width: 10%;
+    min-width: 4rem;
 }
 
 #server span {

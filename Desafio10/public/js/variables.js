@@ -29,8 +29,13 @@ let productRolRadioButton = document.getElementById('productRolRadioButton');
 let cartRolRadioButton = document.getElementById('cartRolRadioButton');
 let cartUserInput = document.getElementById('cartUserInput')
 let idInput = document.getElementById('idInput');
-let userInput = document.getElementById('userInput');
 let idCartInput = document.getElementById('idCartInput');
 let idProdInput = document.getElementById('idProdInput');
+let userInput = document.getElementById('userInput');
+let userIdInput = document.getElementById('userIdInput');
+let userLastnameInput = document.getElementById('userLastnameInput');
+let userAgeInput = document.getElementById('userAgeInput');
+let userAliasInput = document.getElementById('userAliasInput');
+let userAvatarInput = document.getElementById('userAvatarInput');
 let msgInput = document.getElementById('msgInput');
 
