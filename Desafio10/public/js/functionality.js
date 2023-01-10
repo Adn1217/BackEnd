@@ -1,3 +1,7 @@
+const normalize = window.normalizr.normalize;
+const schema = window.normalizr.schema;
+const denormalize = window.normalizr.denormalize;
+
 function checkInputs(){
     if(titleInput.value === '' || codeInput.value === '' || priceInput.value === ''
        || stockInput.value === ''|| thumbnailInput.value === ''){
@@ -391,6 +395,26 @@ async function sendMessage() {
     }
 }
 
+function normalizeMessage(msg){
+    // const authorSchema = new schema.Entity('author');
+    // const fechaSchema = new schema.Entity('fecha');
+    // const mensajeSchema = new schema.Entity('msj');
+    // const messageSchema = new schema.Entity('message',{
+    //     author: authorSchema,
+    //     fecha: fechaSchema,
+    //     mensaje: mensajeSchema
+    // });
+    const messageSchema = new schema.Entity('message');
+    // const typeSchema = new schema.Entity('type');
+    const msgsSchema = new schema.Entity('messages', {
+        // type: typeSchema,   
+        messages: [messageSchema]
+    }, {idAttribute: 'messages'})
+    const normalizedMessage = normalize(msg, msgsSchema);
+    const denormalizedMessage = denormalize(normalizedMessage.result, msgsSchema, normalizedMessage.entities);
+    return [normalizedMessage, denormalizedMessage];
+}
+
 function createMessage() {
     let newMessage = {
         type: 'msgList',
@@ -407,7 +431,7 @@ function createMessage() {
                 fecha: new Date().toLocaleString("en-GB"),
                 mensaje: msgInput.value
             }
-        ] 
+        ]
     } 
     return newMessage
 }
@@ -417,6 +441,13 @@ async function sendNormalizedMessage() {
     let valideInputs = checkMsgInputs(fields);
     if(valideInputs){
         let newMessage = createMessage();
+        // let newMessageStr = JSON.stringify(newMessage)
+        // console.log('OriginalMsgStr', newMessageStr);
+        console.log('OriginalMsg', newMessage);
+        let [normMessage, denormMessage] = normalizeMessage(newMessage);
+        console.log('normMsg', normMessage);
+        console.log('denormMsg', denormMessage);
+        console.log('Normalized Again', normalizeMessage(denormMessage)[0] )
         let url = 'http://localhost:8080/mensajes/normalized';
         let verb = 'POST';
         let response = await fetch(url, { method: verb,
@@ -424,12 +455,12 @@ async function sendNormalizedMessage() {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(newMessage)
+            body: JSON.stringify(normMessage)
         })
         let data = await response.json();
         !("error" in data) && ([msgInput.value] = ['']);
         // console.log(data);
-        socket.emit('messageRequest','msj')
+        socket.emit('normMessageRequest','msj')
     }
 }
 //------PRODUCTS FORM---------------------------

@@ -44,18 +44,28 @@ function tableRender(prods){
     return htmlTable;
 }
 
+function denormalizeMessage(normalizedMessages){
+    const messageSchema = new schema.Entity('message');
+    const msgsSchema = new schema.Entity('messages', {
+        messages: [messageSchema]
+    }, {idAttribute: 'type'})
+    const denormalizedMessages = denormalize(normalizedMessages.result, msgsSchema, normalizedMessages.entities);
+    return denormalizedMessages;
+}
+
 function chatRender(msgs){
     let htmlChat = '';
+    (msgs[0].msj) && (htmlChat+= `<h4>Mensajes normalizados</h4>`);
     const userInputFields = [userIdInput, userInput, userLastnameInput, userAgeInput, userAliasInput, userAvatarInput];
     userInputFields.forEach ((field) => {
         field.setAttribute('disabled', '');
     })
-
-
+    
     msgs.forEach((msg) => {
         // let fecha = msg.fecha || new Date(msg._id.getTimestamp()).toLocaleString();
+        let user = msg?.usuario || msg.msj.author?.nombre || 'Sin autor';
         htmlChat += `<div id="msj" class="rounded-3">
-                        <p><strong>${msg.usuario}:</strong><br>${msg.mensaje}<br><em>Recibido el ${msg.fecha}</em></p>
+                        <p><strong>${user}:</strong><br>${msg.mensaje || msg.msj.mensaje}<br><em>Recibido el ${msg.fecha || msg.msj.fecha}</em></p>
                     </div>`
     })
     return htmlChat;
@@ -74,8 +84,14 @@ socket.on('productos', prods => {
 })
 
 socket.on('mensajes', msgs => {
-    console.log('mensajes: ', msgs.msgs);
+    // console.log(msgs)
+    let mensajes = msgs.msgs;
+    console.log('mensajes: ', mensajes);
+    if (mensajes.entities){ // Si viene normalizado
+        mensajes = denormalizeMessage(mensajes).messages;
+        console.log('mensajes desnormalizados: ', mensajes);
+    }
     if (!("error" in msgs)){
-        chat.innerHTML= chatRender(msgs.msgs);
+        chat.innerHTML= chatRender(mensajes);
     }
 })
