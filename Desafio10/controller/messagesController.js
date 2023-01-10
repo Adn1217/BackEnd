@@ -5,13 +5,16 @@ import {schema, normalize, denormalize} from 'normalizr';
 
 
 function normalizeMessage(msg){
-    const authorSchema = new schema.Entity('author');
-    const messageSchema = new schema.Entity('message',{
+    const authorSchema = new schema.Entity('authorSchema',{},{idAttribute: 'id'});
+    const msgSchema = new schema.Entity('msgSchema',{
         author: authorSchema
-    });
-    const msgsSchema = new schema.Entity('messages', {
-        msj: [messageSchema]
-    }, {idAttribute: 'type'})
+    })
+    const messageSchema = new schema.Entity('messageSchema',{
+        msj: msgSchema
+    })
+    const msgsSchema = new schema.Entity('msgsSchema',{
+        messages: [messageSchema]
+    }, {idAttribute: 'type'} );
 
     const normalizedMessage = normalize(msg, msgsSchema);
     return normalizedMessage;
@@ -19,11 +22,13 @@ function normalizeMessage(msg){
 
 function denormalizeMessage(msg){
     const normalizedMessage = msg;
-    const messageSchema = new schema.Entity('message',{
-    });
-    const msgsSchema = new schema.Entity('messages', {
-        message: [messageSchema]
-    }, {idAttribute: 'type'})
+    const authorSchema = new schema.Entity('authorSchema',{},{idAttribute: 'id'});
+    const messageSchema = new schema.Entity('messageSchema',{
+        author: authorSchema
+    }, {idAttribute: 'author'})
+    const msgsSchema = new schema.Entity('msgsSchema',{
+        messages: [messageSchema]
+    }, {idAttribute: 'type'} );
     const denormalizedMessage = denormalize(normalizedMessage.result, msgsSchema, 
     normalizedMessage.entities);
     return denormalizedMessage;
@@ -66,12 +71,12 @@ export async function getNormMessages() {
     allMessagesFirebase.forEach((msg) => {
         let message = {};
         message.id = cont;
-        message.msj = msg[0];
+        message.msj = msg;
         newAllMessages.push(message);
         cont +=1;
     })
     newAllMessages = {type: 'msgList', messages: newAllMessages};
-    console.log(newAllMessages);
+    console.log('Mensajes desde Firebase', newAllMessages);
     const allNormMessagesFirebase = normalizeMessage(newAllMessages);
     return allNormMessagesFirebase;
 } 

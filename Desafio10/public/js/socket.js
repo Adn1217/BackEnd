@@ -45,10 +45,20 @@ function tableRender(prods){
 }
 
 function denormalizeMessage(normalizedMessages){
-    const messageSchema = new schema.Entity('message');
-    const msgsSchema = new schema.Entity('messages', {
+    const schema = window.normalizr.schema;
+    const denormalize = window.normalizr.denormalize;
+    
+    const authorSchema = new schema.Entity('authorSchema');
+    const msgSchema = new schema.Entity('msgSchema',{
+        author: authorSchema
+    })
+    const messageSchema = new schema.Entity('messageSchema',{
+        msj: msgSchema
+    })
+    const msgsSchema = new schema.Entity('msgsSchema',{
         messages: [messageSchema]
-    }, {idAttribute: 'type'})
+    }, {idAttribute: 'type'} );
+
     const denormalizedMessages = denormalize(normalizedMessages.result, msgsSchema, normalizedMessages.entities);
     return denormalizedMessages;
 }
@@ -88,7 +98,7 @@ socket.on('mensajes', msgs => {
     let mensajes = msgs.msgs;
     console.log('mensajes: ', mensajes);
     if (mensajes.entities){ // Si viene normalizado
-        mensajes = denormalizeMessage(mensajes).messages;
+        mensajes = denormalizeMessage(mensajes);
         console.log('mensajes desnormalizados: ', mensajes);
     }
     if (!("error" in msgs)){

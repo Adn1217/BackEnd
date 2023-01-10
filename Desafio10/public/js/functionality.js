@@ -396,20 +396,13 @@ async function sendMessage() {
 }
 
 function normalizeMessage(msg){
-    // const authorSchema = new schema.Entity('author');
-    // const fechaSchema = new schema.Entity('fecha');
-    // const mensajeSchema = new schema.Entity('msj');
-    // const messageSchema = new schema.Entity('message',{
-    //     author: authorSchema,
-    //     fecha: fechaSchema,
-    //     mensaje: mensajeSchema
-    // });
-    const messageSchema = new schema.Entity('message');
-    // const typeSchema = new schema.Entity('type');
-    const msgsSchema = new schema.Entity('messages', {
-        // type: typeSchema,   
+    const authorSchema = new schema.Entity('authorSchema',{},{idAttribute: 'id'});
+    const messageSchema = new schema.Entity('messageSchema',{
+        author: authorSchema
+    }, {idAttribute: 'author'})
+    const msgsSchema = new schema.Entity('msgsSchema',{
         messages: [messageSchema]
-    }, {idAttribute: 'messages'})
+    }, {idAttribute: 'type'} );
     const normalizedMessage = normalize(msg, msgsSchema);
     const denormalizedMessage = denormalize(normalizedMessage.result, msgsSchema, normalizedMessage.entities);
     return [normalizedMessage, denormalizedMessage];
