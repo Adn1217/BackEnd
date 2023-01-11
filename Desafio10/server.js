@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
 
     socket.on('normMessageRequest', async () => {
         let allMsgs = await msgController.getNormMessages();
-        console.log('Mensajes Normalizados: ', JSON.stringify(allMsgs));
+        // console.log('Mensajes Normalizados: ', JSON.stringify(allMsgs));
         io.sockets.emit('mensajes', {msgs: allMsgs});
     })
 })

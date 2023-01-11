@@ -396,13 +396,13 @@ async function sendMessage() {
 }
 
 function normalizeMessage(msg){
-    const authorSchema = new schema.Entity('authorSchema',{},{idAttribute: 'id'});
+    const authorSchema = new schema.Entity('authorSchema',{}, {idAttribute: 'id'});
     const messageSchema = new schema.Entity('messageSchema',{
         author: authorSchema
     }, {idAttribute: 'author'})
     const msgsSchema = new schema.Entity('msgsSchema',{
         messages: [messageSchema]
-    }, {idAttribute: 'type'} );
+    }, {idAttribute: 'messages'} );
     const normalizedMessage = normalize(msg, msgsSchema);
     const denormalizedMessage = denormalize(normalizedMessage.result, msgsSchema, normalizedMessage.entities);
     return [normalizedMessage, denormalizedMessage];
@@ -440,7 +440,7 @@ async function sendNormalizedMessage() {
         let [normMessage, denormMessage] = normalizeMessage(newMessage);
         console.log('normMsg', normMessage);
         console.log('denormMsg', denormMessage);
-        console.log('Normalized Again', normalizeMessage(denormMessage)[0] )
+        // console.log('Normalized Again', normalizeMessage(denormMessage)[0] )
         let url = 'http://localhost:8080/mensajes/normalized';
         let verb = 'POST';
         let response = await fetch(url, { method: verb,

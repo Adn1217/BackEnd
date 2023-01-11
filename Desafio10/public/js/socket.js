@@ -49,12 +49,15 @@ function denormalizeMessage(normalizedMessages){
     const denormalize = window.normalizr.denormalize;
     
     const authorSchema = new schema.Entity('authorSchema');
-    const msgSchema = new schema.Entity('msgSchema',{
+    const msjSchema = new schema.Entity('msjSchema',{
         author: authorSchema
+    }, {idAttribute: 'id'})
+    const msgSchema = new schema.Entity('msgSchema',{
+        messages: [msjSchema]
     })
     const messageSchema = new schema.Entity('messageSchema',{
         msj: msgSchema
-    })
+    }, {idAttribute: 'id'})
     const msgsSchema = new schema.Entity('msgsSchema',{
         messages: [messageSchema]
     }, {idAttribute: 'type'} );
@@ -63,9 +66,9 @@ function denormalizeMessage(normalizedMessages){
     return denormalizedMessages;
 }
 
-function chatRender(msgs){
+function chatRender(msgs, compression = null){
     let htmlChat = '';
-    (msgs[0].msj) && (htmlChat+= `<h4>Mensajes normalizados</h4>`);
+    (msgs[0].msj) && (htmlChat+= `<h4>Mensajes normalizados (Compresión: ${compression}%)</h4>`);
     const userInputFields = [userIdInput, userInput, userLastnameInput, userAgeInput, userAliasInput, userAvatarInput];
     userInputFields.forEach ((field) => {
         field.setAttribute('disabled', '');
@@ -73,9 +76,9 @@ function chatRender(msgs){
     
     msgs.forEach((msg) => {
         // let fecha = msg.fecha || new Date(msg._id.getTimestamp()).toLocaleString();
-        let user = msg?.usuario || msg.msj.author?.nombre || 'Sin autor';
+        let user = msg?.usuario || msg.msj[0].author?.nombre || 'Sin autor';
         htmlChat += `<div id="msj" class="rounded-3">
-                        <p><strong>${user}:</strong><br>${msg.mensaje || msg.msj.mensaje}<br><em>Recibido el ${msg.fecha || msg.msj.fecha}</em></p>
+                        <p><strong>${user}:</strong><br>${msg.mensaje || msg.msj[0].mensaje}<br><em>Recibido el ${msg.fecha || msg.msj[0].fecha}</em></p>
                     </div>`
     })
     return htmlChat;
@@ -96,12 +99,18 @@ socket.on('productos', prods => {
 socket.on('mensajes', msgs => {
     // console.log(msgs)
     let mensajes = msgs.msgs;
+    let normSize = JSON.stringify(mensajes).length;
+    let compression = 0;
     console.log('mensajes: ', mensajes);
     if (mensajes.entities){ // Si viene normalizado
         mensajes = denormalizeMessage(mensajes);
+        let denormSize = JSON.stringify(mensajes).length;
+        compression = parseFloat(((denormSize-normSize)/denormSize)*100).toFixed(2);
+        mensajes = mensajes.messages;
         console.log('mensajes desnormalizados: ', mensajes);
+        console.log('Porcentaje de compresión: ', compression);
     }
     if (!("error" in msgs)){
-        chat.innerHTML= chatRender(mensajes);
+        chat.innerHTML= chatRender(mensajes, compression);
     }
 })

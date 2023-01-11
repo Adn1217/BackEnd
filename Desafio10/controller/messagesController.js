@@ -5,13 +5,16 @@ import {schema, normalize, denormalize} from 'normalizr';
 
 
 function normalizeMessage(msg){
-    const authorSchema = new schema.Entity('authorSchema',{},{idAttribute: 'id'});
-    const msgSchema = new schema.Entity('msgSchema',{
+    const authorSchema = new schema.Entity('authorSchema');
+    const msjSchema = new schema.Entity('msjSchema',{
         author: authorSchema
+    }, {idAttribute: 'id'})
+    const msgSchema = new schema.Entity('msgSchema',{
+        messages: [msjSchema]
     })
     const messageSchema = new schema.Entity('messageSchema',{
         msj: msgSchema
-    })
+    }, {idAttribute: 'id'})
     const msgsSchema = new schema.Entity('msgsSchema',{
         messages: [messageSchema]
     }, {idAttribute: 'type'} );
@@ -76,7 +79,7 @@ export async function getNormMessages() {
         cont +=1;
     })
     newAllMessages = {type: 'msgList', messages: newAllMessages};
-    console.log('Mensajes desde Firebase', newAllMessages);
+    // console.log('Mensajes desde Firebase restructurados', JSON.stringify(newAllMessages));
     const allNormMessagesFirebase = normalizeMessage(newAllMessages);
     return allNormMessagesFirebase;
 } 
