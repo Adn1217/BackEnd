@@ -459,20 +459,22 @@ async function sendNormalizedMessage() {
 
 async function logout(){
 
-        let response = await fetch(`http://localhost:8080/login/`, { method: 'DELETE',
+        let response = await fetch(`http://localhost:8080/`, { method: 'DELETE',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
             }
         })
         if (response){
-            response = response.json();
-            console.log(response);
-            alert("HASTA LUEGO ", response.user);
+            let resp = await response.json();
+            // console.log('Respuesta :',resp);
+            let user = resp.user;
+            document.body.innerHTML = `<h1>HASTA LUEGO ${user}</h1>`
+            // alert("HASTA LUEGO "+ resp.user);
             setTimeout(async () => {
                 location.href='http://localhost:8080/login'
                     }, 2000);
-        }
+                }
 }
 
 

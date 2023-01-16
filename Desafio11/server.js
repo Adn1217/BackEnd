@@ -7,10 +7,6 @@ import {fileURLToPath} from 'url';
 import {getURL, serviceAccount} from './config.js';
 import * as prdController from './controller/productsController.js';
 import * as msgController from './controller/messagesController.js';
-import {login} from './routes/login.js';
-import {mensajes} from './routes/messages.js';
-import {productos, productosTest} from './routes/products.js';
-import {carrito} from './routes/carts.js';
 // import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics"
 import admin from 'firebase-admin';
@@ -23,6 +19,10 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 
 
+import {login} from './routes/login.js';
+import {mensajes} from './routes/messages.js';
+import {productos, productosTest} from './routes/products.js';
+import {carrito} from './routes/carts.js';
 
 mongoose.set('strictQuery', false);
 
@@ -37,32 +37,22 @@ const port = parseInt(process.env.PORT, 10) || 8080;
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer);
 
-app.use(express.urlencoded({extended: true}))
-app.use(express.json());
-app.use('/login', login);
-app.use('/productos', productos);
-app.use('/productos-test', productosTest);
-app.use('/carrito', carrito);
-app.use('/mensajes', mensajes);
-app.set('view engine', 'ejs');
-// app.set('views', "./views"); //Por defecto.
-app.use(express.static(__dirname + '/public'));
-
 const mongoAtlasDb = 'ecommerce';
 const advancedOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }
 
-
-mongoAtlasConnect(mongoAtlasDb);
-firebaseConnect();
+app.use(express.urlencoded({extended: true}))
+app.use(express.json());
 
 app.use(cookieParser());
 app.use(session({
+    name: 'loggedUser',
     store: MongoStore.create({
         mongoUrl: getURL(mongoAtlasDb),
         mongoOptions: advancedOptions,
+        collectionName: "sessions",
         ttl: 60,
     }),
     secret: 'adn1217',
@@ -72,6 +62,21 @@ app.use(session({
     //     maxAge: 60000
     // }
 }))
+
+app.use('/login', login);
+app.use('/productos', productos);
+app.use('/productos-test', productosTest);
+app.use('/carrito', carrito);
+app.use('/mensajes', mensajes);
+app.set('view engine', 'ejs');
+// app.set('views', "./views"); //Por defecto.
+app.use(express.static(__dirname + '/public'));
+
+
+
+mongoAtlasConnect(mongoAtlasDb);
+firebaseConnect();
+
 
 export const dbFS = admin.firestore();
 // loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks originales.
@@ -121,7 +126,7 @@ function firebaseConnect(){
 
 app.get('/home', (req, res) => {
     if(req.session.user){
-        console.log(req.session);
+        console.log('SesiónIniciada: ', req.session);
         prdController.showProducts(req, res);
     }else{
         res.send({Error: 'Usuario no autenticado'})
@@ -130,13 +135,26 @@ app.get('/home', (req, res) => {
 
 app.post('/home/:user', (req, res) => {
     const user = req.params.user;
-    req.session.user = user
+    req.session.user = user;
     req.session.save();
     res.send({
         Usuario: user,
         Guardado: 'Ok'
     })
-    console.log('Sesiones: ', req.session);
+})
+
+app.delete('/', (req, res) => {
+    console.log('DeletedSesión: ', req.session);
+    const user = req.session.user;
+    console.log('DeletedUsuario : ', user);
+    if(user){
+        req.session.destroy();
+        res.send({
+            user: user,
+            eliminado: 'Ok'})
+    }else{
+        res.render('pages/login')
+    }
 })
 
 const server = httpServer.listen(port, () => {

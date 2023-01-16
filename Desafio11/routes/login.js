@@ -7,6 +7,14 @@ login.get('/', (req, res) => {
     res.render('pages/login')
 })
 
+login.get('/logout/:user', (req, res) => {
+    let user = req.params.user;
+    res.render('pages/logout', {user: user})
+    setTimeout(async () => {
+        location.href='http://localhost:8080/login'
+            }, 2000);
+})
+
 login.post('/:user', (req, res) => {
     const user = req.params.user;
     if(user){
@@ -17,8 +25,9 @@ login.post('/:user', (req, res) => {
 })
 
 login.delete('/', (req, res) => {
-    const user = req.session;
-    console.log(user);
+    console.log('DeletedSesión: ', req);
+    const user = req.cookies;
+    console.log('DeletedUsuario : ', user);
     if(user){
         req.session.destroy();
         res.send({
