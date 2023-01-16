@@ -14,8 +14,13 @@
     <script src="https://cdn.jsdelivr.net/npm/normalizr@3.6.2/dist/normalizr.browser.min.js" integrity="sha256-qQvNv3XFs75Z4rVX8mxyydxpvBhD9/hRsMJzmVQRbUI=" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div id="Saludo">
-        <h1>BIENVENIDO <%=user%></h1>
+    <div id="Saludo" class="container col-md-12">
+        <div class="col-md-6">
+            <h1>BIENVENIDO <%=user%></h1>
+        </div>
+        <div class="col-md-4">
+            <button id="logoutButton" type="button" class="btn btn-warning" >Logout</button>
+        </div>
     </div>
     <%- include('../partials/form.ejs') %>
     <div id="results" class="container">

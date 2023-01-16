@@ -1,5 +1,6 @@
 // BUTTONs
 let loginButton = document.getElementById('loginButton');
+let logoutButton = document.getElementById('logoutButton');
 let submitButton = document.getElementById('submitButton');
 let getAllButton = document.getElementById('getAllButton');
 let getAllRandomButton = document.getElementById('getAllRandomButton');

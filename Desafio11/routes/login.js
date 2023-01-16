@@ -15,3 +15,16 @@ login.post('/:user', (req, res) => {
         res.send({Error: 'Usuario no autenticado'})
     }
 })
+
+login.delete('/', (req, res) => {
+    const user = req.session;
+    console.log(user);
+    if(user){
+        req.session.destroy();
+        res.send({
+            user: user,
+            eliminado: 'Ok'})
+    }else{
+        res.render('pages/login')
+    }
+})

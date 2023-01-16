@@ -121,8 +121,7 @@ function firebaseConnect(){
 
 app.get('/home', (req, res) => {
     if(req.session.user){
-        console.log('Usuario ', req.session.user);
-        console.log('Sesiones', req.session);
+        console.log(req.session);
         prdController.showProducts(req, res);
     }else{
         res.send({Error: 'Usuario no autenticado'})
@@ -132,6 +131,7 @@ app.get('/home', (req, res) => {
 app.post('/home/:user', (req, res) => {
     const user = req.params.user;
     req.session.user = user
+    req.session.save();
     res.send({
         Usuario: user,
         Guardado: 'Ok'

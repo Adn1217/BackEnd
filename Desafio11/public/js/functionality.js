@@ -456,6 +456,28 @@ async function sendNormalizedMessage() {
         socket.emit('normMessageRequest','msj')
     }
 }
+
+async function logout(){
+
+        let response = await fetch(`http://localhost:8080/login/`, { method: 'DELETE',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            }
+        })
+        if (response){
+            response = response.json();
+            console.log(response);
+            alert("HASTA LUEGO ", response.user);
+            setTimeout(async () => {
+                location.href='http://localhost:8080/login'
+                    }, 2000);
+        }
+}
+
+
+//------USER------------------------
+logoutButton.addEventListener('click', () => logout())
 //------PRODUCTS FORM---------------------------
 submitButton.addEventListener('click', () => submitForm())
 getOneButton.addEventListener('click', () => getOneProduct(idInput.value))
