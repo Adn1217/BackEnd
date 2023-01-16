@@ -15,6 +15,8 @@ export default class ContenedorMongoAtlas {
         newElement = new productsModel(elemento);
       }else if (this.collection === 'messages'){
         newElement = new msgsModel(elemento);
+      }else if (this.collection === 'carts'){
+        newElement = new cartsModel(elemento);
       }else{
         newElement = new cartsModel(elemento);
       }

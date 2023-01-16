@@ -28,5 +28,15 @@
     "thumbnail": "https://panamericana.vteximg.com.br/arquivos/ids/190161-1600-1600/globo-terraqueo-politico-40-cm-1-7701016736787.jpg?v=636251722565900000",
     "id": 3,
     "timestamp": "04/12/2022, 19:23:17"
+  },
+  {
+    "code": "Hola",
+    "title": "Hola",
+    "description": "Hola",
+    "price": "111",
+    "stock": "111",
+    "thumbnail": "urlHola",
+    "id": 4,
+    "timestamp": "15/01/2023, 19:04:21"
   }
 ]

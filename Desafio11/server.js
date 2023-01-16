@@ -20,7 +20,7 @@ import { loadMocktoFireBase } from './functions.js';
 
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import mongoStore from 'connect-mongo';
+import MongoStore from 'connect-mongo';
 
 
 
@@ -53,11 +53,17 @@ const advancedOptions = {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }
+
+
+mongoAtlasConnect(mongoAtlasDb);
+firebaseConnect();
+
 app.use(cookieParser());
 app.use(session({
-    store: mongoStore.create({
+    store: MongoStore.create({
         mongoUrl: getURL(mongoAtlasDb),
-        mongoOptions: advancedOptions
+        mongoOptions: advancedOptions,
+        ttl: 60,
     }),
     secret: 'adn1217',
     resave: false,
@@ -66,10 +72,6 @@ app.use(session({
     //     maxAge: 60000
     // }
 }))
-
-
-mongoAtlasConnect(mongoAtlasDb);
-firebaseConnect();
 
 export const dbFS = admin.firestore();
 // loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks originales.
@@ -99,10 +101,7 @@ io.on('connection', (socket) => {
 async function mongoAtlasConnect(db){
     try{
         const URL = getURL(db);
-        await mongoose.connect(URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        })
+        await mongoose.connect(URL, advancedOptions)
         console.log("Se ha conectado exitosamente a MongoAtlas");
     }catch(error){
         console.log("Se ha presentado el siguiente error al intentar conectarse a MongoAtlas: ", error);
@@ -121,16 +120,23 @@ function firebaseConnect(){
 }
 
 app.get('/home', (req, res) => {
-    // if(req.headers.user){
-    //     console.log('Usuario ', req.headers.user);
-        prdController.showProducts(res);
-    // }else{
-    //     res.send({Error: 'Usuario no autenticado'})
-    // }
+    if(req.session.user){
+        console.log('Usuario ', req.session.user);
+        console.log('Sesiones', req.session);
+        prdController.showProducts(req, res);
+    }else{
+        res.send({Error: 'Usuario no autenticado'})
+    }
 })
 
-app.post('/login', (req, res) => {
-    res.redirect('/home')
+app.post('/home/:user', (req, res) => {
+    const user = req.params.user;
+    req.session.user = user
+    res.send({
+        Usuario: user,
+        Guardado: 'Ok'
+    })
+    console.log('Sesiones: ', req.session);
 })
 
 const server = httpServer.listen(port, () => {

@@ -14,6 +14,9 @@
     <script src="https://cdn.jsdelivr.net/npm/normalizr@3.6.2/dist/normalizr.browser.min.js" integrity="sha256-qQvNv3XFs75Z4rVX8mxyydxpvBhD9/hRsMJzmVQRbUI=" crossorigin="anonymous"></script>
 </head>
 <body>
+    <div id="Saludo">
+        <h1>BIENVENIDO <%=user%></h1>
+    </div>
     <%- include('../partials/form.ejs') %>
     <div id="results" class="container">
         <%- include('../partials/results.ejs') %>

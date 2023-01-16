@@ -13,17 +13,17 @@
         if (user !== ''){
             errors.classList.remove('errorLabel');
             loginUserInput.classList.remove('errorInput');
-            let response = await fetch('http://localhost:8080/login', { method: 'POST',
+            let response = await fetch(`http://localhost:8080/home/${user}`, { method: 'POST',
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                },
-                body:{
-                    user: user
-                },
-                redirect: 'follow',
-            })
-            await (response.redirected) && (location.href=response.url);
+                }
+            });
+            let resp = await response.json();
+            console.log(resp);
+            if(resp.Guardado === 'Ok'){
+                location.href='http://localhost:8080/home';
+            }
         }else{
             errors.classList.add('errorLabel');
             loginUserInput.classList.add('errorInput');

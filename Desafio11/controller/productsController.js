@@ -104,12 +104,13 @@ async function deleteProductById(id) {
     return productFirebase
 }
 
-export async function showProducts(res) {
+export async function showProducts(req, res) {
     const allProducts = await getProducts(); 
     const allMessages = await msgController.getMessages();
     // console.log('Los productos son: \n', allProducts);
     // res.send({products: allProducts})
-    res.render('pages/index', {products: allProducts, msgs: allMessages});
+    const user = req.session.user;
+    res.render('pages/index', {user: user, products: allProducts, msgs: allMessages});
 }
 
 export async function showProductsRandom(res) {
@@ -117,7 +118,8 @@ export async function showProductsRandom(res) {
     const allMessages = await msgController.getMessages();
     // console.log('Los productos son: \n', allProducts);
     // res.send({products: allProducts})
-    res.render('pages/index', {products: allProducts, msgs: allMessages});
+    const user = req.session.user;
+    res.render('pages/index', {user: user, products: allProducts, msgs: allMessages});
 }
 
 export async function doSaveProduct(product, res) {
