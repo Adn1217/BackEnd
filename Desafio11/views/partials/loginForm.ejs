@@ -1,0 +1,34 @@
+<h1>Login de usuario</h1>
+<div class="col-md-6">
+    <label for="userLogin" class="form-label">Usuario</label>
+    <input type="text" class="form-control" id="loginUserInput" placeholder="Ingrese usuario">
+</div>
+<div>
+    <button id="loginButton" type="button" class="btn btn-primary" >Login</button>
+</div>
+<div id="errors">
+</div>
+<script>
+    async function login(user){
+        if (user !== ''){
+            errors.classList.remove('errorLabel');
+            loginUserInput.classList.remove('errorInput');
+            let response = await fetch(`http://localhost:8080/home/${user}`, { method: 'POST',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                }
+            });
+            let resp = await response.json();
+            console.log(resp);
+            if(resp.Guardado === 'Ok'){
+                location.href='http://localhost:8080/home';
+            }
+        }else{
+            errors.classList.add('errorLabel');
+            loginUserInput.classList.add('errorInput');
+            errors.innerHTML = 'Los campos resaltados son obligatorios';
+        }
+    }
+    loginButton.addEventListener('click', () => login(loginUserInput.value))
+</script>
