@@ -10,9 +10,6 @@ login.get('/', (req, res) => {
 login.get('/logout/:user', (req, res) => {
     let user = req.params.user;
     res.render('pages/logout', {user: user})
-    setTimeout(async () => {
-        location.href='http://localhost:8080/login'
-            }, 2000);
 })
 
 login.post('/:user', (req, res) => {
