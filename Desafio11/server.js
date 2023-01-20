@@ -56,11 +56,12 @@ app.use(session({
         ttl: 60,
     }),
     secret: 'adn1217',
-    resave: false,
+    resave: true,
     saveUninitialized: false,
-    // cookie: {
-    //     maxAge: 60000
-    // }
+    cookie: {
+        maxAge: 60000,
+        httpOnly: false
+    }
 }))
 
 app.use('/login', login);
