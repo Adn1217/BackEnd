@@ -98,84 +98,101 @@ async function updateProduct(id){
 }
 
 async function getAllProducts(){
+    // console.log('Cookies: ', document.cookie);
     results.classList.remove('errorLabel');
-    let response = await fetch('http://localhost:8080/productos/', { method: 'GET',
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-        }
-    })
-    let prods = await response.json();
-    // console.log("productos: ",prods)
-    results.innerHTML= tableRender(prods);
-}
-
-async function getAllRandomProducts(){
-    results.classList.remove('errorLabel');
-    let response = await fetch('http://localhost:8080/productos-test/', { method: 'GET',
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-        }
-    })
-    let prods = await response.json();
-    // console.log("productos: ",prods)
-    results.innerHTML= tableRender(prods);
-}
-
-async function getOneProduct(id){
-    if (id === ''){
-        idInput.classList.add('errorInput');
-        results.classList.add('errorLabel');
-        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-    }else{
-        idInput.classList.remove('errorInput');
-        results.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
+    if (document.cookie){
+        let response = await fetch('http://localhost:8080/productos/', { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             }
         })
-        let prod = await response.json();
-        if (("error" in prod)){
+        let prods = await response.json();
+        // console.log("productos: ",prods)
+        results.innerHTML= tableRender(prods);
+    }else{
+        location.href='http://localhost:8080/login'
+    }
+}
+
+async function getAllRandomProducts(){
+    results.classList.remove('errorLabel');
+    if (document.cookie){
+        let response = await fetch('http://localhost:8080/productos-test/', { method: 'GET',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+        let prods = await response.json();
+        // console.log("productos: ",prods)
+        results.innerHTML= tableRender(prods);
+    }else{
+        location.href='http://localhost:8080/login'
+    }
+}
+
+async function getOneProduct(id){
+    if (document.cookie){
+        if (id === ''){
+            idInput.classList.add('errorInput');
             results.classList.add('errorLabel');
-            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
         }else{
+            idInput.classList.remove('errorInput');
             results.classList.remove('errorLabel');
-            results.innerHTML= tableRender(prod.producto);
-        }
-        console.log(prod);
+            let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                }
+            })
+            let prod = await response.json();
+            if (("error" in prod)){
+                results.classList.add('errorLabel');
+                results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            }else{
+                results.classList.remove('errorLabel');
+                results.innerHTML= tableRender(prod.producto);
+            }
+            console.log(prod);
         // socket.emit('oneProductRequest', parseInt(id));
+        }
+    }else{
+        location.href='http://localhost:8080/login'
     }
 }
 
 async function deleteOneProduct(id){
-    if (id === ''){
-        idInput.classList.add('errorInput');
-        results.classList.add('errorLabel');
-        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-    }else{
-        idInput.classList.remove('errorInput');
-        results.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Auth: productRolRadioButton.checked
-            }
-        })
-        let prod = await response.json();
-        if (("error" in prod)){
-            console.log("Error", prod);
+    if (document.cookie){
+        if (id === ''){
+            idInput.classList.add('errorInput');
             results.classList.add('errorLabel');
-            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
         }else{
-            console.log("Producto eliminado: ", prod);
+            idInput.classList.remove('errorInput');
             results.classList.remove('errorLabel');
-            socket.emit("productRequest", "msj");
-            idInput.value = '';
+            let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    Auth: productRolRadioButton.checked
+                }
+            })
+            let prod = await response.json();
+            if (("error" in prod)){
+                console.log("Error", prod);
+                results.classList.add('errorLabel');
+                results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            }else{
+                console.log("Producto eliminado: ", prod);
+                results.classList.remove('errorLabel');
+                socket.emit("productRequest", "msj");
+                idInput.value = '';
+            }
         }
+    }else{
+        location.href='http://localhost:8080/login'
     }
 }
 
@@ -183,95 +200,108 @@ async function deleteOneProduct(id){
 //---------CARTS FORM----------------------------------
 
 async function saveCart(user){
-    if(user===''){
-        cartUserInput.classList.add('errorInput');
-        cartResults.classList.add('errorLabel');
-        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-    }else{
-        let newCart = {
-            usuario: user,
-            productos: []
+    if (document.cookie){
+        if(user===''){
+            cartUserInput.classList.add('errorInput');
+            cartResults.classList.add('errorLabel');
+            cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+        }else{
+            let newCart = {
+                usuario: user,
+                productos: []
+            }
+            cartResults.classList.remove('errorLabel');
+            cartUserInput.classList.remove('errorInput');
+            idCartInput.classList.remove('errorInput');
+            idProdInput.classList.remove('errorInput');
+            let response = await fetch('http://localhost:8080/carrito/?', { method: 'POST',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    Auth: true 
+                },
+                body: JSON.stringify(newCart)
+            })
+            let carts = await response.json();
+            console.log("Nuevo carrito: ", carts)
+            // results.innerHTML= tableRender(carts);
+            cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>NuevoCarrito: <br></strong>${JSON.stringify(carts)}</p>`;
+            cartUserInput.value = '';
+            idCartInput.value = '';
+            idProdInput.value = '';
         }
-        cartResults.classList.remove('errorLabel');
-        cartUserInput.classList.remove('errorInput');
-        idCartInput.classList.remove('errorInput');
-        idProdInput.classList.remove('errorInput');
-        let response = await fetch('http://localhost:8080/carrito/?', { method: 'POST',
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Auth: true 
-            },
-            body: JSON.stringify(newCart)
-        })
-        let carts = await response.json();
-        console.log("Nuevo carrito: ", carts)
-        // results.innerHTML= tableRender(carts);
-        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>NuevoCarrito: <br></strong>${JSON.stringify(carts)}</p>`;
-        cartUserInput.value = '';
-        idCartInput.value = '';
-        idProdInput.value = '';
+    }else{
+        location.href='http://localhost:8080/login'
     }
 }
 
 async function saveProdInCart(idCart){
     let valideInputs = checkInputs();
-    if((valideInputs && idCart !== '')){
-        let newProd = {
-                code: codeInput.value,
-                title: titleInput.value,
-                description: descriptionInput.value,
-                price: priceInput.value,
-                stock: stockInput.value,
-                thumbnail: thumbnailInput.value,
-                }
-        cartResults.classList.remove('errorLabel');
-        cartUserInput.classList.remove('errorInput');
-        idCartInput.classList.remove('errorInput');
-        idProdInput.classList.remove('errorInput');
-        let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos`, { method: 'POST',
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Auth: true
-            },
-            body: JSON.stringify(newProd)
-        })
-        let carts = await response.json();
-        console.log("Nuevo carrito: ",carts);
-        // results.innerHTML= tableRender(carts);
-        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>CarritoActualizado: <br></strong>${JSON.stringify(carts)}</p>`;
-        cartUserInput.value = '';
-        idCartInput.value = '';
-        idProdInput.value = '';
-        [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
+    if (document.cookie){
+        if((valideInputs && idCart !== '')){
+            let newProd = {
+                    code: codeInput.value,
+                    title: titleInput.value,
+                    description: descriptionInput.value,
+                    price: priceInput.value,
+                    stock: stockInput.value,
+                    thumbnail: thumbnailInput.value,
+                    }
+            cartResults.classList.remove('errorLabel');
+            cartUserInput.classList.remove('errorInput');
+            idCartInput.classList.remove('errorInput');
+            idProdInput.classList.remove('errorInput');
+            let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos`, { method: 'POST',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                    Auth: true
+                },
+                body: JSON.stringify(newProd)
+            })
+            let carts = await response.json();
+            console.log("Nuevo carrito: ",carts);
+            // results.innerHTML= tableRender(carts);
+            cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>CarritoActualizado: <br></strong>${JSON.stringify(carts)}</p>`;
+            cartUserInput.value = '';
+            idCartInput.value = '';
+            idProdInput.value = '';
+            [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
+        }else{
+            idCartInput.classList.add('errorInput');
+            cartResults.classList.add('errorLabel');
+            cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+        }
     }else{
-        idCartInput.classList.add('errorInput');
-        cartResults.classList.add('errorLabel');
-        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+        location.href='http://localhost:8080/login'
     }
 }
 
 async function getAllCarts(){
-    cartResults.classList.remove('errorLabel');
-    idCartInput.classList.remove('errorInput');
-    idProdInput.classList.remove('errorInput');
-    let response = await fetch('http://localhost:8080/carrito/?', { method: 'GET',
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json"
-        }
-    })
-    let carts = await response.json();
-    console.log("Carritos: ",carts)
-    // results.innerHTML= tableRender(carts);
-    cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carritos: <br></strong>${JSON.stringify(carts)}</p>`;
-    idCartInput.value = '';
-    idProdInput.value = '';
-    [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
+    if (document.cookie){
+        cartResults.classList.remove('errorLabel');
+        idCartInput.classList.remove('errorInput');
+        idProdInput.classList.remove('errorInput');
+        let response = await fetch('http://localhost:8080/carrito/?', { method: 'GET',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+        let carts = await response.json();
+        console.log("Carritos: ",carts)
+        // results.innerHTML= tableRender(carts);
+        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carritos: <br></strong>${JSON.stringify(carts)}</p>`;
+        idCartInput.value = '';
+        idProdInput.value = '';
+        [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
+    }else{
+        location.href='http://localhost:8080/login'
+    }
 }
 
 async function getOneCart(id){
+    if (document.cookie){
         if (id === ''){
             idCartInput.classList.add('errorInput');
             cartResults.classList.add('errorLabel');
@@ -300,9 +330,13 @@ async function getOneCart(id){
             console.log(cart);
             // socket.emit('oneProductRequest', parseInt(id));
         }
+    }else{
+        location.href='http://localhost:8080/login'
+    }
 }
 
 async function deleteOneProductInCart(idCart, idProd){
+    if (document.cookie){
         if (idCart === '' || idProd === ''){
             idCartInput.classList.add('errorInput');
             idProdInput.classList.add('errorInput');
@@ -334,9 +368,13 @@ async function deleteOneProductInCart(idCart, idProd){
                 idProdInput.value = '';
             }
         }
+    }else{
+        location.href='http://localhost:8080/login'
+    }
 }
 
 async function deleteOneCart(id){
+    if (document.cookie){
         if (id === ''){
             idCartInput.classList.add('errorInput');
             cartResults.classList.add('errorLabel');
@@ -366,6 +404,9 @@ async function deleteOneCart(id){
                 idProdInput.value = '';
             }
         }
+    }else{
+        location.href='http://localhost:8080/login'
+    }
 }
 
 
@@ -373,25 +414,29 @@ async function deleteOneCart(id){
 async function sendMessage() {
     const fields = [userInput, msgInput];
     let valideInputs = checkMsgInputs(fields);
-    if(valideInputs){
-        let newMessage = {
-            fecha: new Date().toLocaleString("en-GB"),
-            usuario: userInput.value,
-            mensaje: msgInput.value
+    if (document.cookie){
+        if(valideInputs){
+            let newMessage = {
+                fecha: new Date().toLocaleString("en-GB"),
+                usuario: userInput.value,
+                mensaje: msgInput.value
+            }
+            let url = 'http://localhost:8080/mensajes';
+            let verb = 'POST';
+            let response = await fetch(url, { method: verb,
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newMessage)
+            })
+            let data = await response.json();
+            !("error" in data) && ([msgInput.value] = ['']);
+            // console.log(data);
+            socket.emit('messageRequest','msj')
         }
-        let url = 'http://localhost:8080/mensajes';
-        let verb = 'POST';
-        let response = await fetch(url, { method: verb,
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(newMessage)
-        })
-        let data = await response.json();
-        !("error" in data) && ([msgInput.value] = ['']);
-        // console.log(data);
-        socket.emit('messageRequest','msj')
+    }else{
+        location.href='http://localhost:8080/login'
     }
 }
 
@@ -432,28 +477,33 @@ function createMessage() {
 async function sendNormalizedMessage() {
     const fields = [userIdInput, userInput, userLastnameInput, userAgeInput, userAliasInput, userAvatarInput, msgInput];
     let valideInputs = checkMsgInputs(fields);
-    if(valideInputs){
-        let newMessage = createMessage();
-        // let newMessageStr = JSON.stringify(newMessage)
-        // console.log('OriginalMsgStr', newMessageStr);
-        console.log('OriginalMsg', newMessage);
-        let [normMessage, denormMessage] = normalizeMessage(newMessage);
-        console.log('normMsg', normMessage);
-        console.log('denormMsg', denormMessage);
-        // console.log('Normalized Again', normalizeMessage(denormMessage)[0] )
-        let url = 'http://localhost:8080/mensajes/normalized';
-        let verb = 'POST';
-        let response = await fetch(url, { method: verb,
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(normMessage)
-        })
-        let data = await response.json();
-        !("error" in data) && ([msgInput.value] = ['']);
-        // console.log(data);
-        socket.emit('normMessageRequest','msj')
+
+    if (document.cookie){
+        if(valideInputs){
+            let newMessage = createMessage();
+            // let newMessageStr = JSON.stringify(newMessage)
+            // console.log('OriginalMsgStr', newMessageStr);
+            console.log('OriginalMsg', newMessage);
+            let [normMessage, denormMessage] = normalizeMessage(newMessage);
+            console.log('normMsg', normMessage);
+            console.log('denormMsg', denormMessage);
+            // console.log('Normalized Again', normalizeMessage(denormMessage)[0] )
+            let url = 'http://localhost:8080/mensajes/normalized';
+            let verb = 'POST';
+            let response = await fetch(url, { method: verb,
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(normMessage)
+            })
+            let data = await response.json();
+            !("error" in data) && ([msgInput.value] = ['']);
+            // console.log(data);
+            socket.emit('normMessageRequest','msj')
+        }
+    }else{
+        location.href='http://localhost:8080/login'
     }
 }
 
