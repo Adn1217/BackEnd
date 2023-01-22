@@ -23,14 +23,10 @@ login.post('/:user', (req, res) => {
 
 login.delete('/', (req, res) => {
     console.log('DeletedSesión: ', req);
-    const user = req.cookies;
+    const user = req.session.user;
     console.log('DeletedUsuario : ', user);
-    if(user){
-        req.session.destroy();
-        res.send({
-            user: user,
-            eliminado: 'Ok'})
-    }else{
-        res.render('pages/login')
-    }
+    req.session.destroy();
+    res.send({
+        user: user || 'desconocido',
+        eliminado: 'Ok'});
 })

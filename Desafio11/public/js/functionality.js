@@ -113,10 +113,12 @@ async function getAllProducts(){
     })
     let prods = await response.json();
     // console.log("productos: ",prods)
-    if(prods.error === 'Usuario no Autenticado'){
+    if(prods.error === 'Usuario no autenticado'){
         results.classList.add('errorLabel');
         results.innerHTML=`<h1>Error</h1>${JSON.stringify(prods)}</p>`;
-        location.href='http://localhost:8080/login'
+        setTimeout(() => {
+            location.href='http://localhost:8080/login'
+        }, 2000);
     }else{
         results.innerHTML= tableRender(prods);
     }
@@ -551,22 +553,23 @@ async function sendNormalizedMessage() {
 
 async function logout(){
 
-    let response = await fetch(`http://localhost:8080/`, { method: 'DELETE',
+    let response = await fetch(`http://localhost:8080/login`, { method: 'DELETE',
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
         }
     })
-    if (response){
-        let resp = await response.json();
-        // console.log('Respuesta :',resp);
+    let resp = await response.json();
+    if (resp.user){
         let user = resp.user;
-        document.body.innerHTML = `<h1>HASTA LUEGO ${user}</h1>`
+        console.log('LogoutUser', user);
+        // document.body.innerHTML = `<h1>HASTA LUEGO ${user}</h1>`
         // alert("HASTA LUEGO "+ resp.user);
-        setTimeout(async () => {
-            location.href='http://localhost:8080/login'
-                }, 2000);
-            }
+        location.href=`http://localhost:8080/login/logout/${user}`
+    }else{
+        location.href='http://localhost:8080/login'
+    }
+
 }
 
 
