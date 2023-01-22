@@ -78,6 +78,11 @@ async function submitForm(id) {
         if (("error" in prod)){
             results.classList.add('errorLabel');
             results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            if (prod.error === 'Usuario no autenticado'){
+                setTimeout(() => {
+                    location.href='http://localhost:8080/login'
+                }, 2000);
+            }
         }else{
             results.classList.remove('errorLabel');
             socket.emit("productRequest", "msj");
@@ -100,24 +105,25 @@ async function updateProduct(id){
 async function getAllProducts(){
     // console.log('Cookies: ', document.cookie);
     results.classList.remove('errorLabel');
-    if (document.cookie){
-        let response = await fetch('http://localhost:8080/productos/', { method: 'GET',
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            }
-        })
-        let prods = await response.json();
-        // console.log("productos: ",prods)
-        results.innerHTML= tableRender(prods);
-    }else{
+    let response = await fetch('http://localhost:8080/productos/', { method: 'GET',
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        }
+    })
+    let prods = await response.json();
+    // console.log("productos: ",prods)
+    if(prods.error === 'Usuario no Autenticado'){
+        results.classList.add('errorLabel');
+        results.innerHTML=`<h1>Error</h1>${JSON.stringify(prods)}</p>`;
         location.href='http://localhost:8080/login'
+    }else{
+        results.innerHTML= tableRender(prods);
     }
 }
 
 async function getAllRandomProducts(){
     results.classList.remove('errorLabel');
-    if (document.cookie){
         let response = await fetch('http://localhost:8080/productos-test/', { method: 'GET',
             headers: {
                 Accept: "application/json",
@@ -126,73 +132,81 @@ async function getAllRandomProducts(){
         })
         let prods = await response.json();
         // console.log("productos: ",prods)
-        results.innerHTML= tableRender(prods);
+    if ("error" in prods){
+        results.classList.add('errorLabel');
+        results.innerHTML=`<h1>Error</h1>${JSON.stringify(prods)}</p>`;
+        setTimeout(() => {
+            location.href='http://localhost:8080/login'
+        }, 2000);
     }else{
-        location.href='http://localhost:8080/login'
+        results.innerHTML= tableRender(prods);
     }
 }
 
 async function getOneProduct(id){
-    if (document.cookie){
-        if (id === ''){
-            idInput.classList.add('errorInput');
-            results.classList.add('errorLabel');
-            results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-        }else{
-            idInput.classList.remove('errorInput');
-            results.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                }
-            })
-            let prod = await response.json();
-            if (("error" in prod)){
-                results.classList.add('errorLabel');
-                results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
-            }else{
-                results.classList.remove('errorLabel');
-                results.innerHTML= tableRender(prod.producto);
-            }
-            console.log(prod);
-        // socket.emit('oneProductRequest', parseInt(id));
-        }
+    if (id === ''){
+        idInput.classList.add('errorInput');
+        results.classList.add('errorLabel');
+        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
     }else{
-        location.href='http://localhost:8080/login'
+        idInput.classList.remove('errorInput');
+        results.classList.remove('errorLabel');
+        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            }
+        })
+        let prod = await response.json();
+        if (("error" in prod)){
+            results.classList.add('errorLabel');
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            if (prod.error === 'Usuario no autenticado'){
+                setTimeout(() => {
+                    location.href='http://localhost:8080/login'
+                }, 2000);
+            }
+        }else{
+            results.classList.remove('errorLabel');
+            results.innerHTML= tableRender(prod.producto);
+        }
+        console.log(prod);
+    // socket.emit('oneProductRequest', parseInt(id));
     }
+
 }
 
 async function deleteOneProduct(id){
-    if (document.cookie){
-        if (id === ''){
-            idInput.classList.add('errorInput');
-            results.classList.add('errorLabel');
-            results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-        }else{
-            idInput.classList.remove('errorInput');
-            results.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Auth: productRolRadioButton.checked
-                }
-            })
-            let prod = await response.json();
-            if (("error" in prod)){
-                console.log("Error", prod);
-                results.classList.add('errorLabel');
-                results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
-            }else{
-                console.log("Producto eliminado: ", prod);
-                results.classList.remove('errorLabel');
-                socket.emit("productRequest", "msj");
-                idInput.value = '';
-            }
-        }
+    if (id === ''){
+        idInput.classList.add('errorInput');
+        results.classList.add('errorLabel');
+        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
     }else{
-        location.href='http://localhost:8080/login'
+        idInput.classList.remove('errorInput');
+        results.classList.remove('errorLabel');
+        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: productRolRadioButton.checked
+            }
+        })
+        let prod = await response.json();
+        if (("error" in prod)){
+            console.log("Error", prod);
+            results.classList.add('errorLabel');
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            if (prod.error === 'Usuario no autenticado'){
+                setTimeout(() => {
+                    location.href='http://localhost:8080/login'
+                }, 2000);
+            }
+        }else{
+            console.log("Producto eliminado: ", prod);
+            results.classList.remove('errorLabel');
+            socket.emit("productRequest", "msj");
+            idInput.value = '';
+        }
     }
 }
 
@@ -200,212 +214,227 @@ async function deleteOneProduct(id){
 //---------CARTS FORM----------------------------------
 
 async function saveCart(user){
-    if (document.cookie){
-        if(user===''){
-            cartUserInput.classList.add('errorInput');
+    if(user===''){
+        cartUserInput.classList.add('errorInput');
+        cartResults.classList.add('errorLabel');
+        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+    }else{
+        let newCart = {
+            usuario: user,
+            productos: []
+        }
+        cartResults.classList.remove('errorLabel');
+        cartUserInput.classList.remove('errorInput');
+        idCartInput.classList.remove('errorInput');
+        idProdInput.classList.remove('errorInput');
+        let response = await fetch('http://localhost:8080/carrito/?', { method: 'POST',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: true 
+            },
+            body: JSON.stringify(newCart)
+        })
+        let carts = await response.json();
+        console.log("Nuevo carrito: ", carts)
+        if (carts.error === 'Usuario no autenticado'){
             cartResults.classList.add('errorLabel');
-            cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+            cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(carts)}</p>`;
+                setTimeout(() => {
+                    location.href='http://localhost:8080/login'
+                }, 2000);
         }else{
-            let newCart = {
-                usuario: user,
-                productos: []
-            }
-            cartResults.classList.remove('errorLabel');
-            cartUserInput.classList.remove('errorInput');
-            idCartInput.classList.remove('errorInput');
-            idProdInput.classList.remove('errorInput');
-            let response = await fetch('http://localhost:8080/carrito/?', { method: 'POST',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Auth: true 
-                },
-                body: JSON.stringify(newCart)
-            })
-            let carts = await response.json();
-            console.log("Nuevo carrito: ", carts)
             // results.innerHTML= tableRender(carts);
             cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>NuevoCarrito: <br></strong>${JSON.stringify(carts)}</p>`;
             cartUserInput.value = '';
             idCartInput.value = '';
             idProdInput.value = '';
         }
-    }else{
-        location.href='http://localhost:8080/login'
     }
 }
 
 async function saveProdInCart(idCart){
     let valideInputs = checkInputs();
-    if (document.cookie){
-        if((valideInputs && idCart !== '')){
-            let newProd = {
-                    code: codeInput.value,
-                    title: titleInput.value,
-                    description: descriptionInput.value,
-                    price: priceInput.value,
-                    stock: stockInput.value,
-                    thumbnail: thumbnailInput.value,
-                    }
-            cartResults.classList.remove('errorLabel');
-            cartUserInput.classList.remove('errorInput');
-            idCartInput.classList.remove('errorInput');
-            idProdInput.classList.remove('errorInput');
-            let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos`, { method: 'POST',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Auth: true
-                },
-                body: JSON.stringify(newProd)
-            })
-            let carts = await response.json();
-            console.log("Nuevo carrito: ",carts);
+    if((valideInputs && idCart !== '')){
+        let newProd = {
+                code: codeInput.value,
+                title: titleInput.value,
+                description: descriptionInput.value,
+                price: priceInput.value,
+                stock: stockInput.value,
+                thumbnail: thumbnailInput.value,
+                }
+        cartResults.classList.remove('errorLabel');
+        cartUserInput.classList.remove('errorInput');
+        idCartInput.classList.remove('errorInput');
+        idProdInput.classList.remove('errorInput');
+        let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos`, { method: 'POST',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: true
+            },
+            body: JSON.stringify(newProd)
+        })
+        let carts = await response.json();
+        console.log("Nuevo carrito: ",carts);
+        if (carts.error === 'Usuario no autenticado'){
+            cartResults.classList.add('errorLabel');
+            cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(carts)}</p>`;
+                setTimeout(() => {
+                    location.href='http://localhost:8080/login'
+                }, 2000);
+        }else{
             // results.innerHTML= tableRender(carts);
             cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>CarritoActualizado: <br></strong>${JSON.stringify(carts)}</p>`;
             cartUserInput.value = '';
             idCartInput.value = '';
             idProdInput.value = '';
             [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
-        }else{
-            idCartInput.classList.add('errorInput');
-            cartResults.classList.add('errorLabel');
-            cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
         }
     }else{
-        location.href='http://localhost:8080/login'
+        idCartInput.classList.add('errorInput');
+        cartResults.classList.add('errorLabel');
+        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
     }
 }
 
 async function getAllCarts(){
-    if (document.cookie){
-        cartResults.classList.remove('errorLabel');
+    cartResults.classList.remove('errorLabel');
+    idCartInput.classList.remove('errorInput');
+    idProdInput.classList.remove('errorInput');
+    let response = await fetch('http://localhost:8080/carrito/?', { method: 'GET',
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        }
+    })
+    let carts = await response.json();
+    console.log("Carritos: ",carts)
+    if (carts.error === 'Usuario no autenticado'){
+        cartResults.classList.add('errorLabel');
+        cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(carts)}</p>`;
+            setTimeout(() => {
+                location.href='http://localhost:8080/login'
+            }, 2000);
+    }else{
+    // results.innerHTML= tableRender(carts);
+    cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carritos: <br></strong>${JSON.stringify(carts)}</p>`;
+    idCartInput.value = '';
+    idProdInput.value = '';
+    [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
+    }
+}
+
+async function getOneCart(id){
+    if (id === ''){
+        idCartInput.classList.add('errorInput');
+        cartResults.classList.add('errorLabel');
+        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+    }else{
         idCartInput.classList.remove('errorInput');
         idProdInput.classList.remove('errorInput');
-        let response = await fetch('http://localhost:8080/carrito/?', { method: 'GET',
+        cartResults.classList.remove('errorLabel');
+        let response = await fetch(`http://localhost:8080/carrito/${id}/productos`, { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             }
         })
-        let carts = await response.json();
-        console.log("Carritos: ",carts)
-        // results.innerHTML= tableRender(carts);
-        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carritos: <br></strong>${JSON.stringify(carts)}</p>`;
-        idCartInput.value = '';
-        idProdInput.value = '';
-        [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
-    }else{
-        location.href='http://localhost:8080/login'
-    }
-}
-
-async function getOneCart(id){
-    if (document.cookie){
-        if (id === ''){
-            idCartInput.classList.add('errorInput');
+        let cart = await response.json();
+        if (("error" in cart)){
             cartResults.classList.add('errorLabel');
-            cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-        }else{
-            idCartInput.classList.remove('errorInput');
-            idProdInput.classList.remove('errorInput');
-            cartResults.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/carrito/${id}/productos`, { method: 'GET',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                }
-            })
-            let cart = await response.json();
-            if (("error" in cart)){
-                cartResults.classList.add('errorLabel');
-                cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(cart)}</p>`;
-            }else{
-                cartResults.classList.remove('errorLabel');
-                // cartResults.innerHTML= tableRender(prod.producto);
-                cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>ProductosCarrito${id}: <br></strong>${JSON.stringify(cart)}</p>`;
-                idCartInput.value = '';
+            cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(cart)}</p>`;
+            if (cart.error === "Usuario no autenticado"){
+                setTimeout(() => {
+                    location.href='http://localhost:8080/login'
+                }, 2000);
             }
-            idProdInput.value = '';
-            console.log(cart);
-            // socket.emit('oneProductRequest', parseInt(id));
+        }else{
+            cartResults.classList.remove('errorLabel');
+            // cartResults.innerHTML= tableRender(prod.producto);
+            cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>ProductosCarrito${id}: <br></strong>${JSON.stringify(cart)}</p>`;
+            idCartInput.value = '';
         }
-    }else{
-        location.href='http://localhost:8080/login'
+        idProdInput.value = '';
+        console.log(cart);
+        // socket.emit('oneProductRequest', parseInt(id));
     }
 }
 
 async function deleteOneProductInCart(idCart, idProd){
-    if (document.cookie){
-        if (idCart === '' || idProd === ''){
-            idCartInput.classList.add('errorInput');
-            idProdInput.classList.add('errorInput');
-            cartResults.classList.add('errorLabel');
-            cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-        }else{
-            idCartInput.classList.remove('errorInput');
-            idProdInput.classList.remove('errorInput');
-            cartResults.classList.remove('errorLabel');
-            cartResults.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos/${idProd}`, { method: 'DELETE',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Auth: true
-                }
-            })
-            let prod = await response.json();
-            if (("error" in prod)){
-                console.log("Error", prod);
-                cartResults.classList.add('errorLabel');
-                cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
-            }else{
-                console.log("Producto eliminado: ", prod);
-                cartResults.classList.remove('errorLabel');
-                cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>ProductoEliminadoDelCarrito${idCart}: <br></strong>${JSON.stringify(prod)}</p>`;
-                // socket.emit("productRequest", "msj");
-                idCartInput.value = '';
-                idProdInput.value = '';
-            }
-        }
+    if (idCart === '' || idProd === ''){
+        idCartInput.classList.add('errorInput');
+        idProdInput.classList.add('errorInput');
+        cartResults.classList.add('errorLabel');
+        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
     }else{
-        location.href='http://localhost:8080/login'
+        idCartInput.classList.remove('errorInput');
+        idProdInput.classList.remove('errorInput');
+        cartResults.classList.remove('errorLabel');
+        cartResults.classList.remove('errorLabel');
+        let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos/${idProd}`, { method: 'DELETE',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: true
+            }
+        })
+        let prod = await response.json();
+        if (("error" in prod)){
+            console.log("Error", prod);
+            cartResults.classList.add('errorLabel');
+            cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            if (prod.error === "Usuario no autenticado"){
+                setTimeout(() => {
+                    location.href='http://localhost:8080/login'
+                }, 2000);
+            }
+        }else{
+            console.log("Producto eliminado: ", prod);
+            cartResults.classList.remove('errorLabel');
+            cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>ProductoEliminadoDelCarrito${idCart}: <br></strong>${JSON.stringify(prod)}</p>`;
+            // socket.emit("productRequest", "msj");
+            idCartInput.value = '';
+            idProdInput.value = '';
+        }
     }
 }
 
 async function deleteOneCart(id){
-    if (document.cookie){
-        if (id === ''){
-            idCartInput.classList.add('errorInput');
-            cartResults.classList.add('errorLabel');
-            cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-        }else{
-            idCartInput.classList.remove('errorInput');
-            idProdInput.classList.remove('errorInput');
-            cartResults.classList.remove('errorLabel');
-            let response = await fetch(`http://localhost:8080/carrito/${id}`, { method: 'DELETE',
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                    Auth: true
-                }
-            })
-            let cart = await response.json();
-            if (("error" in cart)){
-                console.log("Error", cart);
-                cartResults.classList.add('errorLabel');
-                cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(cart)}</p>`;
-            }else{
-                console.log("Carrito eliminado: ", cart);
-                results.classList.remove('errorLabel');
-                // socket.emit("productRequest", "msj");
-                cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carrito${id}Eliminado: <br></strong>${JSON.stringify(cart)}</p>`;
-                idCartInput.value = '';
-                idProdInput.value = '';
-            }
-        }
+    if (id === ''){
+        idCartInput.classList.add('errorInput');
+        cartResults.classList.add('errorLabel');
+        cartResults.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
     }else{
-        location.href='http://localhost:8080/login'
+        idCartInput.classList.remove('errorInput');
+        idProdInput.classList.remove('errorInput');
+        cartResults.classList.remove('errorLabel');
+        let response = await fetch(`http://localhost:8080/carrito/${id}`, { method: 'DELETE',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: true
+            }
+        })
+        let cart = await response.json();
+        if (("error" in cart)){
+            console.log("Error", cart);
+            cartResults.classList.add('errorLabel');
+            cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(cart)}</p>`;
+            if (cart.error === "Usuario no autenticado"){
+                setTimeout(() => {
+                    location.href='http://localhost:8080/login'
+                }, 2000);
+            }
+        }else{
+            console.log("Carrito eliminado: ", cart);
+            results.classList.remove('errorLabel');
+            // socket.emit("productRequest", "msj");
+            cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carrito${id}Eliminado: <br></strong>${JSON.stringify(cart)}</p>`;
+            idCartInput.value = '';
+            idProdInput.value = '';
+        }
     }
 }
 
@@ -414,29 +443,35 @@ async function deleteOneCart(id){
 async function sendMessage() {
     const fields = [userInput, msgInput];
     let valideInputs = checkMsgInputs(fields);
-    if (document.cookie){
-        if(valideInputs){
-            let newMessage = {
-                fecha: new Date().toLocaleString("en-GB"),
-                usuario: userInput.value,
-                mensaje: msgInput.value
-            }
-            let url = 'http://localhost:8080/mensajes';
-            let verb = 'POST';
-            let response = await fetch(url, { method: verb,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(newMessage)
-            })
-            let data = await response.json();
-            !("error" in data) && ([msgInput.value] = ['']);
-            // console.log(data);
+    if(valideInputs){
+        let newMessage = {
+            fecha: new Date().toLocaleString("en-GB"),
+            usuario: userInput.value,
+            mensaje: msgInput.value
+        }
+        let url = 'http://localhost:8080/mensajes';
+        let verb = 'POST';
+        let response = await fetch(url, { method: verb,
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(newMessage)
+        })
+        let data = await response.json();
+        !("error" in data) && ([msgInput.value] = ['']);
+        // console.log(data);
+
+        if (data?.error === "Usuario no autenticado"){
+            console.log("Error", data);
+            results.classList.add('errorLabel');
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(data)}</p>`;
+            setTimeout(() => {
+                location.href='http://localhost:8080/login'
+            }, 2000);
+        }else{
             socket.emit('messageRequest','msj')
         }
-    }else{
-        location.href='http://localhost:8080/login'
     }
 }
 
@@ -478,53 +513,58 @@ async function sendNormalizedMessage() {
     const fields = [userIdInput, userInput, userLastnameInput, userAgeInput, userAliasInput, userAvatarInput, msgInput];
     let valideInputs = checkMsgInputs(fields);
 
-    if (document.cookie){
-        if(valideInputs){
-            let newMessage = createMessage();
-            // let newMessageStr = JSON.stringify(newMessage)
-            // console.log('OriginalMsgStr', newMessageStr);
-            console.log('OriginalMsg', newMessage);
-            let [normMessage, denormMessage] = normalizeMessage(newMessage);
-            console.log('normMsg', normMessage);
-            console.log('denormMsg', denormMessage);
-            // console.log('Normalized Again', normalizeMessage(denormMessage)[0] )
-            let url = 'http://localhost:8080/mensajes/normalized';
-            let verb = 'POST';
-            let response = await fetch(url, { method: verb,
-                headers: {
-                    Accept: "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(normMessage)
-            })
-            let data = await response.json();
-            !("error" in data) && ([msgInput.value] = ['']);
-            // console.log(data);
-            socket.emit('normMessageRequest','msj')
+    if(valideInputs){
+        let newMessage = createMessage();
+        // let newMessageStr = JSON.stringify(newMessage)
+        // console.log('OriginalMsgStr', newMessageStr);
+        console.log('OriginalMsg', newMessage);
+        let [normMessage, denormMessage] = normalizeMessage(newMessage);
+        console.log('normMsg', normMessage);
+        console.log('denormMsg', denormMessage);
+        // console.log('Normalized Again', normalizeMessage(denormMessage)[0] )
+        let url = 'http://localhost:8080/mensajes/normalized';
+        let verb = 'POST';
+        let response = await fetch(url, { method: verb,
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(normMessage)
+        })
+        let data = await response.json();
+        !("error" in data) && ([msgInput.value] = ['']);
+        // console.log(data);
+        if (data?.error === "Usuario no autenticado"){
+            console.log("Error", data);
+            results.classList.add('errorLabel');
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(data)}</p>`;
+            setTimeout(() => {
+                location.href='http://localhost:8080/login'
+            }, 2000);
+        }else{
+            socket.emit('messageRequest','msj')
         }
-    }else{
-        location.href='http://localhost:8080/login'
     }
 }
 
 async function logout(){
 
-        let response = await fetch(`http://localhost:8080/`, { method: 'DELETE',
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
+    let response = await fetch(`http://localhost:8080/`, { method: 'DELETE',
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        }
+    })
+    if (response){
+        let resp = await response.json();
+        // console.log('Respuesta :',resp);
+        let user = resp.user;
+        document.body.innerHTML = `<h1>HASTA LUEGO ${user}</h1>`
+        // alert("HASTA LUEGO "+ resp.user);
+        setTimeout(async () => {
+            location.href='http://localhost:8080/login'
+                }, 2000);
             }
-        })
-        if (response){
-            let resp = await response.json();
-            // console.log('Respuesta :',resp);
-            let user = resp.user;
-            document.body.innerHTML = `<h1>HASTA LUEGO ${user}</h1>`
-            // alert("HASTA LUEGO "+ resp.user);
-            setTimeout(async () => {
-                location.href='http://localhost:8080/login'
-                    }, 2000);
-                }
 }
 
 

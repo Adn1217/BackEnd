@@ -15,6 +15,17 @@ async function onlyAdmin(req, res, next, params) {
     }
 }
 
+function isLogged(req, res, next){
+    if (req.session.user){
+        next()
+    }else{
+        res.send({error: 'Usuario no autenticado'});
+    }
+}
+
+productos.use('/', isLogged);
+productosTest.use('/', isLogged);
+
 productos.get('/:id?', async(req, res) => {
     if(Object.keys(req.query).length > 0 || req.params.id){
         const id = req.query.id || req.params.id
