@@ -445,7 +445,8 @@ async function sendMessage() {
     let valideInputs = checkMsgInputs(fields);
     if(valideInputs){
         let newMessage = {
-            fecha: new Date().toLocaleString("en-GB"),
+            // fecha: new Date().toLocaleString("en-GB"),
+            fecha: new Date(),
             usuario: userInput.value,
             mensaje: msgInput.value
         }
@@ -501,7 +502,8 @@ function createMessage() {
                     alias: userAliasInput.value,
                     avatar: userAvatarInput.value
                 },
-                fecha: new Date().toLocaleString("en-GB"),
+                fecha: new Date(),
+                // fecha: new Date().toLocaleString("en-GB"),
                 mensaje: msgInput.value
             }
         ]
@@ -542,7 +544,7 @@ async function sendNormalizedMessage() {
                 location.href='http://localhost:8080/login'
             }, 2000);
         }else{
-            socket.emit('messageRequest','msj')
+            socket.emit('normMessageRequest','msj')
         }
     }
 }
