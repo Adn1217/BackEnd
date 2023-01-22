@@ -113,10 +113,12 @@ async function getAllProducts(){
     })
     let prods = await response.json();
     // console.log("productos: ",prods)
-    if(prods.error === 'Usuario no Autenticado'){
+    if(prods.error === 'Usuario no autenticado'){
         results.classList.add('errorLabel');
         results.innerHTML=`<h1>Error</h1>${JSON.stringify(prods)}</p>`;
-        location.href='http://localhost:8080/login'
+        setTimeout(() => {
+            location.href='http://localhost:8080/login'
+        }, 2000);
     }else{
         results.innerHTML= tableRender(prods);
     }
@@ -445,7 +447,8 @@ async function sendMessage() {
     let valideInputs = checkMsgInputs(fields);
     if(valideInputs){
         let newMessage = {
-            fecha: new Date().toLocaleString("en-GB"),
+            // fecha: new Date().toLocaleString("en-GB"),
+            fecha: new Date(),
             usuario: userInput.value,
             mensaje: msgInput.value
         }
@@ -501,7 +504,8 @@ function createMessage() {
                     alias: userAliasInput.value,
                     avatar: userAvatarInput.value
                 },
-                fecha: new Date().toLocaleString("en-GB"),
+                fecha: new Date(),
+                // fecha: new Date().toLocaleString("en-GB"),
                 mensaje: msgInput.value
             }
         ]
@@ -542,29 +546,30 @@ async function sendNormalizedMessage() {
                 location.href='http://localhost:8080/login'
             }, 2000);
         }else{
-            socket.emit('messageRequest','msj')
+            socket.emit('normMessageRequest','msj')
         }
     }
 }
 
 async function logout(){
 
-    let response = await fetch(`http://localhost:8080/`, { method: 'DELETE',
+    let response = await fetch(`http://localhost:8080/login`, { method: 'DELETE',
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
         }
     })
-    if (response){
-        let resp = await response.json();
-        // console.log('Respuesta :',resp);
+    let resp = await response.json();
+    if (resp.user){
         let user = resp.user;
-        document.body.innerHTML = `<h1>HASTA LUEGO ${user}</h1>`
+        console.log('LogoutUser', user);
+        // document.body.innerHTML = `<h1>HASTA LUEGO ${user}</h1>`
         // alert("HASTA LUEGO "+ resp.user);
-        setTimeout(async () => {
-            location.href='http://localhost:8080/login'
-                }, 2000);
-            }
+        location.href=`http://localhost:8080/login/logout/${user}`
+    }else{
+        location.href='http://localhost:8080/login'
+    }
+
 }
 
 

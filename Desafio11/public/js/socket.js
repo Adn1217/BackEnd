@@ -75,10 +75,12 @@ function chatRender(msgs, compression = null){
     })
     
     msgs.forEach((msg) => {
-        // let fecha = msg.fecha || new Date(msg._id.getTimestamp()).toLocaleString();
+        let date = Date.parse(msg?.fecha) ||  Date.parse(msg?.msj[0].fecha)
+        let formattedDate = (new Date(date)).toLocaleDateString('en-GB') + ', ' + (new Date(date)).toLocaleTimeString('en-GB') || msg.fecha;
+        let fecha = formattedDate || date;
         let user = msg?.usuario || msg.msj[0].author?.nombre || 'Sin autor';
         htmlChat += `<div id="msj" class="rounded-3">
-                        <p><strong>${user}:</strong><br>${msg.mensaje || msg.msj[0].mensaje}<br><em>Recibido el ${msg.fecha || msg.msj[0].fecha}</em></p>
+                        <p><strong>${user}:</strong><br>${msg.mensaje || msg.msj[0].mensaje}<br><em>Recibido el ${fecha}</em></p>
                     </div>`
     })
     return htmlChat;
@@ -107,8 +109,19 @@ socket.on('mensajes', msgs => {
         let denormSize = JSON.stringify(mensajes).length;
         compression = parseFloat(((denormSize-normSize)/denormSize)*100).toFixed(2);
         mensajes = mensajes.messages;
+        mensajes.sort((a,b) => {
+            let date1 = new Date(a.msj[0].fecha);
+            let date2 = new Date(b.msj[0].fecha);
+            return date2.getTime() - date1.getTime();
+        })
         console.log('mensajes desnormalizados: ', mensajes);
         console.log('Porcentaje de compresión: ', compression);
+    }else{
+        mensajes.sort((a,b) => {
+            let date1 = new Date(a.fecha);
+            let date2 = new Date(b.fecha);
+            return date2.getTime() - date1.getTime();
+        })
     }
     if (!("error" in msgs)){
         chat.innerHTML= chatRender(mensajes, compression);

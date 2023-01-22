@@ -53,15 +53,15 @@ app.use(session({
         mongoUrl: getURL(mongoAtlasDb),
         mongoOptions: advancedOptions,
         collectionName: "sessions",
-        ttl: 20,
+        ttl: 10,
     }),
     secret: 'adn1217',
     resave: false,
-    // rolling: true,
+    rolling: true,
     saveUninitialized: false,
     cookie: {
-        maxAge: 20000,
-        httpOnly: false
+        maxAge: 10000,
+        // httpOnly: false
     }
 }))
 
@@ -152,20 +152,6 @@ app.post('/home/:user', (req, res) => {
         Usuario: user,
         Guardado: 'Ok'
     })
-})
-
-app.delete('/', (req, res) => {
-    console.log('DeletedSesión: ', req.session);
-    const user = req.session.user;
-    console.log('DeletedUsuario : ', user);
-    if(user){
-        req.session.destroy();
-        res.send({
-            user: user,
-            eliminado: 'Ok'})
-    }else{
-        res.render('pages/login')
-    }
 })
 
 const server = httpServer.listen(port, () => {
