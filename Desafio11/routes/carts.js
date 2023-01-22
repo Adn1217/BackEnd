@@ -14,6 +14,16 @@ async function onlyAdmin(req, res, next, params) {
     }
 }
 
+function isLogged(req, res, next){
+    if (req.session.user){
+        next()
+    }else{
+        res.send({error: 'Usuario no autenticado'});
+    }
+}
+
+carrito.use('/', isLogged);
+
 carrito.get('/', (req, res) => {
     cartController.showCart(res);
 })

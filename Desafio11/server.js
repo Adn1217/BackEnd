@@ -53,27 +53,37 @@ app.use(session({
         mongoUrl: getURL(mongoAtlasDb),
         mongoOptions: advancedOptions,
         collectionName: "sessions",
-        ttl: 60,
+        ttl: 20,
     }),
     secret: 'adn1217',
-    resave: true,
+    resave: false,
+    // rolling: true,
     saveUninitialized: false,
     cookie: {
-        maxAge: 60000,
+        maxAge: 20000,
         httpOnly: false
     }
 }))
 
-app.use('/login', login);
-app.use('/productos', productos);
-app.use('/productos-test', productosTest);
-app.use('/carrito', carrito);
-app.use('/mensajes', mensajes);
+app.use('/login', login, (req, res) =>{
+    res.sendStatus(400)
+});
+app.use('/productos', productos, (req, res) =>{
+    res.sendStatus(400)
+});
+app.use('/productos-test', productosTest, (req, res) =>{
+    res.sendStatus(400)
+});
+app.use('/carrito', carrito,(req, res) =>{
+    res.sendStatus(400)
+});
+app.use('/mensajes', mensajes, (req, res) =>{
+    res.sendStatus(400)
+});
+
 app.set('view engine', 'ejs');
 // app.set('views', "./views"); //Por defecto.
 app.use(express.static(__dirname + '/public'));
-
-
 
 mongoAtlasConnect(mongoAtlasDb);
 firebaseConnect();
