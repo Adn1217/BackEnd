@@ -5,12 +5,20 @@ export const login = new Router();
 export const register = new Router();
 export const logout = new Router();
 
+function requireAuthentication(req, res, next){
+    if(req.isAuthenticated()){
+        next()
+    }else{
+        res.render('pages/login')
+    }
+}
+
 login.get('/', (req, res) => {
     res.render('pages/login')
 })
 
 register.get('/', (req, res) => {
-    res.render('pages/register')
+    res.render('pages/register', {error: null})
 })
 
 logout.get('/:user', (req, res) => {
@@ -30,6 +38,14 @@ login.post('/:user', (req, res) => {
     }else{
         res.send({Error: 'Usuario no autenticado'})
     }
+})
+
+// register.post('/', (req, res) => {
+//     console.log(req.body);
+// })
+
+register.get('/failregister', (req, res) => {
+    res.render('pages/register', {error: 'El usuario ya existe'})
 })
 
 login.delete('/', (req, res) => {

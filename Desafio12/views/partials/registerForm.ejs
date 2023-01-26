@@ -4,8 +4,8 @@
     <input type="text" class="form-control" id="registerUserInput" placeholder="Ingrese usuario">
 </div>
 <div class="col-md-6">
-    <label for="userPswRegister" class="form-label">Contraseña</label>
-    <input type="password" class="form-control" id="registerPwdRegister" placeholder="Ingrese usuario">
+    <label for="pwdRegister" class="form-label">Contraseña</label>
+    <input type="password" class="form-control" id="registerPwdInput" placeholder="Ingrese usuario">
 </div>
 <div>
     <button id="registerButton" type="button" class="btn btn-primary" >Registrar</button>
@@ -17,29 +17,35 @@
     <button id="goToLoginButton" type="button" class="btn btn-warning" >ir al Login</button>
 </div>
 <script>
-    async function login(user){
-        if (user !== ''){
-            errors.classList.remove('errorLabel');
-            loginUserInput.classList.remove('errorInput');
-            let response = await fetch(`http://localhost:8080/login/${user}`, { method: 'POST',
+    async function register(){
+        if (registerUserInput.value !== '' && registerPwdInput.value !== '' ){
+            registerErrors.classList.remove('errorLabel');
+            registerUserInput.classList.remove('errorInput');
+            registerPwdInput.classList.remove('errorInput');
+            let response = await fetch(`http://localhost:8080/register`, { method: 'POST',
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                }
+                },
+                body: JSON.stringify({
+                    username: registerUserInput.value,
+                    password: registerPwdInput.value
+                })
             });
-            let resp = await response.json();
-            console.log(resp);
-            if(resp.Guardado === 'Ok'){
-                location.href='http://localhost:8080/home';
-            }else{
-                errors.classList.add('errorLabel');
-                loginUserInput.classList.add('errorInput');
-                errors.innerHTML = JSON.stringify(resp);
-            }
+            // let resp = await response.json();
+            // console.log(resp);
+            // if(resp.Guardado === 'Ok'){
+            //     location.href='http://localhost:8080/home';
+            // }else{
+            //     errors.classList.add('errorLabel');
+            //     loginUserInput.classList.add('errorInput');
+            //     errors.innerHTML = JSON.stringify(resp);
+            // }
         }else{
-            errors.classList.add('errorLabel');
-            loginUserInput.classList.add('errorInput');
-            errors.innerHTML = 'Los campos resaltados son obligatorios';
+            registerErrors.classList.add('errorLabel');
+            registerUserInput.classList.add('errorInput');
+            registerPwdInput.classList.add('errorInput');
+            registerErrors.innerHTML = 'Los campos resaltados son obligatorios';
         }
     }
     
