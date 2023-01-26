@@ -1,5 +1,8 @@
 // BUTTONs
 let loginButton = document.getElementById('loginButton');
+let goToRegisterButton = document.getElementById('goToRegisterButton');
+let goToLoginButton = document.getElementById('goToLoginButton');
+let registerButton = document.getElementById('registerButton');
 let logoutButton = document.getElementById('logoutButton');
 let submitButton = document.getElementById('submitButton');
 let getAllButton = document.getElementById('getAllButton');
@@ -19,6 +22,7 @@ let sendMsgButton = document.getElementById('sendMsgButton');
 
 // DIVs
 let errors = document.getElementById('errors');
+let registerErrors = document.getElementById('registerErrors');
 let results = document.getElementById('results');
 let cartResults = document.getElementById('cartResults');
 let resultados = document.getElementById('resultados');
@@ -26,6 +30,9 @@ let chat = document.getElementById('msjs');
 
 // INPUTs
 let loginUserInput = document.getElementById('loginUserInput');
+let loginPswInput = document.getElementById('loginPswInput');
+let registerUserInput = document.getElementById('registerUserInput');
+let registerPwdInput = document.getElementById('registerPwdInput');
 let titleInput = document.getElementById('titleInput');
 let descriptionInput = document.getElementById('descriptionInput');
 let codeInput = document.getElementById('codeInput');

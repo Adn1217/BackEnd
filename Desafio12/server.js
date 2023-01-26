@@ -1,3 +1,4 @@
+
 import express from 'express';
 import mongoose from 'mongoose';
 import {Server as HttpServer} from 'http';
@@ -19,7 +20,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 
 
-import {login, logout} from './routes/login.js';
+import {login, register, logout} from './routes/login.js';
 import {mensajes} from './routes/messages.js';
 import {productos, productosTest} from './routes/products.js';
 import {carrito} from './routes/carts.js';
@@ -70,22 +71,25 @@ app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/public'));
 
 app.use('/login', login, (req, res) =>{
-    res.sendStatus(400)
+    res.sendStatus(400);
+});
+app.use('/register', register, (req, res) =>{
+    res.sendStatus(400);
 });
 app.use('/logout', logout, (req, res) =>{
-    res.sendStatus(400)
+    res.sendStatus(400);
 });
 app.use('/productos', productos, (req, res) =>{
-    res.sendStatus(400)
+    res.sendStatus(400);
 });
 app.use('/productos-test', productosTest, (req, res) =>{
-    res.sendStatus(400)
+    res.sendStatus(400);
 });
 app.use('/carrito', carrito,(req, res) =>{
-    res.sendStatus(400) 
+    res.sendStatus(400);
 });
 app.use('/mensajes', mensajes, (req, res) =>{
-    res.sendStatus(400) //Bad Request
+    res.sendStatus(400); //Bad Request
 });
 
 mongoAtlasConnect(mongoAtlasDb);

@@ -1,0 +1,51 @@
+<h1>Registro de usuario</h1>
+<div class="col-md-6">
+    <label for="userRegister" class="form-label">Usuario</label>
+    <input type="text" class="form-control" id="registerUserInput" placeholder="Ingrese usuario">
+</div>
+<div class="col-md-6">
+    <label for="userPswRegister" class="form-label">Contraseña</label>
+    <input type="password" class="form-control" id="registerPwdRegister" placeholder="Ingrese usuario">
+</div>
+<div>
+    <button id="registerButton" type="button" class="btn btn-primary" >Registrar</button>
+</div>
+<div id="registerErrors">
+</div>
+<hr>
+<div>
+    <button id="goToLoginButton" type="button" class="btn btn-warning" >ir al Login</button>
+</div>
+<script>
+    async function login(user){
+        if (user !== ''){
+            errors.classList.remove('errorLabel');
+            loginUserInput.classList.remove('errorInput');
+            let response = await fetch(`http://localhost:8080/login/${user}`, { method: 'POST',
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                }
+            });
+            let resp = await response.json();
+            console.log(resp);
+            if(resp.Guardado === 'Ok'){
+                location.href='http://localhost:8080/home';
+            }else{
+                errors.classList.add('errorLabel');
+                loginUserInput.classList.add('errorInput');
+                errors.innerHTML = JSON.stringify(resp);
+            }
+        }else{
+            errors.classList.add('errorLabel');
+            loginUserInput.classList.add('errorInput');
+            errors.innerHTML = 'Los campos resaltados son obligatorios';
+        }
+    }
+    
+    function goToLogin(){
+        location.href = `http://localhost:8080/login`
+    }
+    registerButton.addEventListener('click', () => register());
+    goToLoginButton.addEventListener('click', () => goToLogin());
+</script>
