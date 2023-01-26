@@ -1,3 +1,4 @@
+
 import express from 'express';
 import mongoose from 'mongoose';
 import {Server as HttpServer} from 'http';
@@ -18,8 +19,10 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 
+import passport from 'passport';
+import {Strategy as LocalStrategy} from 'passport-local';
 
-import {login, logout} from './routes/login.js';
+import {login, register, logout} from './routes/login.js';
 import {mensajes} from './routes/messages.js';
 import {productos, productosTest} from './routes/products.js';
 import {carrito} from './routes/carts.js';
@@ -46,6 +49,51 @@ const advancedOptions = {
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 
+const usuarios = [];
+
+passport.use('register', new LocalStrategy({
+    passReqToCallback: true
+},(req, username, password, done) => {
+    const usuario = usuarios.find(usuario => usuario.user === username);
+
+    if(usuario){
+        return done('El usuario ya está registrado')
+    }
+
+    const newUser = {
+        username: username,
+        password: password
+    }
+
+    usuarios.push(newUser);
+    done(null, newUser);
+
+}));
+
+passport.use('login', new LocalStrategy( (username, password, done) => {
+    const usuario = usuarios.find( usuario => usuario.username === username);
+
+    if(!usuario){
+        return done('El usuario no existe', false);
+    }
+    
+    if(usuario.password !== password){
+        return done('Contraseña incorrecta', false);
+    }
+
+    return done(null, usuario);
+}))
+
+passport.serializeUser((user, done) => {
+    done(null, user.username);
+})
+
+passport.deserializeUser((username, done) => {
+    const usuario = usuarios.find(usuario => usuario.username === username);
+    done(null, usuario);
+})
+
+
 app.use(cookieParser());
 app.use(session({
     name: 'loggedUser',
@@ -65,27 +113,33 @@ app.use(session({
     }
 }))
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.set('view engine', 'ejs');
 // app.set('views', "./views"); //Por defecto.
 app.use(express.static(__dirname + '/public'));
 
 app.use('/login', login, (req, res) =>{
-    res.sendStatus(400)
+    res.sendStatus(400);
+});
+app.use('/register', register, (req, res) =>{
+    res.sendStatus(400);
 });
 app.use('/logout', logout, (req, res) =>{
-    res.sendStatus(400)
+    res.sendStatus(400);
 });
 app.use('/productos', productos, (req, res) =>{
-    res.sendStatus(400)
+    res.sendStatus(400);
 });
 app.use('/productos-test', productosTest, (req, res) =>{
-    res.sendStatus(400)
+    res.sendStatus(400);
 });
 app.use('/carrito', carrito,(req, res) =>{
-    res.sendStatus(400) 
+    res.sendStatus(400);
 });
 app.use('/mensajes', mensajes, (req, res) =>{
-    res.sendStatus(400) //Bad Request
+    res.sendStatus(400); //Bad Request
 });
 
 mongoAtlasConnect(mongoAtlasDb);
@@ -152,6 +206,12 @@ app.get('/home', (req, res) => {
         // res.send({Error: 'Usuario no autenticado'})
     }
 })
+
+register.post('/',
+    passport.authenticate('register', {
+    failureRedirect: '/failRegister', 
+    successRedirect: '/home'
+}))
 
 app.use('*', (req, res) =>{
     res.sendStatus(404) //Not Found
