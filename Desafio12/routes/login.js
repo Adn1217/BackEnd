@@ -14,16 +14,17 @@ function requireAuthentication(req, res, next){
 }
 
 login.get('/', (req, res) => {
-    res.render('pages/login')
+    console.log('Redireccionado al Login');
+    res.render('pages/login');
 })
 
 register.get('/', (req, res) => {
-    res.render('pages/register', {error: null})
+    res.render('pages/register', {error: null});
 })
 
 logout.get('/:user', (req, res) => {
     let user = req.params.user;
-    res.render('pages/logout', {user: user})
+    res.render('pages/logout', {user: user});
 })
 
 login.post('/:user', (req, res) => {
@@ -36,7 +37,7 @@ login.post('/:user', (req, res) => {
         Guardado: 'Ok'
     })
     }else{
-        res.send({Error: 'Usuario no autenticado'})
+        res.send({Error: 'Usuario no autenticado'});
     }
 })
 
@@ -44,9 +45,9 @@ login.post('/:user', (req, res) => {
 //     console.log(req.body);
 // })
 
-register.get('/failregister', (req, res) => {
-    res.render('pages/register', {error: 'El usuario ya existe'})
-})
+// register.get('/failregister', (req, res) => {
+//     res.render('pages/register', {error: 'El usuario ya existe'})
+// })
 
 login.delete('/', (req, res) => {
     console.log('DeletedSesión: ', req.session);

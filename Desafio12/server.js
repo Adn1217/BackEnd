@@ -53,35 +53,47 @@ const usuarios = [];
 
 passport.use('register', new LocalStrategy({
     passReqToCallback: true
-},(req, username, password, done) => {
-    const usuario = usuarios.find(usuario => usuario.user === username);
+}, function(req, username, password, done){
+    try{
 
-    if(usuario){
-        return done('El usuario ya está registrado')
+        const usuario = usuarios.find(usuario => usuario.username === username);
+
+        if(usuario){
+            return done(null, false, {message: 'El usuario ya está registrado'})
+        }
+
+        const newUser = {
+            username: username,
+            password: password
+        }
+
+        usuarios.push(newUser);
+        console.log('Nuevo Usuario: ', newUser);
+        done(null, newUser);
+    }catch(err){
+        done(err);
     }
-
-    const newUser = {
-        username: username,
-        password: password
-    }
-
-    usuarios.push(newUser);
-    done(null, newUser);
 
 }));
 
 passport.use('login', new LocalStrategy( (username, password, done) => {
-    const usuario = usuarios.find( usuario => usuario.username === username);
+    try{
+        const usuario = usuarios.find( usuario => usuario.username === username);
 
-    if(!usuario){
-        return done('El usuario no existe', false);
-    }
-    
-    if(usuario.password !== password){
-        return done('Contraseña incorrecta', false);
-    }
+        if(!usuario){
+            return done(null, false, {message: 'El usuario no existe'});
+        }
+        
+        if(usuario.password !== password){
+            return done('Contraseña incorrecta', false);
+        }
 
-    return done(null, usuario);
+        return done(null, usuario);
+
+    }catch(err){
+
+        return done(err);
+    }
 }))
 
 passport.serializeUser((user, done) => {
@@ -89,6 +101,7 @@ passport.serializeUser((user, done) => {
 })
 
 passport.deserializeUser((username, done) => {
+    console.log('Usuarios: '+ JSON.stringify(usuarios) + ' Usuario autenticado: '+ username);
     const usuario = usuarios.find(usuario => usuario.username === username);
     done(null, usuario);
 })
@@ -101,14 +114,14 @@ app.use(session({
         mongoUrl: getURL(mongoAtlasDb),
         mongoOptions: advancedOptions,
         collectionName: "sessions",
-        ttl: 10,
+        ttl: 60,
     }),
     secret: 'adn1217',
     resave: false,
     rolling: true,
     saveUninitialized: false,
     cookie: {
-        maxAge: 10000,
+        maxAge: 60000,
         // httpOnly: false
     }
 }))
@@ -193,25 +206,33 @@ function firebaseConnect(){
 }
 
 app.get('/', (req, res) => {
-     res.redirect('/login');
+    res.redirect('/login');
 })
 
 app.get('/home', (req, res) => {
-    if(req.session.user){
+    // if(req.session.user){
         console.log('SesiónIniciada: ', req.session);
         prdController.showProducts(req, res);
-    }else{
-        res.sendStatus(401); //Unauthorized
+    // }else{
+    //     res.sendStatus(401); //Unauthorized
         // res.status(401).render({Error: 'Usuario no autenticado'})
         // res.send({Error: 'Usuario no autenticado'})
-    }
+    // }
 })
 
-register.post('/',
+app.post('/',
     passport.authenticate('register', {
-    failureRedirect: '/failRegister', 
-    successRedirect: '/home'
+    failureRedirect: '/failregister', 
+    successRedirect: '/successregister'
 }))
+
+app.get('/failregister', (req, res) => {
+    res.status(400).send({status:'El usuario ya existe'});
+})
+
+app.get('/successregister', (req, res) => {
+    res.status(200).send({status: 'Ok'});
+})
 
 app.use('*', (req, res) =>{
     res.sendStatus(404) //Not Found
