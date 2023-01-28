@@ -1,1 +1,11 @@
 <h1><%=error%></h1>
+<hr>
+<div>
+    <button id="goToRegisterButton" type="button" class="btn btn-warning" >ir al Login</button>
+</div>
+<script>
+    function goToRegister(){
+        location.href = `http://localhost:8080/register`
+    }
+    goToRegisterButton.addEventListener('click', () => goToRegister());
+</script>
