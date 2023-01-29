@@ -21,6 +21,7 @@ import MongoStore from 'connect-mongo';
 
 import passport from 'passport';
 import {Strategy as LocalStrategy} from 'passport-local';
+import bCrypt from 'bCrypt'; 
 
 import {login, register, logout} from './routes/login.js';
 import {mensajes} from './routes/messages.js';
@@ -51,6 +52,11 @@ app.use(express.json());
 
 const usuarios = [];
 
+function encrypt(pwd){
+    let encrypted = bCrypt.hashSync(pwd, bCrypt.genSaltSync(10), null)
+    return encrypted
+}
+
 passport.use('register', new LocalStrategy({
     passReqToCallback: true
 }, function(req, username, password, done){
@@ -64,7 +70,7 @@ passport.use('register', new LocalStrategy({
 
         const newUser = {
             username: username,
-            password: password
+            password: encrypt(password)
         }
 
         usuarios.push(newUser);
@@ -85,7 +91,7 @@ passport.use('login', new LocalStrategy(
                 return done(null, false, {message: 'El usuario no existe'});
             }
             
-            if(usuario.password !== password){
+            if(!bCrypt.compare(password, usuario.password)){
                 return done(null, false, {message: 'Contraseña incorrecta'});
             }
 

@@ -20,7 +20,7 @@ logout.get('/:user', (req, res) => {
 
 login.delete('/', (req, res) => {
     console.log('DeletedSesión: ', req.session);
-    const user = req.session.passport.user;
+    const user = req.user.username;
     console.log('DeletedUsuario : ', user);
     req.session.destroy();
     res.send({

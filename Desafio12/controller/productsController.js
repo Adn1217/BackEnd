@@ -109,7 +109,7 @@ export async function showProducts(req, res) {
     const allMessages = await msgController.getMessages();
     // console.log('Los productos son: \n', allProducts);
     // res.send({products: allProducts})
-    const user = req.session.passport.user;
+    const user = req.user.username;
     res.render('pages/index', {user: user, products: allProducts, msgs: allMessages});
 }
 

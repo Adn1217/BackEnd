@@ -5,7 +5,7 @@ const { Router } = express;
 export const mensajes = new Router();
 
 function isLogged(req, res, next){
-    if (req.session.user){
+    if (req.isAuthenticated()){
         next()
     }else{
         res.send({error: 'Usuario no autenticado'});
