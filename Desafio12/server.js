@@ -17,6 +17,7 @@ import { loadMocktoFireBase } from './functions.js';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
+import {usersModel} from './models/users.js';
 
 import passport from 'passport';
 import {Strategy as LocalStrategy} from 'passport-local';
@@ -87,6 +88,12 @@ async function saveUserFirebase(newUser){
     return data.id
 }
 
+async function saveUserMongoAtlas(newUser){
+    let newElement = new usersModel(newUser);
+    let data = await newElement.save();
+    return data
+}
+
 async function searchUserFirebase(username){
     let query = dbFS.collection('users');
     let data = await query.where('username','==', username).get();
@@ -97,10 +104,19 @@ async function searchUserFirebase(username){
         let usuario = null;
         data.forEach((doc) => {
             usuario = doc.data();
-            console.log(doc.id + ' => ' + JSON.stringify(usuario));
+            console.log(doc.id + ' => ' + JSON.stringify(doc.data()));
         })
         // console.log('Usuario :', usuario);
         return usuario;
+    }
+}
+
+async function searchUserMongoAtlas(username){
+    let user = usersModel.findOne({username: username});
+    if(!user){
+        return null
+    }else{
+        return user
     }
 }
 
@@ -111,7 +127,9 @@ passport.use('register', new LocalStrategy({
 
         // const usuario = usuarios.find(usuario => usuario.username === username);
         const usuario = await searchUserFirebase(username);
-        console.log('Usuario encontrado: ', usuario)
+        console.log('Usuario encontrado FB: ', usuario)
+        const usuarioMongoAtlas = await searchUserMongoAtlas(username);
+        console.log('Usuario encontrado Mongo Atlas: ', usuarioMongoAtlas)
 
         if(usuario){
             return done(null, false, {message: 'El usuario ya está registrado'})
@@ -125,7 +143,9 @@ passport.use('register', new LocalStrategy({
         // usuarios.push(newUser); // Persistencia local.
 
         let newUserId = await saveUserFirebase(newUser);
-        console.log('Nuevo Usuario Id: ', newUserId);
+        console.log('Nuevo Usuario FB Id: ', newUserId);
+        let newUserSaved = await saveUserMongoAtlas(newUser);
+        console.log('Nuevo Usuario Mongo Atlas: ', newUserSaved);
         done(null, newUser);
     }catch(err){
         done(err);
@@ -138,7 +158,7 @@ passport.use('login', new LocalStrategy(
         try{
             // const usuario = usuarios.find( usuario => usuario.username === username);
             const usuario = await searchUserFirebase(username);
-            console.log('usuario: ', usuario)
+            console.log('usuario FB: ', usuario)
             if(!usuario){
                 return done(null, false, {message: 'El usuario no existe'});
             }
@@ -228,9 +248,6 @@ app.use('/mensajes', mensajes, (req, res) =>{
     res.sendStatus(400); //Bad Request
 });
 
-
-
-
 // loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks originales.
 
 io.on('connection', (socket) => {
@@ -264,9 +281,9 @@ app.get('/home', (req, res) => {
         console.log('SesiónIniciada: ', req.session);
         prdController.showProducts(req, res);
     }else{
-        res.sendStatus(401); //Unauthorized
-        res.status(401).render({Error: 'Usuario no autenticado'})
-        res.send({Error: 'Usuario no autenticado'})
+        // res.sendStatus(401); //Unauthorized
+        res.status(401).send({Error: 'Usuario no autenticado'})
+        // res.send({Error: 'Usuario no autenticado'})
     }
 })
 
@@ -280,6 +297,10 @@ app.get('/successlogin', (req, res) =>{
 
 app.get('/failregister', (req, res) => {
     res.status(400).send({status:'El usuario ya existe'});
+})
+
+app.get('/failreg', (req, res) => {
+    res.render('pages/register', {error: 'El usuario ya existe'});
 })
 
 app.get('/successregister', (req, res) => {
