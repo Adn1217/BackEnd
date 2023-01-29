@@ -104,7 +104,7 @@ async function searchUserFirebase(username){
         let usuario = null;
         data.forEach((doc) => {
             usuario = doc.data();
-            console.log(doc.id + ' => ' + JSON.stringify(doc.data()));
+            // console.log(doc.id + ' => ' + JSON.stringify(doc.data()));
         })
         // console.log('Usuario :', usuario);
         return usuario;
@@ -163,7 +163,8 @@ passport.use('login', new LocalStrategy(
                 return done(null, false, {message: 'El usuario no existe'});
             }
             
-            if(!bCrypt.compare(password, usuario.password)){
+            if(!bCrypt.compareSync(password, usuario.password)){
+                console.log('Contraseña incorrecta');
                 return done(null, false, {message: 'Contraseña incorrecta'});
             }
 
@@ -289,6 +290,10 @@ app.get('/home', (req, res) => {
 
 app.get('/faillogin', (req, res) =>{
     res.status(401).send({status: 'Autenticación incorrecta'});
+})
+
+app.get('/faillog', (req, res) =>{
+    res.render('pages/login', {error: 'Autenticación incorrecta'});
 })
 
 app.get('/successlogin', (req, res) =>{

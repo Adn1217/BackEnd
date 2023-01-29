@@ -6,7 +6,7 @@ export const register = new Router();
 export const logout = new Router();
 
 login.get('/', (req, res) => {
-    res.render('pages/login');
+    res.render('pages/login', {error: null});
 })
 
 register.get('/', (req, res) => {
@@ -20,10 +20,10 @@ logout.get('/:user', (req, res) => {
 
 login.delete('/', (req, res) => {
     console.log('DeletedSesión: ', req.session);
-    const user = req.user.username;
+    const user = req.user?.username;
     console.log('DeletedUsuario : ', user);
     req.session.destroy();
     res.send({
-        user: user || 'desconocido',
+        user: user || 'Desconocido',
         eliminado: 'Ok'});
 })

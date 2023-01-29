@@ -40,6 +40,10 @@
                 loginUserInput.classList.add('errorInput');
                 loginPwdInput.classList.add('errorInput');
                 errors.innerHTML = resp.status;
+                setTimeout( () => {
+                    location.href='http://localhost:8080/faillog';
+                }
+                , 2000)
             }
         }else{
             errors.classList.add('errorLabel');
