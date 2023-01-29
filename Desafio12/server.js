@@ -11,9 +11,8 @@ import * as msgController from './controller/messagesController.js';
 // import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics"
 import admin from 'firebase-admin';
+import { doc, getDoc } from "firebase/firestore"
 import { loadMocktoFireBase } from './functions.js';
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -47,22 +46,72 @@ const advancedOptions = {
     useUnifiedTopology: true
 }
 
+mongoAtlasConnect(mongoAtlasDb);
+firebaseConnect();
+export const dbFS = admin.firestore();
+
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 
-const usuarios = [];
+// const usuarios = []; // Persistencia local.
 
 function encrypt(pwd){
     let encrypted = bCrypt.hashSync(pwd, bCrypt.genSaltSync(10), null)
     return encrypted
 }
 
+async function mongoAtlasConnect(db){
+    try{
+        const URL = getURL(db);
+        await mongoose.connect(URL, advancedOptions)
+        console.log("Se ha conectado exitosamente a MongoAtlas");
+    }catch(error){
+        console.log("Se ha presentado el siguiente error al intentar conectarse a MongoAtlas: ", error);
+    }
+}
+
+function firebaseConnect(){
+    try{
+        admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+        });
+        console.log("Se ha conectado exitosamente a FireBase")
+    }catch(error){
+        console.log("Se ha presentado error al intentar conectar con Firebase: ", error)
+    }
+}
+
+async function saveUserFirebase(newUser){
+    let query = dbFS.collection('users');
+    let data = await query.add(newUser);
+    return data.id
+}
+
+async function searchUserFirebase(username){
+    let query = dbFS.collection('users');
+    let data = await query.where('username','==', username).get();
+    console.log('Empty: ',data.empty);
+    if (data.empty){
+        return null ;
+    }else{
+        let usuario = null;
+        data.forEach((doc) => {
+            usuario = doc.data();
+            console.log(doc.id + ' => ' + JSON.stringify(usuario));
+        })
+        // console.log('Usuario :', usuario);
+        return usuario;
+    }
+}
+
 passport.use('register', new LocalStrategy({
     passReqToCallback: true
-}, function(req, username, password, done){
+}, async function(req, username, password, done){
     try{
 
-        const usuario = usuarios.find(usuario => usuario.username === username);
+        // const usuario = usuarios.find(usuario => usuario.username === username);
+        const usuario = await searchUserFirebase(username);
+        console.log('Usuario encontrado: ', usuario)
 
         if(usuario){
             return done(null, false, {message: 'El usuario ya está registrado'})
@@ -73,8 +122,10 @@ passport.use('register', new LocalStrategy({
             password: encrypt(password)
         }
 
-        usuarios.push(newUser);
-        console.log('Nuevo Usuario: ', newUser);
+        // usuarios.push(newUser); // Persistencia local.
+
+        let newUserId = await saveUserFirebase(newUser);
+        console.log('Nuevo Usuario Id: ', newUserId);
         done(null, newUser);
     }catch(err){
         done(err);
@@ -83,10 +134,11 @@ passport.use('register', new LocalStrategy({
 }));
 
 passport.use('login', new LocalStrategy( 
-    function(username, password, done){
+    async function(username, password, done){
         try{
-            const usuario = usuarios.find( usuario => usuario.username === username);
-
+            // const usuario = usuarios.find( usuario => usuario.username === username);
+            const usuario = await searchUserFirebase(username);
+            console.log('usuario: ', usuario)
             if(!usuario){
                 return done(null, false, {message: 'El usuario no existe'});
             }
@@ -108,9 +160,10 @@ passport.serializeUser((user, done) => {
     done(null, user.username);
 })
 
-passport.deserializeUser((username, done) => {
-    console.log('Usuarios: '+ JSON.stringify(usuarios) + ' Usuario autenticado: '+ username);
-    const usuario = usuarios.find(usuario => usuario.username === username);
+passport.deserializeUser(async (username, done) => {
+    // console.log('Usuarios: '+ JSON.stringify(usuarios) + ' Usuario autenticado: '+ username);
+    // const usuario = usuarios.find(usuario => usuario.username === username); //Persistencia local
+    const usuario = await searchUserFirebase(username);
     done(null, usuario);
 })
 
@@ -175,11 +228,9 @@ app.use('/mensajes', mensajes, (req, res) =>{
     res.sendStatus(400); //Bad Request
 });
 
-mongoAtlasConnect(mongoAtlasDb);
-firebaseConnect();
 
 
-export const dbFS = admin.firestore();
+
 // loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks originales.
 
 io.on('connection', (socket) => {
@@ -203,27 +254,6 @@ io.on('connection', (socket) => {
         io.sockets.emit('mensajes', {msgs: allMsgs});
     })
 })
-
-async function mongoAtlasConnect(db){
-    try{
-        const URL = getURL(db);
-        await mongoose.connect(URL, advancedOptions)
-        console.log("Se ha conectado exitosamente a MongoAtlas");
-    }catch(error){
-        console.log("Se ha presentado el siguiente error al intentar conectarse a MongoAtlas: ", error);
-    }
-}
-
-function firebaseConnect(){
-    try{
-        admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-        });
-        console.log("Se ha conectado exitosamente a FireBase")
-    }catch(error){
-        console.log("Se ha presentado error al intentar conectar con Firebase: ", error)
-    }
-}
 
 app.get('/', (req, res) => {
     res.redirect('/login');
