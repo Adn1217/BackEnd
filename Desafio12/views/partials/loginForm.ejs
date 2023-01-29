@@ -17,34 +17,40 @@
     <button id="goToRegisterButton" type="button" class="btn btn-warning" >ir al Registro</button>
 </div>
 <script>
-    async function login(user){
+    async function login(user, pwd){
         if (user !== ''){
             errors.classList.remove('errorLabel');
             loginUserInput.classList.remove('errorInput');
-            let response = await fetch(`http://localhost:8080/login/${user}`, { method: 'POST',
+            let response = await fetch(`http://localhost:8080/login`, { method: 'POST',
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
-                }
+                },
+                body: JSON.stringify({ 
+                    username: user,
+                    password: pwd,
+                })
             });
             let resp = await response.json();
             console.log(resp);
-            if(resp.Guardado === 'Ok'){
+            if(response.status === 200){
                 location.href='http://localhost:8080/home';
             }else{
                 errors.classList.add('errorLabel');
                 loginUserInput.classList.add('errorInput');
-                errors.innerHTML = JSON.stringify(resp);
+                loginPwdInput.classList.add('errorInput');
+                errors.innerHTML = resp.status;
             }
         }else{
             errors.classList.add('errorLabel');
             loginUserInput.classList.add('errorInput');
+            loginPwdInput.classList.add('errorInput');
             errors.innerHTML = 'Los campos resaltados son obligatorios';
         }
     }
     function goToRegister(){
         location.href='http://localhost:8080/register';
     }
-    loginButton.addEventListener('click', () => login(loginUserInput.value));
+    loginButton.addEventListener('click', () => login(loginUserInput.value, loginPwdInput.value));
     goToRegisterButton.addEventListener('click', () => goToRegister());
 </script>

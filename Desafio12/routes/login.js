@@ -5,16 +5,7 @@ export const login = new Router();
 export const register = new Router();
 export const logout = new Router();
 
-function requireAuthentication(req, res, next){
-    if(req.isAuthenticated()){
-        next()
-    }else{
-        res.render('pages/login')
-    }
-}
-
 login.get('/', (req, res) => {
-    console.log('Redireccionado al Login');
     res.render('pages/login');
 })
 
@@ -27,31 +18,9 @@ logout.get('/:user', (req, res) => {
     res.render('pages/logout', {user: user});
 })
 
-login.post('/:user', (req, res) => {
-    const user = req.params.user;
-    if(user){
-        req.session.user = user;
-        // req.session.save();
-        res.send({
-        Usuario: user,
-        Guardado: 'Ok'
-    })
-    }else{
-        res.send({Error: 'Usuario no autenticado'});
-    }
-})
-
-// register.post('/', (req, res) => {
-//     console.log(req.body);
-// })
-
-// register.get('/failregister', (req, res) => {
-//     res.render('pages/register', {error: 'El usuario ya existe'})
-// })
-
 login.delete('/', (req, res) => {
     console.log('DeletedSesión: ', req.session);
-    const user = req.session.user;
+    const user = req.session.passport.user;
     console.log('DeletedUsuario : ', user);
     req.session.destroy();
     res.send({

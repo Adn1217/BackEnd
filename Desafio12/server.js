@@ -76,25 +76,27 @@ passport.use('register', new LocalStrategy({
 
 }));
 
-passport.use('login', new LocalStrategy( (username, password, done) => {
-    try{
-        const usuario = usuarios.find( usuario => usuario.username === username);
+passport.use('login', new LocalStrategy( 
+    function(username, password, done){
+        try{
+            const usuario = usuarios.find( usuario => usuario.username === username);
 
-        if(!usuario){
-            return done(null, false, {message: 'El usuario no existe'});
+            if(!usuario){
+                return done(null, false, {message: 'El usuario no existe'});
+            }
+            
+            if(usuario.password !== password){
+                return done(null, false, {message: 'Contraseña incorrecta'});
+            }
+
+            return done(null, usuario);
+
+        }catch(err){
+
+            return done(err);
         }
-        
-        if(usuario.password !== password){
-            return done('Contraseña incorrecta', false);
-        }
-
-        return done(null, usuario);
-
-    }catch(err){
-
-        return done(err);
     }
-}))
+))
 
 passport.serializeUser((user, done) => {
     done(null, user.username);
@@ -133,9 +135,21 @@ app.set('view engine', 'ejs');
 // app.set('views', "./views"); //Por defecto.
 app.use(express.static(__dirname + '/public'));
 
+app.post('/login',
+    passport.authenticate('login', {
+    failureRedirect: '/faillogin', 
+    successRedirect: '/successlogin'
+    })
+)
 app.use('/login', login, (req, res) =>{
     res.sendStatus(400);
 });
+app.post('/register',
+    passport.authenticate('register', {
+    failureRedirect: '/failregister', 
+    successRedirect: '/successregister'
+    })
+)
 app.use('/register', register, (req, res) =>{
     res.sendStatus(400);
 });
@@ -210,21 +224,23 @@ app.get('/', (req, res) => {
 })
 
 app.get('/home', (req, res) => {
-    // if(req.session.user){
+    if(req.isAuthenticated()){
         console.log('SesiónIniciada: ', req.session);
         prdController.showProducts(req, res);
-    // }else{
-    //     res.sendStatus(401); //Unauthorized
-        // res.status(401).render({Error: 'Usuario no autenticado'})
-        // res.send({Error: 'Usuario no autenticado'})
-    // }
+    }else{
+        res.sendStatus(401); //Unauthorized
+        res.status(401).render({Error: 'Usuario no autenticado'})
+        res.send({Error: 'Usuario no autenticado'})
+    }
 })
 
-app.post('/',
-    passport.authenticate('register', {
-    failureRedirect: '/failregister', 
-    successRedirect: '/successregister'
-}))
+app.get('/faillogin', (req, res) =>{
+    res.status(401).send({status: 'Autenticación incorrecta'});
+})
+
+app.get('/successlogin', (req, res) =>{
+    res.status(200).send({status: 'Ok'});
+})
 
 app.get('/failregister', (req, res) => {
     res.status(400).send({status:'El usuario ya existe'});
