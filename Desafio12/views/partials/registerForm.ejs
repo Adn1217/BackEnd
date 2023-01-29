@@ -44,6 +44,10 @@
                 registerErrors.classList.add('errorLabel');
                 registerUserInput.classList.add('errorInput');
                 registerErrors.innerHTML = resp.status;
+                setTimeout( () => {
+                    location.href='http://localhost:8080/failreg';
+                }
+                , 2000)
             }
         }else{
             registerErrors.classList.add('errorLabel');
