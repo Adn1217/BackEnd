@@ -11,9 +11,8 @@ import * as msgController from './controller/messagesController.js';
 // import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics"
 import admin from 'firebase-admin';
+import { doc, getDoc } from "firebase/firestore"
 import { loadMocktoFireBase } from './functions.js';
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -21,6 +20,7 @@ import MongoStore from 'connect-mongo';
 
 import passport from 'passport';
 import {Strategy as LocalStrategy} from 'passport-local';
+import bCrypt from 'bCrypt'; 
 
 import {login, register, logout} from './routes/login.js';
 import {mensajes} from './routes/messages.js';
@@ -46,17 +46,72 @@ const advancedOptions = {
     useUnifiedTopology: true
 }
 
+mongoAtlasConnect(mongoAtlasDb);
+firebaseConnect();
+export const dbFS = admin.firestore();
+
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
 
-const usuarios = [];
+// const usuarios = []; // Persistencia local.
+
+function encrypt(pwd){
+    let encrypted = bCrypt.hashSync(pwd, bCrypt.genSaltSync(10), null)
+    return encrypted
+}
+
+async function mongoAtlasConnect(db){
+    try{
+        const URL = getURL(db);
+        await mongoose.connect(URL, advancedOptions)
+        console.log("Se ha conectado exitosamente a MongoAtlas");
+    }catch(error){
+        console.log("Se ha presentado el siguiente error al intentar conectarse a MongoAtlas: ", error);
+    }
+}
+
+function firebaseConnect(){
+    try{
+        admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+        });
+        console.log("Se ha conectado exitosamente a FireBase")
+    }catch(error){
+        console.log("Se ha presentado error al intentar conectar con Firebase: ", error)
+    }
+}
+
+async function saveUserFirebase(newUser){
+    let query = dbFS.collection('users');
+    let data = await query.add(newUser);
+    return data.id
+}
+
+async function searchUserFirebase(username){
+    let query = dbFS.collection('users');
+    let data = await query.where('username','==', username).get();
+    console.log('Empty: ',data.empty);
+    if (data.empty){
+        return null ;
+    }else{
+        let usuario = null;
+        data.forEach((doc) => {
+            usuario = doc.data();
+            console.log(doc.id + ' => ' + JSON.stringify(usuario));
+        })
+        // console.log('Usuario :', usuario);
+        return usuario;
+    }
+}
 
 passport.use('register', new LocalStrategy({
     passReqToCallback: true
-}, function(req, username, password, done){
+}, async function(req, username, password, done){
     try{
 
-        const usuario = usuarios.find(usuario => usuario.username === username);
+        // const usuario = usuarios.find(usuario => usuario.username === username);
+        const usuario = await searchUserFirebase(username);
+        console.log('Usuario encontrado: ', usuario)
 
         if(usuario){
             return done(null, false, {message: 'El usuario ya está registrado'})
@@ -64,11 +119,13 @@ passport.use('register', new LocalStrategy({
 
         const newUser = {
             username: username,
-            password: password
+            password: encrypt(password)
         }
 
-        usuarios.push(newUser);
-        console.log('Nuevo Usuario: ', newUser);
+        // usuarios.push(newUser); // Persistencia local.
+
+        let newUserId = await saveUserFirebase(newUser);
+        console.log('Nuevo Usuario Id: ', newUserId);
         done(null, newUser);
     }catch(err){
         done(err);
@@ -76,33 +133,37 @@ passport.use('register', new LocalStrategy({
 
 }));
 
-passport.use('login', new LocalStrategy( (username, password, done) => {
-    try{
-        const usuario = usuarios.find( usuario => usuario.username === username);
+passport.use('login', new LocalStrategy( 
+    async function(username, password, done){
+        try{
+            // const usuario = usuarios.find( usuario => usuario.username === username);
+            const usuario = await searchUserFirebase(username);
+            console.log('usuario: ', usuario)
+            if(!usuario){
+                return done(null, false, {message: 'El usuario no existe'});
+            }
+            
+            if(!bCrypt.compare(password, usuario.password)){
+                return done(null, false, {message: 'Contraseña incorrecta'});
+            }
 
-        if(!usuario){
-            return done(null, false, {message: 'El usuario no existe'});
+            return done(null, usuario);
+
+        }catch(err){
+
+            return done(err);
         }
-        
-        if(usuario.password !== password){
-            return done('Contraseña incorrecta', false);
-        }
-
-        return done(null, usuario);
-
-    }catch(err){
-
-        return done(err);
     }
-}))
+))
 
 passport.serializeUser((user, done) => {
     done(null, user.username);
 })
 
-passport.deserializeUser((username, done) => {
-    console.log('Usuarios: '+ JSON.stringify(usuarios) + ' Usuario autenticado: '+ username);
-    const usuario = usuarios.find(usuario => usuario.username === username);
+passport.deserializeUser(async (username, done) => {
+    // console.log('Usuarios: '+ JSON.stringify(usuarios) + ' Usuario autenticado: '+ username);
+    // const usuario = usuarios.find(usuario => usuario.username === username); //Persistencia local
+    const usuario = await searchUserFirebase(username);
     done(null, usuario);
 })
 
@@ -133,9 +194,21 @@ app.set('view engine', 'ejs');
 // app.set('views', "./views"); //Por defecto.
 app.use(express.static(__dirname + '/public'));
 
+app.post('/login',
+    passport.authenticate('login', {
+    failureRedirect: '/faillogin', 
+    successRedirect: '/successlogin'
+    })
+)
 app.use('/login', login, (req, res) =>{
     res.sendStatus(400);
 });
+app.post('/register',
+    passport.authenticate('register', {
+    failureRedirect: '/failregister', 
+    successRedirect: '/successregister'
+    })
+)
 app.use('/register', register, (req, res) =>{
     res.sendStatus(400);
 });
@@ -155,11 +228,9 @@ app.use('/mensajes', mensajes, (req, res) =>{
     res.sendStatus(400); //Bad Request
 });
 
-mongoAtlasConnect(mongoAtlasDb);
-firebaseConnect();
 
 
-export const dbFS = admin.firestore();
+
 // loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks originales.
 
 io.on('connection', (socket) => {
@@ -184,47 +255,28 @@ io.on('connection', (socket) => {
     })
 })
 
-async function mongoAtlasConnect(db){
-    try{
-        const URL = getURL(db);
-        await mongoose.connect(URL, advancedOptions)
-        console.log("Se ha conectado exitosamente a MongoAtlas");
-    }catch(error){
-        console.log("Se ha presentado el siguiente error al intentar conectarse a MongoAtlas: ", error);
-    }
-}
-
-function firebaseConnect(){
-    try{
-        admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-        });
-        console.log("Se ha conectado exitosamente a FireBase")
-    }catch(error){
-        console.log("Se ha presentado error al intentar conectar con Firebase: ", error)
-    }
-}
-
 app.get('/', (req, res) => {
     res.redirect('/login');
 })
 
 app.get('/home', (req, res) => {
-    // if(req.session.user){
+    if(req.isAuthenticated()){
         console.log('SesiónIniciada: ', req.session);
         prdController.showProducts(req, res);
-    // }else{
-    //     res.sendStatus(401); //Unauthorized
-        // res.status(401).render({Error: 'Usuario no autenticado'})
-        // res.send({Error: 'Usuario no autenticado'})
-    // }
+    }else{
+        res.sendStatus(401); //Unauthorized
+        res.status(401).render({Error: 'Usuario no autenticado'})
+        res.send({Error: 'Usuario no autenticado'})
+    }
 })
 
-app.post('/',
-    passport.authenticate('register', {
-    failureRedirect: '/failregister', 
-    successRedirect: '/successregister'
-}))
+app.get('/faillogin', (req, res) =>{
+    res.status(401).send({status: 'Autenticación incorrecta'});
+})
+
+app.get('/successlogin', (req, res) =>{
+    res.status(200).send({status: 'Ok'});
+})
 
 app.get('/failregister', (req, res) => {
     res.status(400).send({status:'El usuario ya existe'});

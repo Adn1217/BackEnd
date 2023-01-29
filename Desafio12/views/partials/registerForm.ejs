@@ -17,26 +17,29 @@
     <button id="goToLoginButton" type="button" class="btn btn-warning" >ir al Login</button>
 </div>
 <script>
-    async function register(){
+    async function register(user, pwd){
         if (registerUserInput.value !== '' && registerPwdInput.value !== '' ){
             registerErrors.classList.remove('errorLabel');
             registerUserInput.classList.remove('errorInput');
             registerPwdInput.classList.remove('errorInput');
-            let response = await fetch(`http://localhost:8080/`, { method: 'POST',
+            let response = await fetch(`http://localhost:8080/register`, { method: 'POST',
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    username: registerUserInput.value,
-                    password: registerPwdInput.value
+                    username: user,
+                    password: pwd
                 })
             });
             let resp = await response.json();
             console.log(resp);
             if(response.status === 200){
-                console.log(resp);
-                location.href='http://localhost:8080/home';
+                registerErrors.innerHTML = 'Usuario registrado, será redirigido..';
+                setTimeout( () => {
+                    location.href='http://localhost:8080/login';
+                }
+                , 2000)
             }else{
                 registerErrors.classList.add('errorLabel');
                 registerUserInput.classList.add('errorInput');
@@ -53,6 +56,6 @@
     function goToLogin(){
         location.href = `http://localhost:8080/login`
     }
-    registerButton.addEventListener('click', () => register());
+    registerButton.addEventListener('click', () => register(registerUserInput.value, registerPwdInput.value));
     goToLoginButton.addEventListener('click', () => goToLogin());
 </script>
