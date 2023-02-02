@@ -4,3 +4,4 @@ Instaladores/
 MongoDB/
 config.js
 db/
+*.env
