@@ -58,7 +58,6 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 // const port = parseInt(process.env.PORT, 10) || 8080;
-
 if(isNaN(args['port']) || (typeof(args['port']) !== 'number')){
     args['port'] = 8080;
     console.log(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
@@ -312,6 +311,19 @@ app.get('/home', (req, res) => {
         res.status(401).send({Error: 'Usuario no autenticado'})
         // res.send({Error: 'Usuario no autenticado'})
     }
+})
+
+app.get('/info', (req, res) =>{
+    const usedArgs = {
+        "inputArgs" : args,
+        "OS": process.env.OS,
+        "nodeVersion": process.version,
+        "memoryUsage": process.memoryUsage().rss,
+        "execPath": process.execPath,
+        "processID": process.pid,
+        "filePath": process.env.PWD
+    }
+    res.send(usedArgs);
 })
 
 app.get('/faillogin', (req, res) =>{
