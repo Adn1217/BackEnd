@@ -5,14 +5,6 @@ import * as msgController from '../controller/messagesController.js';
 const { Router } = express;
 export const mensajes = new Router();
 
-// function isLogged(req, res, next){
-//     if (req.isAuthenticated()){
-//         next()
-//     }else{
-//         res.send({error: 'Usuario no autenticado'});
-//     }
-// }
-
 mensajes.use('/', isLogged);
 
 mensajes.get('/', async (req, res) => {

@@ -32,6 +32,7 @@ import {login, register, logout} from './routes/login.js';
 import {mensajes} from './routes/messages.js';
 import {productos, productosTest} from './routes/products.js';
 import {carrito} from './routes/carts.js';
+import {random} from './routes/random.js';
 
 dotenv.config({
     path: './.env'
@@ -270,6 +271,9 @@ app.use('/carrito', carrito,(req, res) =>{
     res.sendStatus(400);
 });
 app.use('/mensajes', mensajes, (req, res) =>{
+    res.sendStatus(400); //Bad Request
+});
+app.use('/randoms', random, (req, res) =>{
     res.sendStatus(400); //Bad Request
 });
 
