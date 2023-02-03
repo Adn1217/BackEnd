@@ -6,24 +6,6 @@ const { Router } = express;
 export const productos = new Router();
 export const productosTest = new Router();
 
-// async function onlyAdmin(req, res, next, params) {
-//     const isAdmin = req.headers.auth; //Solo para poder probarlo desde el Front.
-//     // console.log(String(isAdmin).toLowerCase() == "true");
-//     if (String(isAdmin).toLowerCase() == "true") { 
-//         next(...params);
-//     } else { 
-//         res.status(401).json({error:-1,descripcion:`Ruta ${req.originalUrl} metodo ${req.method} no autorizado`});
-//     }
-// }
-
-// function isLogged(req, res, next){
-//     if (req.isAuthenticated()){
-//         next()
-//     }else{
-//         res.send({error: 'Usuario no autenticado'});
-//     }
-// }
-
 productos.use('/', isLogged);
 productosTest.use('/', isLogged);
 

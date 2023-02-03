@@ -32,6 +32,7 @@ import {login, register, logout} from './routes/login.js';
 import {mensajes} from './routes/messages.js';
 import {productos, productosTest} from './routes/products.js';
 import {carrito} from './routes/carts.js';
+import {random} from './routes/random.js';
 
 dotenv.config({
     path: './.env'
@@ -46,7 +47,6 @@ export const productsCollection = process.env.DB_PRODUCTS_COLLECTION;
 export const cartsCollection = process.env.DB_CARTS_COLLECTION;
 export const messagesCollection = process.env.DB_MESSAGES_COLLECTION;
 const sessionSecret = process.env.SESSION_SECRET;
-console.log('Sessions :', sessionsCollection)
 const options = { alias: {p: 'port'}, default: {port: 8080}};
 const args = parseArgs(process.argv.slice(2), options);
 mongoose.set('strictQuery', false);
@@ -273,6 +273,9 @@ app.use('/carrito', carrito,(req, res) =>{
 app.use('/mensajes', mensajes, (req, res) =>{
     res.sendStatus(400); //Bad Request
 });
+app.use('/randoms', random, (req, res) =>{
+    res.sendStatus(400); //Bad Request
+});
 
 // loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks originales.
 
@@ -315,15 +318,17 @@ app.get('/home', (req, res) => {
 
 app.get('/info', (req, res) =>{
     const usedArgs = {
-        "inputArgs" : args,
-        "OS": process.env.OS,
-        "nodeVersion": process.version,
-        "memoryUsage": process.memoryUsage().rss,
-        "execPath": process.execPath,
-        "processID": process.pid,
-        "filePath": process.env.PWD
+        inputArgs : args,
+        OS: process.env.OS,
+        nodeVersion: process.version,
+        memoryUsage: process.memoryUsage().rss,
+        execPath: process.execPath,
+        processID: process.pid,
+        filePath: process.env.PWD
     }
-    res.send(usedArgs);
+    console.log("ProcessInfo: ",usedArgs);
+    res.render('pages/info.ejs', {Args: usedArgs});
+    // res.send(usedArgs);
 })
 
 app.get('/faillogin', (req, res) =>{
