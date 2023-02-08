@@ -1,4 +1,7 @@
 
+import cluster from 'cluster';
+import os from 'os';
+// import {spawn} from 'child_process';
 import express from 'express';
 import mongoose from 'mongoose';
 import {Server as HttpServer} from 'http';
@@ -6,7 +9,7 @@ import {Server as IOServer} from 'socket.io';
 import path from 'path';
 import {fileURLToPath} from 'url';
 // import {getURL, serviceAccount} from './config.js';
-import {getURL} from './functions.js';
+import {getURL, loadMocktoFireBase} from './functions.js';
 
 import dotenv from 'dotenv';
 import parseArgs from 'minimist';
@@ -17,7 +20,6 @@ import * as msgController from './controller/messagesController.js';
 // import { getAnalytics } from "firebase/analytics"
 import admin from 'firebase-admin';
 // import { doc, getDoc } from "firebase/firestore"
-import { loadMocktoFireBase } from './functions.js';
 
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -34,6 +36,9 @@ import {productos, productosTest} from './routes/products.js';
 import {carrito} from './routes/carts.js';
 import {random} from './routes/random.js';
 
+
+const numCPUs = os.cpus().length;
+
 dotenv.config({
     path: './.env'
 })
@@ -47,11 +52,19 @@ export const productsCollection = process.env.DB_PRODUCTS_COLLECTION;
 export const cartsCollection = process.env.DB_CARTS_COLLECTION;
 export const messagesCollection = process.env.DB_MESSAGES_COLLECTION;
 const sessionSecret = process.env.SESSION_SECRET;
-const options = { alias: {p: 'port'}, default: {port: 8080}};
+const options = {
+    alias: {
+        p: 'port',
+        m: 'mode'
+    }, 
+    default: {
+        port: 8080,
+        mode: 'fork'
+    }
+};
 const args = parseArgs(process.argv.slice(2), options);
 mongoose.set('strictQuery', false);
 
-console.log('\n################INICIO DE SERVIDOR################\n')
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -60,10 +73,17 @@ const app = express();
 // const port = parseInt(process.env.PORT, 10) || 8080;
 if(isNaN(args['port']) || (typeof(args['port']) !== 'number')){
     args['port'] = 8080;
-    console.log(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
+    console.warn(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
 }
 const port = args['port'];
+// spawn('export', [`PORT=${port}`]);
 process.env['PORT'] = port;
+
+const mode = args['mode'];
+
+if(mode !== 'cluster' && mode !=='fork'){
+    console.warn('Modo inválido, se ejecutará en el modo fork por defecto.');
+}
 
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer);
@@ -73,9 +93,7 @@ const advancedOptions = {
     useUnifiedTopology: true
 }
 
-mongoAtlasConnect(mongoAtlasDb, userName, pwd);
-firebaseConnect();
-export const dbFS = admin.firestore();
+export let dbFS;
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
@@ -91,9 +109,9 @@ async function mongoAtlasConnect(db, userName, pwd){
     try{
         const URL = getURL(db, userName, pwd);
         await mongoose.connect(URL, advancedOptions)
-        console.log("Se ha conectado exitosamente a MongoAtlas");
+        console.log(`Servidor ${process.pid} se ha conectado exitosamente a MongoAtlas`);
     }catch(error){
-        console.log("Se ha presentado el siguiente error al intentar conectarse a MongoAtlas: ", error);
+        console.log(`Se ha presentado el siguiente error al intentar conectar el servidor ${process.pid} a MongoAtlas: ${error}`);
     }
 }
 
@@ -102,9 +120,9 @@ function firebaseConnect(){
         admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
         });
-        console.log("Se ha conectado exitosamente a FireBase")
+        console.log(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
     }catch(error){
-        console.log("Se ha presentado error al intentar conectar con Firebase: ", error)
+        console.log(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
     }
 }
 
@@ -321,6 +339,7 @@ app.get('/info', (req, res) =>{
     const usedArgs = {
         inputArgs : args,
         OS: process.env.OS,
+        numCPUs: numCPUs,
         nodeVersion: process.version,
         memoryUsage: process.memoryUsage().rss,
         execPath: process.execPath,
@@ -360,8 +379,28 @@ app.use('*', (req, res) =>{
     res.sendStatus(404) //Not Found
 });
 
-const server = httpServer.listen(port, () => {
-    console.log(`Servidor escuchando en el puerto ${port}`);
-})
+if(cluster.isPrimary && mode === 'cluster'){
+    console.log('CPUs: ', numCPUs );
+    console.log(`Servidor maestro ${process.pid} escuchando en el puerto ${port}`)
+    for(let i=0; i<numCPUs; i++){
+        cluster.fork();
+    }
 
-server.on('error', (error) => console.log('Se presentó error: ', error.message));
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`Hijo ${worker.process.pid} finalizado.`)
+    })
+
+}else{
+    let serverType='';
+    mongoAtlasConnect(mongoAtlasDb, userName, pwd);
+    firebaseConnect();
+    dbFS = admin.firestore();
+    const server = httpServer.listen(port, () => {
+        if(mode === 'cluster'){
+            serverType = ' hijo';
+        }
+        console.log(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
+    })
+    server.on('error', (error) => console.log('Se presentó error: ', error.message));
+    console.log('\n################INICIO DE SERVIDOR################\n')
+}
