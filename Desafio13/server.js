@@ -63,6 +63,7 @@ if(isNaN(args['port']) || (typeof(args['port']) !== 'number')){
     console.log(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
 }
 const port = args['port'];
+process.env['PORT'] = port;
 
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer);

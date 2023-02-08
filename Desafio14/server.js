@@ -1,7 +1,7 @@
 
 import cluster from 'cluster';
 import os from 'os';
-
+// import {spawn} from 'child_process';
 import express from 'express';
 import mongoose from 'mongoose';
 import {Server as HttpServer} from 'http';
@@ -76,6 +76,8 @@ if(isNaN(args['port']) || (typeof(args['port']) !== 'number')){
     console.log(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
 }
 const port = args['port'];
+// spawn('export', [`PORT=${port}`]);
+process.env['PORT'] = port;
 
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer);

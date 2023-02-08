@@ -1,6 +1,7 @@
 const normalize = window.normalizr.normalize;
 const schema = window.normalizr.schema;
 const denormalize = window.normalizr.denormalize;
+const port = 8080;
 
 function checkInputs(){
     if(titleInput.value === '' || codeInput.value === '' || priceInput.value === ''
@@ -62,7 +63,7 @@ async function submitForm(id) {
             stock: stockInput.value,
             thumbnail: thumbnailInput.value,
         }
-        let url = 'http://localhost:8080/productos';
+        let url = `http://localhost:${port}/productos`;
         let verb = 'POST';
         id && (url = url + `/${id}`);
         id && (verb = 'PUT');
@@ -80,7 +81,7 @@ async function submitForm(id) {
             results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
             if (prod.error === 'Usuario no autenticado'){
                 setTimeout(() => {
-                    location.href='http://localhost:8080/login'
+                    location.href=`http://localhost:${port}/login`
                 }, 2000);
             }
         }else{
@@ -105,7 +106,7 @@ async function updateProduct(id){
 async function getAllProducts(){
     // console.log('Cookies: ', document.cookie);
     results.classList.remove('errorLabel');
-    let response = await fetch('http://localhost:8080/productos/', { method: 'GET',
+    let response = await fetch(`http://localhost:${port}/productos/`, { method: 'GET',
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json"
@@ -117,7 +118,7 @@ async function getAllProducts(){
         results.classList.add('errorLabel');
         results.innerHTML=`<h1>Error</h1>${JSON.stringify(prods)}</p>`;
         setTimeout(() => {
-            location.href='http://localhost:8080/login'
+            location.href=`http://localhost:${port}/login`
         }, 2000);
     }else{
         results.innerHTML= tableRender(prods);
@@ -126,7 +127,7 @@ async function getAllProducts(){
 
 async function getAllRandomProducts(){
     results.classList.remove('errorLabel');
-        let response = await fetch('http://localhost:8080/productos-test/', { method: 'GET',
+        let response = await fetch(`http://localhost:${port}/productos-test/`, { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
@@ -138,7 +139,7 @@ async function getAllRandomProducts(){
         results.classList.add('errorLabel');
         results.innerHTML=`<h1>Error</h1>${JSON.stringify(prods)}</p>`;
         setTimeout(() => {
-            location.href='http://localhost:8080/login'
+            location.href=`http://localhost:${port}/login`
         }, 2000);
     }else{
         results.innerHTML= tableRender(prods);
@@ -153,7 +154,7 @@ async function getOneProduct(id){
     }else{
         idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'GET',
+        let response = await fetch(`http://localhost:${port}/productos/${id}`, { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
@@ -165,7 +166,7 @@ async function getOneProduct(id){
             results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
             if (prod.error === 'Usuario no autenticado'){
                 setTimeout(() => {
-                    location.href='http://localhost:8080/login'
+                    location.href=`http://localhost:${port}/login`
                 }, 2000);
             }
         }else{
@@ -186,7 +187,7 @@ async function deleteOneProduct(id){
     }else{
         idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/productos/${id}`, { method: 'DELETE',
+        let response = await fetch(`http://localhost:${port}/productos/${id}`, { method: 'DELETE',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -200,7 +201,7 @@ async function deleteOneProduct(id){
             results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
             if (prod.error === 'Usuario no autenticado'){
                 setTimeout(() => {
-                    location.href='http://localhost:8080/login'
+                    location.href=`http://localhost:${port}/login`
                 }, 2000);
             }
         }else{
@@ -229,7 +230,7 @@ async function saveCart(user){
         cartUserInput.classList.remove('errorInput');
         idCartInput.classList.remove('errorInput');
         idProdInput.classList.remove('errorInput');
-        let response = await fetch('http://localhost:8080/carrito/?', { method: 'POST',
+        let response = await fetch(`http://localhost:${port}/carrito/?`, { method: 'POST',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -243,7 +244,7 @@ async function saveCart(user){
             cartResults.classList.add('errorLabel');
             cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(carts)}</p>`;
                 setTimeout(() => {
-                    location.href='http://localhost:8080/login'
+                    location.href=`http://localhost:${port}/login`
                 }, 2000);
         }else{
             // results.innerHTML= tableRender(carts);
@@ -270,7 +271,7 @@ async function saveProdInCart(idCart){
         cartUserInput.classList.remove('errorInput');
         idCartInput.classList.remove('errorInput');
         idProdInput.classList.remove('errorInput');
-        let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos`, { method: 'POST',
+        let response = await fetch(`http://localhost:${port}/carrito/${idCart}/productos`, { method: 'POST',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -284,7 +285,7 @@ async function saveProdInCart(idCart){
             cartResults.classList.add('errorLabel');
             cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(carts)}</p>`;
                 setTimeout(() => {
-                    location.href='http://localhost:8080/login'
+                    location.href=`http://localhost:${port}/login`
                 }, 2000);
         }else{
             // results.innerHTML= tableRender(carts);
@@ -305,7 +306,7 @@ async function getAllCarts(){
     cartResults.classList.remove('errorLabel');
     idCartInput.classList.remove('errorInput');
     idProdInput.classList.remove('errorInput');
-    let response = await fetch('http://localhost:8080/carrito/?', { method: 'GET',
+    let response = await fetch(`http://localhost:${port}/carrito/?`, { method: 'GET',
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json"
@@ -317,7 +318,7 @@ async function getAllCarts(){
         cartResults.classList.add('errorLabel');
         cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(carts)}</p>`;
             setTimeout(() => {
-                location.href='http://localhost:8080/login'
+                location.href=`http://localhost:${port}/login`
             }, 2000);
     }else{
     // results.innerHTML= tableRender(carts);
@@ -337,7 +338,7 @@ async function getOneCart(id){
         idCartInput.classList.remove('errorInput');
         idProdInput.classList.remove('errorInput');
         cartResults.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/carrito/${id}/productos`, { method: 'GET',
+        let response = await fetch(`http://localhost:${port}/carrito/${id}/productos`, { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
@@ -349,7 +350,7 @@ async function getOneCart(id){
             cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(cart)}</p>`;
             if (cart.error === "Usuario no autenticado"){
                 setTimeout(() => {
-                    location.href='http://localhost:8080/login'
+                    location.href=`http://localhost:${port}/login`
                 }, 2000);
             }
         }else{
@@ -375,7 +376,7 @@ async function deleteOneProductInCart(idCart, idProd){
         idProdInput.classList.remove('errorInput');
         cartResults.classList.remove('errorLabel');
         cartResults.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/carrito/${idCart}/productos/${idProd}`, { method: 'DELETE',
+        let response = await fetch(`http://localhost:${port}/carrito/${idCart}/productos/${idProd}`, { method: 'DELETE',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -389,7 +390,7 @@ async function deleteOneProductInCart(idCart, idProd){
             cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
             if (prod.error === "Usuario no autenticado"){
                 setTimeout(() => {
-                    location.href='http://localhost:8080/login'
+                    location.href=`http://localhost:${port}/login`
                 }, 2000);
             }
         }else{
@@ -412,7 +413,7 @@ async function deleteOneCart(id){
         idCartInput.classList.remove('errorInput');
         idProdInput.classList.remove('errorInput');
         cartResults.classList.remove('errorLabel');
-        let response = await fetch(`http://localhost:8080/carrito/${id}`, { method: 'DELETE',
+        let response = await fetch(`http://localhost:${port}/carrito/${id}`, { method: 'DELETE',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -426,7 +427,7 @@ async function deleteOneCart(id){
             cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(cart)}</p>`;
             if (cart.error === "Usuario no autenticado"){
                 setTimeout(() => {
-                    location.href='http://localhost:8080/login'
+                    location.href=`http://localhost:${port}/login`
                 }, 2000);
             }
         }else{
@@ -452,7 +453,7 @@ async function sendMessage() {
             usuario: userInput.value,
             mensaje: msgInput.value
         }
-        let url = 'http://localhost:8080/mensajes';
+        let url = `http://localhost:${port}/mensajes`;
         let verb = 'POST';
         let response = await fetch(url, { method: verb,
             headers: {
@@ -470,7 +471,7 @@ async function sendMessage() {
             results.classList.add('errorLabel');
             results.innerHTML=`<h1>Error</h1>${JSON.stringify(data)}</p>`;
             setTimeout(() => {
-                location.href='http://localhost:8080/login'
+                location.href=`http://localhost:${port}/login`
             }, 2000);
         }else{
             socket.emit('messageRequest','msj')
@@ -526,7 +527,7 @@ async function sendNormalizedMessage() {
         console.log('normMsg', normMessage);
         console.log('denormMsg', denormMessage);
         // console.log('Normalized Again', normalizeMessage(denormMessage)[0] )
-        let url = 'http://localhost:8080/mensajes/normalized';
+        let url = `http://localhost:${port}/mensajes/normalized`;
         let verb = 'POST';
         let response = await fetch(url, { method: verb,
             headers: {
@@ -543,7 +544,7 @@ async function sendNormalizedMessage() {
             results.classList.add('errorLabel');
             results.innerHTML=`<h1>Error</h1>${JSON.stringify(data)}</p>`;
             setTimeout(() => {
-                location.href='http://localhost:8080/login'
+                location.href=`http://localhost:${port}/login`
             }, 2000);
         }else{
             socket.emit('normMessageRequest','msj')
@@ -553,7 +554,7 @@ async function sendNormalizedMessage() {
 
 async function logout(){
 
-    let response = await fetch(`http://localhost:8080/login`, { method: 'DELETE',
+    let response = await fetch(`http://localhost:${port}/login`, { method: 'DELETE',
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
@@ -565,9 +566,9 @@ async function logout(){
         console.log('LogoutUser', user);
         // document.body.innerHTML = `<h1>HASTA LUEGO ${user}</h1>`
         // alert("HASTA LUEGO "+ resp.user);
-        location.href=`http://localhost:8080/logout/${user}`
+        location.href=`http://localhost:${port}/logout/${user}`
     }else{
-        location.href='http://localhost:8080/login'
+        location.href=`http://localhost:${port}/login`
     }
 
 }
