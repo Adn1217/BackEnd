@@ -59,7 +59,7 @@ const options = {
     }, 
     default: {
         port: 8080,
-        mode: 'Fork'
+        mode: 'fork'
     }
 };
 const args = parseArgs(process.argv.slice(2), options);
