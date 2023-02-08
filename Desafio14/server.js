@@ -396,8 +396,8 @@ if(cluster.isPrimary && mode === 'cluster'){
     firebaseConnect();
     dbFS = admin.firestore();
     const server = httpServer.listen(port, () => {
-        if(mode === ' cluster'){
-            serverType = 'hijo';
+        if(mode === 'cluster'){
+            serverType = ' hijo';
         }
         console.log(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
     })
