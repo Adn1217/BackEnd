@@ -73,11 +73,17 @@ const app = express();
 // const port = parseInt(process.env.PORT, 10) || 8080;
 if(isNaN(args['port']) || (typeof(args['port']) !== 'number')){
     args['port'] = 8080;
-    console.log(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
+    console.warn(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
 }
 const port = args['port'];
 // spawn('export', [`PORT=${port}`]);
 process.env['PORT'] = port;
+
+const mode = args['mode'];
+
+if(mode !== 'cluster' && mode !=='fork'){
+    console.warn('Modo inválido, se ejecutará en el modo fork por defecto.');
+}
 
 const httpServer = new HttpServer(app);
 const io = new IOServer(httpServer);
@@ -373,7 +379,7 @@ app.use('*', (req, res) =>{
     res.sendStatus(404) //Not Found
 });
 
-if(cluster.isPrimary){
+if(cluster.isPrimary && mode === 'cluster'){
     console.log('CPUs: ', numCPUs );
     console.log(`Servidor maestro ${process.pid} escuchando en el puerto ${port}`)
     for(let i=0; i<numCPUs; i++){
@@ -385,11 +391,15 @@ if(cluster.isPrimary){
     })
 
 }else{
+    let serverType='';
     mongoAtlasConnect(mongoAtlasDb, userName, pwd);
     firebaseConnect();
     dbFS = admin.firestore();
     const server = httpServer.listen(port, () => {
-        console.log(`Servidor hijo ${process.pid} escuchando en el puerto ${port}`);
+        if(mode === ' cluster'){
+            serverType = 'hijo';
+        }
+        console.log(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
     })
     server.on('error', (error) => console.log('Se presentó error: ', error.message));
     console.log('\n################INICIO DE SERVIDOR################\n')
