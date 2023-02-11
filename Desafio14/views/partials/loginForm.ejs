@@ -17,11 +17,17 @@
     <button id="goToRegisterButton" type="button" class="btn btn-warning" >ir al Registro</button>
 </div>
 <script>
+    let port='';
+    if (port){
+        port =`:${port}`
+    }
+    const server ='localhost';
+    const uri = `http://${server}${port}`;
     async function login(user, pwd){
         if (user !== ''){
             errors.classList.remove('errorLabel');
             loginUserInput.classList.remove('errorInput');
-            let response = await fetch(`http://localhost:8080/login`, { method: 'POST',
+            let response = await fetch(`${uri}/login`, { method: 'POST',
                 headers: {
                     Accept: "application/json",
                     "Content-Type": "application/json",
@@ -34,14 +40,14 @@
             let resp = await response.json();
             console.log(resp);
             if(response.status === 200){
-                location.href='http://localhost:8080/home';
+                location.href=`${uri}/home`;
             }else{
                 errors.classList.add('errorLabel');
                 loginUserInput.classList.add('errorInput');
                 loginPwdInput.classList.add('errorInput');
                 errors.innerHTML = resp.status;
                 setTimeout( () => {
-                    location.href='http://localhost:8080/faillog';
+                    location.href=`${uri}/faillog`;
                 }
                 , 2000)
             }
@@ -53,7 +59,7 @@
         }
     }
     function goToRegister(){
-        location.href='http://localhost:8080/register';
+        location.href=`${uri}/register`;
     }
     loginButton.addEventListener('click', () => login(loginUserInput.value, loginPwdInput.value));
     goToRegisterButton.addEventListener('click', () => goToRegister());
