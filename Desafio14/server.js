@@ -257,7 +257,9 @@ app.use(passport.session());
 
 app.set('view engine', 'ejs');
 // app.set('views', "./views"); //Por defecto.
+app.use('/static', express.static(path.join(__dirname, 'public')))
 // app.use(express.static(__dirname + '/public'));
+// console.log(__dirname + '/public');
 
 app.post('/login',
     passport.authenticate('login', {
