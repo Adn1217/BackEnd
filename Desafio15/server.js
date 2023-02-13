@@ -37,6 +37,7 @@ import {carrito} from './routes/carts.js';
 import {random} from './routes/random.js';
 
 import compression from 'compression';
+import logger from './logger.js';
 
 const numCPUs = os.cpus().length;
 
@@ -74,7 +75,8 @@ const app = express();
 // const port = parseInt(process.env.PORT, 10) || 8080;
 if(isNaN(args['port']) || (typeof(args['port']) !== 'number')){
     args['port'] = 8080;
-    console.warn(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
+    // console.warn(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
+    logger.warn(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
 }
 const port = args['port'];
 // spawn('export', [`PORT=${port}`]);
@@ -83,7 +85,8 @@ process.env['PORT'] = port;
 const mode = args['mode'];
 
 if(mode !== 'cluster' && mode !=='fork'){
-    console.warn('Modo inválido, se ejecutará en el modo fork por defecto.');
+    // console.warn('Modo inválido, se ejecutará en el modo fork por defecto.');
+    logger.warn('Modo inválido, se ejecutará en el modo fork por defecto.');
 }
 
 const httpServer = new HttpServer(app);
@@ -110,9 +113,11 @@ async function mongoAtlasConnect(db, userName, pwd){
     try{
         const URL = getURL(db, userName, pwd);
         await mongoose.connect(URL, advancedOptions)
-        console.log(`Servidor ${process.pid} se ha conectado exitosamente a MongoAtlas`);
+        // console.log(`Servidor ${process.pid} se ha conectado exitosamente a MongoAtlas`);
+        logger.info(`Servidor ${process.pid} se ha conectado exitosamente a MongoAtlas`);
     }catch(error){
-        console.log(`Se ha presentado el siguiente error al intentar conectar el servidor ${process.pid} a MongoAtlas: ${error}`);
+        // console.error(`se ha presentado el siguiente error al intentar conectar el servidor ${process.pid} a mongoatlas: ${error}`);
+        logger.error(`se ha presentado el siguiente error al intentar conectar el servidor ${process.pid} a mongoatlas: ${error}`);
     }
 }
 
@@ -121,9 +126,11 @@ function firebaseConnect(){
         admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
         });
-        console.log(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+        // console.log(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+        logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
     }catch(error){
-        console.log(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
+        // console.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
+        logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
     }
 }
 
@@ -172,11 +179,13 @@ passport.use('register', new LocalStrategy({
 
         // const usuario = usuarios.find(usuario => usuario.username === username);
         const usuario = await searchUserFirebase(username);
-        console.log('Usuario encontrado FB: ', usuario)
         const usuarioMongoAtlas = await searchUserMongoAtlas(username);
-        console.log('Usuario encontrado Mongo Atlas: ', usuarioMongoAtlas)
 
         if(usuario){
+            // console.log('Usuario encontrado FB: ', usuario)
+            logger.info(`Usuario encontrado FB: ${usuario.username}`);
+            // console.log('Usuario encontrado Mongo Atlas: ', usuarioMongoAtlas)
+            logger.info(`Usuario encontrado Mongo Atlas: ${usuarioMongoAtlas._id}}`);
             return done(null, false, {message: 'El usuario ya está registrado'})
         }
 
@@ -188,9 +197,11 @@ passport.use('register', new LocalStrategy({
         // usuarios.push(newUser); // Persistencia local.
 
         let newUserId = await saveUserFirebase(newUser);
-        console.log('Nuevo Usuario FB Id: ', newUserId);
+        // console.log('Nuevo Usuario FB Id: ', newUserId);
+        logger.info(`Nuevo Usuario FB Id:  ${newUserId}`);
         let newUserSaved = await saveUserMongoAtlas(newUser);
-        console.log('Nuevo Usuario Mongo Atlas: ', newUserSaved);
+        // console.log('Nuevo Usuario Mongo Atlas: ', newUserSaved);
+        logger.info(`Nuevo Usuario Mongo Atlas:  ${newUserSaved._id}`);
         done(null, newUser);
     }catch(err){
         done(err);
@@ -203,13 +214,15 @@ passport.use('login', new LocalStrategy(
         try{
             // const usuario = usuarios.find( usuario => usuario.username === username);
             const usuario = await searchUserFirebase(username);
-            console.log('usuario FB: ', usuario)
+            // console.log('usuario FB: ', usuario)
+            logger.info(`usuario FB autenticado: ${JSON.stringify(usuario.username)}`);
             if(!usuario){
                 return done(null, false, {message: 'El usuario no existe'});
             }
             
             if(!bCrypt.compareSync(password, usuario.password)){
-                console.log('Contraseña incorrecta');
+                // console.log('Contraseña incorrecta');
+                logger.warn(`Contraseña incorrecta para el usuario FB: ${JSON.stringify(usuario.username)}`);
                 return done(null, false, {message: 'Contraseña incorrecta'});
             }
 
@@ -302,7 +315,8 @@ app.use('/randoms', compression(), random, (req, res) =>{
 // loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks originales.
 
 io.on('connection', (socket) => {
-    console.log('Usuario Conectado');
+    // console.log('Usuario Conectado');
+    logger.info('Usuario conectado');
     socket.emit('welcome', 'Usuario conectado');
     // mongoAtlasConnect('ecommerce');
 
@@ -329,7 +343,8 @@ app.get('/', (req, res) => {
 
 app.get('/home', compression(), (req, res) => {
     if(req.isAuthenticated()){
-        console.log('SesiónIniciada: ', req.session);
+        // console.log('SesiónIniciada: ', req.session);
+        logger.info(`SesiónIniciada: ${JSON.stringify(req.session)}`);
         prdController.showProducts(req, res);
     }else{
         // res.sendStatus(401); //Unauthorized
@@ -349,7 +364,8 @@ app.get('/info', compression(), (req, res) =>{
         processID: process.pid,
         filePath: process.env.PWD
     }
-    console.log("ProcessInfo: ",usedArgs);
+    // console.log("ProcessInfo: ",usedArgs);
+    logger.info(`ProcessInfo: ${JSON.stringify(usedArgs)}`);
     res.render('pages/info.ejs', {Args: usedArgs});
     // res.send(usedArgs);
 })
@@ -383,14 +399,17 @@ app.use('*', (req, res) =>{
 });
 
 if(cluster.isPrimary && mode === 'cluster'){
-    console.log('CPUs: ', numCPUs );
-    console.log(`Servidor maestro ${process.pid} escuchando en el puerto ${port}`)
+    // console.log('CPUs: ', numCPUs );
+    logger.silly(`CPUs: ${numCPUs}`);
+    // console.log(`Servidor maestro ${process.pid} escuchando en el puerto ${port}`)
+    logger.debug(`Servidor maestro ${process.pid} escuchando en el puerto ${port}`)
     for(let i=0; i<numCPUs; i++){
         cluster.fork();
     }
 
     cluster.on('exit', (worker, code, signal) => {
-        console.log(`Hijo ${worker.process.pid} finalizado.`)
+        // console.log(`Hijo ${worker.process.pid} finalizado.`)
+        logger.debug(`Hijo ${worker.process.pid} finalizado.`)
     })
 
 }else{
@@ -402,8 +421,13 @@ if(cluster.isPrimary && mode === 'cluster'){
         if(mode === 'cluster'){
             serverType = ' hijo';
         }
-        console.log(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
+        // console.log(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
+        logger.debug(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
     })
-    server.on('error', (error) => console.log('Se presentó error: ', error.message));
-    console.log('\n################INICIO DE SERVIDOR################\n')
+    server.on('error', (error) => {
+        // console.log('Se presentó error: ', error.message)
+        logger.error(`Se presentó error: ${error.message}`)
+    }) 
+    // console.log('\n################INICIO DE SERVIDOR################\n')
+    logger.silly('################INICIO DE SERVIDOR################')
 }
