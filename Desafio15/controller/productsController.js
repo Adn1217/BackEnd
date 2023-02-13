@@ -4,7 +4,7 @@ import ContenedorFirebase from '../ContenedorFirebase.class.js';
 import * as msgController from './messagesController.js';
 import { faker } from '@faker-js/faker';
 import { productsCollection } from '../server.js'
-
+import logger from '../logger.js';
 
 function createRandomProducts(n){
     const randomProducts = [];
@@ -35,7 +35,8 @@ export async function getProducts() {
 
 export function getRandomProducts(n) {
     const allProductsRandom = createRandomProducts(n);
-    console.log(allProductsRandom);
+    // console.log(allProductsRandom);
+    logger.debug(`${JSON.stringify(allProductsRandom)}`);
     return allProductsRandom
 } 
 
@@ -73,7 +74,8 @@ async function saveProductByIdFile(res, updatedProd, id){
             }
             return prod;
         })
-        console.log('La nueva lista es: ', newAllProducts);
+        // console.log('La nueva lista es: ', newAllProducts);
+        logger.debug(`La nueva lista es: ${JSON.stringify(newAllProducts)}`);
         const allSaved = await saveAllProducts(newAllProducts);
         if (allSaved === 'ok'){
             // res.send({actualizado: updatedProd})
@@ -82,7 +84,12 @@ async function saveProductByIdFile(res, updatedProd, id){
             // res.send({error: allSaved})
         }
     }
-    console.log("Actualizado en Archivo: ", actualizadoArchivo)
+    // console.log("Actualizado en Archivo: ", actualizadoArchivo)
+    if('error' in actualizadoArchivo){
+        logger.error(`${JSON.stringify(actualizadoArchivo)}`);
+    }else{
+        logger.debug(`Actualizado en Archivo: ${JSON.stringify(actualizadoArchivo)}`);
+    }
 }
 
 export async function getProductById(id) {
@@ -125,9 +132,10 @@ export async function showProductsRandom(res) {
 
 export async function doSaveProduct(product, res) {
     if (Object.keys(product).length === 0){
+        logger.error('Producto no recibido');
         res.send({Error: "Producto no recibido"})
     }else{
-        console.log('ProductoFront', product);
+        // console.log('ProductoFront', product);
         const newProd = await saveProduct(product); 
         res.send({Guardado: newProd})
     }
@@ -136,10 +144,12 @@ export async function doSaveProduct(product, res) {
 export async function showProductById(res, id) {
     let productById = await getProductById(id);
     if (!productById){
+        logger.error(`Producto ${id} no encontrado`);
         res.send({error:"Producto no encontrado"});
     }else{
         res.send({producto: productById});
-        console.log(productById);
+        // console.log(productById);
+        logger.debug(`productById: ${JSON.stringify(productById)}`);
     }
 }
 
@@ -148,20 +158,25 @@ export async function updateProductById(res, updatedProd, id) {
     const productosFirebase = new ContenedorFirebase(productsCollection);
     const productFirebase = await productosFirebase.updateById(updatedProd,id);
     if (productFirebase){
-        console.log("Se ha actualizado el producto: \n", productFirebase);
+        // console.log("Se ha actualizado el producto: \n", productFirebase);
+        logger.info(`Se ha actualizado el producto: ${productFirebase}`);
         res.send({actualizadoFirebase: productFirebase})
     }else{
-        console.log("Producto no actualizado");
-        res.send({error: "Producto no encontrado"})
+        // console.log("Producto no actualizado");
+        logger.warn('Producto no actualizado');
+        logger.error(`Producto ${id} no encontrado`);
+        res.send({error: "Producto no encontrado"});
     }
 
     const productosMongoAtlas = new ContenedorMongoAtlas(productsCollection);
     const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
     if (productMongoAtlas){
-        console.log("Se ha actualizado en Mongo el producto: \n", productMongoAtlas);
+        // console.log("Se ha actualizado en Mongo el producto: \n", productMongoAtlas);
+        logger.info(`Se ha actualizado en Mongo el producto: ${JSON.stringify(productMongoAtlas)}`);
         // res.send({actualizadoMongo: productMongoAtlas})
     }else{
-        console.log("Producto no actualizado en Mongo");
+        // console.log("Producto no actualizado en Mongo");
+        logger.warn("Producto no actualizado en Mongo");
         // res.send({error: "Producto no encontrado"})
     }
     await saveProductByIdFile(res, updatedProd, id);
@@ -173,6 +188,7 @@ export async function doDeleteProductById(res, id) {
         deletedProduct = {
             error: "Producto no encontrado"
         }
+        logger.error(`Producto ${id} no encontrado.`)
         res.send(deletedProduct)
     }else{
         res.send({eliminado: deletedProduct})

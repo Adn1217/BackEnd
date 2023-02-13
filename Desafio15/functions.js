@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { dbFS } from './server.js';
+import logger from './logger.js';
 
 export function getURL(db, userName, pwd) {
     const URL = `mongodb+srv://${userName}:${pwd}@backendcluster.mlmtmq6.mongodb.net/${db}?retryWrites=true&w=majority`;
@@ -72,6 +73,11 @@ export function isLogged(req, res, next){
     }else{
         res.send({error: 'Usuario no autenticado'});
     }
+}
+
+export function logRequest(req, res, next){
+    logger.info(`Petición ${req.method} a ruta ${req.url}`)
+    next()
 }
 
 export function randomCount(cant=0){

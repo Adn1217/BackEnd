@@ -3,6 +3,7 @@ import ContenedorMongoAtlas from '../ContenedorMongoAtlas.class.js';
 import ContenedorFirebase from '../ContenedorFirebase.class.js';
 import {schema, normalize, denormalize} from 'normalizr';
 import { messagesCollection} from '../server.js';
+import logger from '../logger.js';
 
 
 function normalizeMessage(msg){
@@ -69,7 +70,8 @@ export async function getMessages() {
 export async function getNormMessages() {
     const messagesFirebase = new ContenedorFirebase('normMsgs');
     const allMessagesFirebase = await messagesFirebase.getAll();
-    console.log('Mensajes desde Firebase', allMessagesFirebase);
+    // console.log('Mensajes desde Firebase: ', allMessagesFirebase);
+    logger.debug(`Mensajes desde Firebase: ${JSON.stringify(allMessagesFirebase)}`);
     let newAllMessages  = [];
     let cont = 0;
     allMessagesFirebase.forEach((msg) => {

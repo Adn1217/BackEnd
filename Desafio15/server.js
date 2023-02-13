@@ -9,7 +9,7 @@ import {Server as IOServer} from 'socket.io';
 import path from 'path';
 import {fileURLToPath} from 'url';
 // import {getURL, serviceAccount} from './config.js';
-import {getURL, loadMocktoFireBase} from './functions.js';
+import {getURL, loadMocktoFireBase, logRequest} from './functions.js';
 
 import dotenv from 'dotenv';
 import parseArgs from 'minimist';
@@ -275,6 +275,7 @@ app.use('/static', express.static(path.join(__dirname, 'public')))
 // app.use(express.static(__dirname + '/public'));
 // console.log(__dirname + '/public');
 
+app.use('/', logRequest);
 app.post('/login',
     passport.authenticate('login', {
     failureRedirect: '/faillogin', 
@@ -282,6 +283,7 @@ app.post('/login',
     })
 )
 app.use('/login', login, (req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400);
 });
 app.post('/register',
@@ -291,24 +293,31 @@ app.post('/register',
     })
 )
 app.use('/register', register, (req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400);
 });
 app.use('/logout', logout, (req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400);
 });
 app.use('/productos', productos, (req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400);
 });
 app.use('/productos-test', productosTest, (req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400);
 });
 app.use('/carrito', carrito,(req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400);
 });
 app.use('/mensajes', mensajes, (req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400); //Bad Request
 });
 app.use('/randoms', compression(), random, (req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400); //Bad Request
 });
 
@@ -395,6 +404,7 @@ app.get('/successregister', (req, res) => {
 })
 
 app.use('*', (req, res) =>{
+    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(404) //Not Found
 });
 

@@ -3,6 +3,7 @@ import ContenedorMongoAtlas from '../ContenedorMongoAtlas.class.js';
 import ContenedorFirebase from '../ContenedorFirebase.class.js';
 import { calculateId } from '../functions.js';
 import { cartsCollection } from '../server.js';
+import logger from '../logger.js';
 
 async function saveCart(cart) {
     const carritoFirebase = new ContenedorFirebase(cartsCollection);
@@ -40,7 +41,8 @@ async function saveProductInCartByIdFile(res, newProd, id_cart){
             // res.send({error: allSaved})
         }
     }
-    console.log("Actualizado en Archivo: ", actualizadoArchivo)
+    // console.log("Actualizado en Archivo: ", actualizadoArchivo)
+    logger.debug(`Actualizado en Archivo: ${JSON.stringify(actualizadoArchivo)}`)
 }
 
 async function getCarts() {
@@ -85,19 +87,22 @@ async function deleteProductInCartById(id_prod, id_cart) {
 
 export async function showCart(res) {
     const cart = await getCarts(); 
-    console.log('El carrito es: \n', cart);
+    // console.log('El carrito es: \n', cart);
+    logger.debug(`El carrito es: ${cart}`)
     res.send({carrito: cart})
     // res.render('pages/index', {products: allProducts, msgs: allMessages})
 }
 
 export async function showCartById(res, id) {
     let cartById = await getCartById(id);
-    console.log(cartById);
+    // console.log(cartById);
+    // logger.debug(`El carrito es: ${JSON.stringify(cartById)}`)
     if (!cartById){
         res.send({error:"Carrito no encontrado"});
     }else{
         res.send({productoCarrito: cartById.productos});
-        console.log(cartById.productos);
+        // console.log(cartById.productos);
+        logger.debug(`Los productos del carrito son: ${JSON.stringify(cartById.productos)}`)
     }
 }
 
@@ -116,7 +121,8 @@ export async function doDeleteCartById(res, id) {
 
 export async function doDeleteProductInCartById(res, id_prod, id_cart) {
     let deletedProduct = await deleteProductInCartById(id_prod, id_cart);
-    console.log("Producto eliminado: ", deletedProduct);
+    // console.log("Producto eliminado: ", deletedProduct);
+    logger.info(`Producto eliminado: ${deletedProduct}`);
     if (!deletedProduct && deletedProduct !== undefined){
         deletedProduct = {
             error: `Carrito ${id_cart} no encontrado`
@@ -145,16 +151,19 @@ export async function doSaveProductInCart(res, newProd, id_cart) {
 
     const cartsFirebase = new ContenedorFirebase(cartsCollection);
     const cartFirebase = await cartsFirebase.getById(id_cart);
-    console.log('Carrito en Firebase', cartFirebase);
+    // console.log('Carrito en Firebase', cartFirebase);
+    logger.debug(`Carrito en Firebase ${cartFirebase}`);
     if (cartFirebase){
         let newProdWithId = calculateId(newProd, cartFirebase.productos)
         newProdWithId.timestamp = new Date().toLocaleString("en-GB");
         cartFirebase.productos.push(newProdWithId);
         cartsFirebase.updateById(cartFirebase, id_cart);
-        console.log("Se ha agregado en Firebase el producto: \n", newProdWithId);
+        // console.log("Se ha agregado en Firebase el producto: \n", newProdWithId);
+        logger.debug(`Se ha agregado en Firebase el producto: ${newProdWithId}`);
         res.send({actualizadoFirebase: cartFirebase})
     }else{
-        console.log("Carrito no encontrado en Firebase.");
+        // console.log("Carrito no encontrado en Firebase.");
+        logger.error(`Carrito ${id_cart} no encontrado en Firebase.`);
         res.send({error: "Carrito no encontrado"})
     }
 
@@ -164,20 +173,24 @@ export async function doSaveProductInCart(res, newProd, id_cart) {
     if (cartMongoAtlas){
         cartMongoAtlas.productos.push(newProd);
         let cart = await cartsMongoAtlas.updateById(cartMongoAtlas, id_cart);
-        console.log("Se ha agregado en Mongo el producto al carrito: \n", cart);
+        // console.log("Se ha agregado en Mongo el producto al carrito: \n", cart);
+        logger.debug(`Se ha agregado en Mongo el producto al carrito: ${cart}`, cart);
         // res.send({actualizadoMongo: cartMongoAtlas})
     }else{
-        console.log("Carrito no encontrado en Mongo.");
+        // console.log("Carrito no encontrado en Mongo.");
+        logger.error(`Carrito ${id_cart} no encontrado en Mongo.`);
         actualizadoMongo = {error: "Carrito no encontrado en Mongo."}
         // res.send({error: "Carrito no encontrado"})
     }
-    console.log(actualizadoMongo)
+    // console.log(actualizadoMongo);
+    logger.info(`${JSON.stringify(actualizadoMongo)}`);
     await saveProductInCartByIdFile(res, newProd, parseInt(id_cart));
 }
  // Sin FRONT.
 export async function updateCartById(res, updatedCart, id) {
     let cartById = await getCartById(id);
     if (!cartById){
+        logger.error(`Carrito ${id} no encontrado`);
         res.send({error: "Carrito no encontrado"});
     }else{
         const allCarts = await getCarts();
@@ -189,11 +202,13 @@ export async function updateCartById(res, updatedCart, id) {
             }
             return cart;
         })
-        console.log('La nueva lista de carritos es: ', newCarts);
+        // console.log('La nueva lista de carritos es: ', newCarts);
+        logger.debug(`La nueva lista de carritos es: ${JSON.stringify(newCarts)}`);
         const allSaved = await saveAllCarts(newCarts);
         if (allSaved === 'ok'){
             res.send({actualizado: updatedCart})
         }else{
+            logger.error(`Se ha presentado error al guardar de forma local: ${allSaved}`)
             res.send({error: allSaved})
         }
     }

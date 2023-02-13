@@ -1,6 +1,7 @@
 import express from 'express';
 import {onlyAdmin, isLogged} from '../functions.js';
 import * as prdController from '../controller/productsController.js';
+import logger from '../logger.js';
 
 const { Router } = express;
 export const productos = new Router();
