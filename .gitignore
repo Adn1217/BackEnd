@@ -5,3 +5,7 @@ MongoDB/
 config.js
 db/
 *.env
+*.docx
+*.doc
+*.log
+*.tmp
