@@ -25,7 +25,7 @@ export default class ContenedorFirebase {
       
       let data = await this.query.doc(Id).get();
       let doc = data.data();
-      if(data.id){
+      if(doc){
         doc.id = data.id;
         // console.log('Documento extraidos de Firebase ', doc);
         return doc;
