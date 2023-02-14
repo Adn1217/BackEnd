@@ -42,5 +42,6 @@ random.get('/?', async (req, res) => {
 random.get('/sync?', async (req, res) => {
     let quantity = req.query.cant || 1e8;
     let count = randomCount(quantity);
+    // console.log('El conteo aleatorio es: ', count); //Pedido por el desafío.
     res.send({por: args['port'], conteo: count});
 })

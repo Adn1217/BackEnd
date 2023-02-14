@@ -40,10 +40,12 @@ function buildProdLogger(){
         format: combine(timestamp(), prettyPrint()),
         transports: [
             // new winston.transports.Console({level: 'Info'}),
-            new winston.transports.File({filename: './logs/warnProd.log', level: 'warn'}),
+            new winston.transports.File({
+                format: combine(ignoreErrorOnWarn(), timestamp(), prettyPrint()),filename: './logs/warnProd.log', level: 'warn'}),
             new winston.transports.File({filename: './logs/errorProd.log', level: 'error'}),
         ]
     })
+    winston.addColors(myColors);
     return prodLogger;
 }
 
