@@ -3,7 +3,7 @@ import stream from 'stream';
 import logger from './logger.js';
 
 function run(url){
-    logger.info(`Inicio de pruebas Benchmark para ${ur}`);
+    logger.info(`Inicio de pruebas Benchmark para ${url}`);
     const buf =[];
     const outputStream = new stream.PassThrough();
 
@@ -22,5 +22,5 @@ function run(url){
     })
 }
 
-run('http://localhost/randoms/?cant=20');
+// run('http://localhost/randoms/?cant=20');
 run('http://localhost/randoms/sync?cant=20');
