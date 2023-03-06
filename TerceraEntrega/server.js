@@ -67,7 +67,7 @@ const gmailMail = process.env.GMAIL_MAIL;
 const gmailAppPass = process.env.GMAIL_APP_PASS;
 
 const transporter = createTransport({
-    host: 'gmail',
+    service: 'gmail',
     port: 587,
     auth: {
         user: `${gmailMail}`,
