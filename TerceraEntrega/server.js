@@ -195,10 +195,19 @@ async function searchUserMongoAtlas(username){
     }
 }
 
-async function sendWappMsg(msg){
+export async function sendWappMsg(msg, data, asunto){
+    let htmlItems = '';
+    let topic = asunto ? 'compra:' : 'usuario:';
+    for(let key in data){
+        if(typeof(data[key]) === 'object'){
+            data[key] = JSON.stringify(data[key]);
+        }
+        htmlItems += `*${key}*: ${data[key]}\n`
+    }
+    let htmlList = `${htmlItems}`
     try{
         const message = await client.messages.create({
-            body: `${msg}`,
+            body: `${msg} \n ${htmlList}`,
             from: `whatsapp:${twilioWappNumber}`,
             to: `whatsapp:${personalWappNumber}`
         })
@@ -210,12 +219,12 @@ async function sendWappMsg(msg){
     }
 }
 
-async function sendSmsMsg(msg){
+export async function sendSmsMsg(msg, tel){
     try{
         const message = await client.messages.create({
             body: `${msg}`,
             messagingServiceSid: `${twilioMsgSID}`,
-            to: `${personalWappNumber}`
+            to: `${tel}` || `${personalWappNumber}`
         })
         logger.info(`Se ha enviado mensaje de texto: ${JSON.stringify(message.body)}`);
         return message;
@@ -225,13 +234,29 @@ async function sendSmsMsg(msg){
     }
 }
 
-async function sendMail(msg){
+export async function sendMail(msg, data, asunto){
+    let htmlItems = '';
+    let topic = asunto ? 'compra' : 'usuario';
+    for(let key in data){
+        if(typeof(data[key]) === 'object'){
+            data[key] = JSON.stringify(data[key]);
+        }
+        htmlItems += `<li><strong>${key}</strong>: ${data[key]}</li>`
+    }
+    let htmlList = `<ul>${htmlItems}</ul>`
     const mailOptions = {
         from: 'Ecommerce Backend',
         to: `${personalMail}`,
-        subject: `${msg}`,
-        text: `${msg}`,
-        html: `<h3>${msg}</h3>`
+        subject: asunto || `Nuevo registro`,
+        text: `${msg} \n Datos de ${topic}: \n ${JSON.stringify(data)}`,
+        html: `<h3>${msg}</h3>
+               <div>
+                    <p>Datos de ${topic}:</p>
+               </div>
+               <div>
+                    ${htmlList}
+               </div>`
+                    
     }
     try{
         const info = await transporter.sendMail(mailOptions)
@@ -250,7 +275,7 @@ passport.use('register', new LocalStrategy({
         // const usuario = usuarios.find(usuario => usuario.username === username);
         const usuario = await searchUserFirebase(username);
         const usuarioMongoAtlas = await searchUserMongoAtlas(username);
-
+        
         if(usuario){
             // console.log('Usuario encontrado FB: ', usuario)
             logger.info(`Usuario encontrado FB: ${usuario.username}`);
@@ -261,6 +286,10 @@ passport.use('register', new LocalStrategy({
 
         const newUser = {
             username: username,
+            mail: req.body.mail,
+            tel: req.body.tel,
+            edad: req.body.edad,
+            avatar: req.body.avatar,
             password: encrypt(password)
         }
 
@@ -272,6 +301,7 @@ passport.use('register', new LocalStrategy({
         let newUserSaved = await saveUserMongoAtlas(newUser);
         // console.log('Nuevo Usuario Mongo Atlas: ', newUserSaved);
         logger.info(`Nuevo Usuario Mongo Atlas:  ${newUserSaved._id}`);
+        sendMail('Se ha registrado un nuevo usuario', newUser);
         done(null, newUser);
     }catch(err){
         done(err);
@@ -469,9 +499,6 @@ app.get('/failreg', (req, res) => {
 })
 
 app.get('/successregister', async (req, res) => {
-    sendWappMsg('Se ha registrado un nuevo usuario.');
-    sendSmsMsg('Se ha registrado un nuevo usuario.');
-    sendMail('Se ha registrado un nuevo usuario');
     res.status(200).send({status: 'Ok'});
 })
 
