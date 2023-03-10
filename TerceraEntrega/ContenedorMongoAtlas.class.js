@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import {productsModel} from './models/products.js';
 import {msgsModel} from './models/messages.js';
 import {cartsModel} from './models/carts.js';
+import {usersModel} from './models/users.js';
 import { productsCollection, messagesCollection, cartsCollection } from "./server.js";
 
 export default class ContenedorMongoAtlas {
@@ -19,7 +20,7 @@ export default class ContenedorMongoAtlas {
       }else if (this.collection === cartsCollection){
         newElement = new cartsModel(elemento);
       }else{
-        newElement = new cartsModel(elemento);
+        newElement = new usersModel(elemento);
       }
       let data = await newElement.save();
       console.log('GuardadoMongo: ', data);

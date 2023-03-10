@@ -17,9 +17,13 @@
     <label for="age" class="form-label">Edad</label>
     <input type="number" min="0" max="99" class="form-control" id="registerUserAgeInput" placeholder="Edad">
 </div>
-<div class="col-md-6">
-    <label for="tel" class="form-label">Telefono</label>
-    <input type="text" class="form-control" id="registerUserTelInput" placeholder="Ingrese Telefono">
+<div class="col-md-4">
+    <label for="tel" class="form-label">Teléfono</label>
+    <div id="tel">
+        <input type="number" min="0" max="999" class="form-control" id="registerUserTelAreaInput" placeholder="Área">
+        <span>-</span>
+        <input type="number" min="0" max="9999999" class="form-control" id="registerUserTelInput" placeholder="Ingrese teléfono">
+    </div>
 </div>
 <div class="col-md-6">
     <label for="avatar" class="form-label">Avatar</label>
@@ -45,8 +49,15 @@
     }
     const server ='localhost';
     const uri = `http://${server}${port}`;
-    async function register(user, pwd){
-        if (registerUserInput.value !== '' && registerPwdInput.value !== '' ){
+    async function register(user, mail, server, telArea, telephone, pwd){
+        let registerMail = '';
+        let tel = telArea + telephone;
+
+        if (mail !== '' && server !== ''){
+            registerMail = mail + '@' + server;
+        }
+        
+        if (user !== '' && pwd !== '' ){
             registerErrors.classList.remove('errorLabel');
             registerUserInput.classList.remove('errorInput');
             registerPwdInput.classList.remove('errorInput');
@@ -57,6 +68,10 @@
                 },
                 body: JSON.stringify({
                     username: user,
+                    mail: registerMail,
+                    tel: tel,
+                    edad: parseInt(registerUserAgeInput.value,10),
+                    avatar: registerUserAvatarInput.value,
                     password: pwd
                 })
             });
@@ -88,6 +103,8 @@
     function goToLogin(){
         location.href = `${uri}/login`
     }
-    registerButton.addEventListener('click', () => register(registerUserInput.value, registerPwdInput.value));
+
+
+    registerButton.addEventListener('click', () => register(registerUserInput.value, registerUserMailInput.value.trim(), registerUserServerInput.value.trim(),registerUserTelAreaInput.value, registerUserTelInput.value, registerPwdInput.value));
     goToLoginButton.addEventListener('click', () => goToLogin());
 </script>

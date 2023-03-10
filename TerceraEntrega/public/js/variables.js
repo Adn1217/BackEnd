@@ -35,6 +35,7 @@ let registerUserInput = document.getElementById('registerUserInput');
 let registerUserMailInput = document.getElementById('registerUserMailInput');
 let registerUserServerInput = document.getElementById('registerUserServerInput');
 let registerUserAgeInput = document.getElementById('registerUserAgeInput');
+let registerUserTelAreaInput = document.getElementById('registerUserTelAreaInput');
 let registerUserTelInput = document.getElementById('registerUserTelInput');
 let registerUserAvatarInput = document.getElementById('registerUserAvatarInput');
 let registerPwdInput = document.getElementById('registerPwdInput');

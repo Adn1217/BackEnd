@@ -225,13 +225,25 @@ async function sendSmsMsg(msg){
     }
 }
 
-async function sendMail(msg){
+async function sendMail(msg, newUser){
+    let htmlItems = '';
+    for(let key in newUser){
+        htmlItems += `<li><strong>${key}</strong>: ${newUser[key]}</li>`
+    }
+    let htmlList = `<ul>${htmlItems}</ul>`
     const mailOptions = {
         from: 'Ecommerce Backend',
         to: `${personalMail}`,
-        subject: `${msg}`,
-        text: `${msg}`,
-        html: `<h3>${msg}</h3>`
+        subject: `Nuevo registro`,
+        text: `${msg} \n Datos de usuario: \n ${JSON.stringify(newUser)}`,
+        html: `<h3>${msg}</h3>
+               <div>
+                    <p>Datos de usuario:</p>
+               </div>
+               <div>
+                    ${htmlList}
+               </div>`
+                    
     }
     try{
         const info = await transporter.sendMail(mailOptions)
@@ -250,7 +262,7 @@ passport.use('register', new LocalStrategy({
         // const usuario = usuarios.find(usuario => usuario.username === username);
         const usuario = await searchUserFirebase(username);
         const usuarioMongoAtlas = await searchUserMongoAtlas(username);
-
+        
         if(usuario){
             // console.log('Usuario encontrado FB: ', usuario)
             logger.info(`Usuario encontrado FB: ${usuario.username}`);
@@ -261,6 +273,10 @@ passport.use('register', new LocalStrategy({
 
         const newUser = {
             username: username,
+            mail: req.body.mail,
+            tel: req.body.tel,
+            edad: req.body.edad,
+            avatar: req.body.avatar,
             password: encrypt(password)
         }
 
@@ -272,6 +288,7 @@ passport.use('register', new LocalStrategy({
         let newUserSaved = await saveUserMongoAtlas(newUser);
         // console.log('Nuevo Usuario Mongo Atlas: ', newUserSaved);
         logger.info(`Nuevo Usuario Mongo Atlas:  ${newUserSaved._id}`);
+        sendMail('Se ha registrado un nuevo usuario', newUser);
         done(null, newUser);
     }catch(err){
         done(err);
@@ -469,9 +486,8 @@ app.get('/failreg', (req, res) => {
 })
 
 app.get('/successregister', async (req, res) => {
-    sendWappMsg('Se ha registrado un nuevo usuario.');
-    sendSmsMsg('Se ha registrado un nuevo usuario.');
-    sendMail('Se ha registrado un nuevo usuario');
+    // sendWappMsg('Se ha registrado un nuevo usuario.');
+    // sendSmsMsg('Se ha registrado un nuevo usuario.');
     res.status(200).send({status: 'Ok'});
 })
 
