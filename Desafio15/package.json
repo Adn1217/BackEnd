@@ -22,7 +22,7 @@
     "winston": "^3.8.2"
   },
   "scripts": {
-    "start": "0x server.js",
+    "start": "node server.js",
     "test": "node benchmark.js"
   },
   "name": "desafio5-ejs",

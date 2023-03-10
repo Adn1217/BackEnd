@@ -1,11 +1,33 @@
 <h1>Registro de usuario</h1>
 <div class="col-md-6">
-    <label for="userRegister" class="form-label">Usuario</label>
-    <input type="text" class="form-control" id="registerUserInput" placeholder="Ingrese usuario">
+    <div>
+        <label for="userRegister" class="form-label">Usuario</label>
+        <input type="text" class="form-control" id="registerUserInput" placeholder="Ingrese usuario">
+    </div>
+    <div class="user">
+        <label for="title" class="form-label">Correo</label>
+        <div id="server">
+            <input type="text" class="form-control" id="registerUserMailInput" placeholder="Ingrese correo">
+            <span class="input-group-text">@</span>
+            <input type="text" class="form-control" id="registerUserServerInput" placeholder="Dominio" aria-label="Server">
+        </div>
+    </div>
+</div>
+<div class="col-md-3">
+    <label for="age" class="form-label">Edad</label>
+    <input type="number" min="0" max="99" class="form-control" id="registerUserAgeInput" placeholder="Edad">
+</div>
+<div class="col-md-6">
+    <label for="tel" class="form-label">Telefono</label>
+    <input type="text" class="form-control" id="registerUserTelInput" placeholder="Ingrese Telefono">
+</div>
+<div class="col-md-6">
+    <label for="avatar" class="form-label">Avatar</label>
+    <input type="text" class="form-control" id="registerUserAvatarInput" placeholder="Ingrese Avatar URL">
 </div>
 <div class="col-md-6">
     <label for="pwdRegister" class="form-label">Contraseña</label>
-    <input type="password" class="form-control" id="registerPwdInput" placeholder="Ingrese usuario">
+    <input type="password" class="form-control" id="registerPwdInput" placeholder="Ingrese contraseña">
 </div>
 <div>
     <button id="registerButton" type="button" class="btn btn-primary" >Registrar</button>

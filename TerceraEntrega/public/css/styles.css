@@ -93,9 +93,8 @@ td {
     max-width: 10rem;
 }
 
-#server {
+#mail {
     display: inline;
-    width: 50%
 }
 
 #chat input{
@@ -108,6 +107,10 @@ td {
     min-width: 4rem;
 }
 
+#server {
+    display: inline;
+}
+
 #server span {
     display: inline;
     width: 2.5rem;
@@ -115,6 +118,14 @@ td {
 
 #server input {
     width: 30%;
+}
+
+#server input:first-of-type {
+    width: 65%;
+}
+
+#server {
+    display: flex;
 }
 
 #msj {
