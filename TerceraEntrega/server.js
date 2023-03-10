@@ -195,10 +195,19 @@ async function searchUserMongoAtlas(username){
     }
 }
 
-export async function sendWappMsg(msg){
+export async function sendWappMsg(msg, data, asunto){
+    let htmlItems = '';
+    let topic = asunto ? 'compra:' : 'usuario:';
+    for(let key in data){
+        if(typeof(data[key]) === 'object'){
+            data[key] = JSON.stringify(data[key]);
+        }
+        htmlItems += `*${key}*: ${data[key]}\n`
+    }
+    let htmlList = `${htmlItems}`
     try{
         const message = await client.messages.create({
-            body: `${msg}`,
+            body: `${msg} \n ${htmlList}`,
             from: `whatsapp:${twilioWappNumber}`,
             to: `whatsapp:${personalWappNumber}`
         })
@@ -210,12 +219,12 @@ export async function sendWappMsg(msg){
     }
 }
 
-export async function sendSmsMsg(msg){
+export async function sendSmsMsg(msg, tel){
     try{
         const message = await client.messages.create({
             body: `${msg}`,
             messagingServiceSid: `${twilioMsgSID}`,
-            to: `${personalWappNumber}`
+            to: `${tel}` || `${personalWappNumber}`
         })
         logger.info(`Se ha enviado mensaje de texto: ${JSON.stringify(message.body)}`);
         return message;
@@ -490,8 +499,6 @@ app.get('/failreg', (req, res) => {
 })
 
 app.get('/successregister', async (req, res) => {
-    // sendWappMsg('Se ha registrado un nuevo usuario.');
-    // sendSmsMsg('Se ha registrado un nuevo usuario.');
     res.status(200).send({status: 'Ok'});
 })
 

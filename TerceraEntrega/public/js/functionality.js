@@ -449,7 +449,6 @@ async function deleteOneCart(id){
 
 async function buyCart(id){
     let cart = await getOneCart(id);
-    console.log(cart);
     if(!("error" in cart)){
         let response = await fetch(`${uri}/carrito/${id}/productosCompra`, { method: 'POST',
             headers: {
@@ -459,7 +458,7 @@ async function buyCart(id){
             },
             body: JSON.stringify(cart)
         })
-
+    cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha registrado la compra de los siguientes productos: <br></strong>${JSON.stringify(cart)}</p>`;
     }
 }
 

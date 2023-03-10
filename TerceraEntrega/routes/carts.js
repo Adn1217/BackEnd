@@ -1,7 +1,7 @@
 import express from 'express';
 import {onlyAdmin, isLogged} from '../functions.js';
 import * as cartController from '../controller/cartsController.js';
-import { sendMail } from '../server.js';
+import { sendMail, sendSmsMsg, sendWappMsg } from '../server.js';
 
 const { Router } = express;
 export const carrito = new Router();
@@ -21,8 +21,11 @@ carrito.get('/:id/productos', (req, res) => {
 carrito.post('/:id/productosCompra', (req, res) => {
     const id = req.params.id;
     const cart = req.body;
-    console.log(cart);
+    // console.log(cart);
     sendMail('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${req.user?.username} - ${req.user?.mail}`);
+    sendWappMsg('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${req.user?.username} - ${req.user?.mail}`);
+    sendSmsMsg('Su pedido ha sido recibido y se encuentra en proceso', req.user?.tel)
+    res.status(200).send({compraRegistrada: 'Ok'});
 })
 
 carrito.post('/', (req, res) => {
