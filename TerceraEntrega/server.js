@@ -195,7 +195,7 @@ async function searchUserMongoAtlas(username){
     }
 }
 
-async function sendWappMsg(msg){
+export async function sendWappMsg(msg){
     try{
         const message = await client.messages.create({
             body: `${msg}`,
@@ -210,7 +210,7 @@ async function sendWappMsg(msg){
     }
 }
 
-async function sendSmsMsg(msg){
+export async function sendSmsMsg(msg){
     try{
         const message = await client.messages.create({
             body: `${msg}`,
@@ -225,20 +225,24 @@ async function sendSmsMsg(msg){
     }
 }
 
-async function sendMail(msg, newUser){
+export async function sendMail(msg, data, asunto){
     let htmlItems = '';
-    for(let key in newUser){
-        htmlItems += `<li><strong>${key}</strong>: ${newUser[key]}</li>`
+    let topic = asunto ? 'compra' : 'usuario';
+    for(let key in data){
+        if(typeof(data[key]) === 'object'){
+            data[key] = JSON.stringify(data[key]);
+        }
+        htmlItems += `<li><strong>${key}</strong>: ${data[key]}</li>`
     }
     let htmlList = `<ul>${htmlItems}</ul>`
     const mailOptions = {
         from: 'Ecommerce Backend',
         to: `${personalMail}`,
-        subject: `Nuevo registro`,
-        text: `${msg} \n Datos de usuario: \n ${JSON.stringify(newUser)}`,
+        subject: asunto || `Nuevo registro`,
+        text: `${msg} \n Datos de ${topic}: \n ${JSON.stringify(data)}`,
         html: `<h3>${msg}</h3>
                <div>
-                    <p>Datos de usuario:</p>
+                    <p>Datos de ${topic}:</p>
                </div>
                <div>
                     ${htmlList}

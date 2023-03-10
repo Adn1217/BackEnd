@@ -100,7 +100,7 @@ export async function showCartById(res, id) {
     if (!cartById){
         res.send({error:"Carrito no encontrado"});
     }else{
-        res.send({productoCarrito: cartById.productos});
+        res.send({productosCarrito: cartById.productos});
         // console.log(cartById.productos);
         logger.debug(`Los productos del carrito son: ${JSON.stringify(cartById.productos)}`)
     }

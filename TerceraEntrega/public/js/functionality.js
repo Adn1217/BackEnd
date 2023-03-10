@@ -366,6 +366,7 @@ async function getOneCart(id){
         }
         idProdInput.value = '';
         console.log(cart);
+        return cart;
         // socket.emit('oneProductRequest', parseInt(id));
     }
 }
@@ -445,6 +446,23 @@ async function deleteOneCart(id){
         }
     }
 }
+
+async function buyCart(id){
+    let cart = await getOneCart(id);
+    console.log(cart);
+    if(!("error" in cart)){
+        let response = await fetch(`${uri}/carrito/${id}/productosCompra`, { method: 'POST',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: true
+            },
+            body: JSON.stringify(cart)
+        })
+
+    }
+}
+
 
 
 //-----------MESSAGES----------------------------------------
@@ -596,6 +614,7 @@ getAllCartsButton.addEventListener('click', getAllCarts)
 getCartButton.addEventListener('click', () => getOneCart(idCartInput.value))
 deleteProductInCartButton.addEventListener('click', () => deleteOneProductInCart(idCartInput.value, idProdInput.value));
 deleteCartButton.addEventListener('click', () => deleteOneCart(idCartInput.value))
+buyCartButton.addEventListener('click', () => buyCart(idCartInput.value))
 
 //-------MESSAGES------------------------------------
 sendNormMsgButton.addEventListener('click', () => sendNormalizedMessage())

@@ -16,6 +16,7 @@ let getAllCartsButton = document.getElementById('getAllCartsButton');
 let getCartButton = document.getElementById('getCartButton');
 let deleteProductInCartButton = document.getElementById('deleteProductInCartButton');
 let deleteCartButton = document.getElementById('deleteCartButton');
+let buyCartButton = document.getElementById('buyCartButton');
 let addMsgButton = document.getElementById('addMsgButton');
 let sendNormMsgButton = document.getElementById('sendNormMsgButton');
 let sendMsgButton = document.getElementById('sendMsgButton');
