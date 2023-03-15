@@ -1,5 +1,5 @@
 import ContenedorArchivo from '../ContenedorArchivo.class.js';
-import ContenedorMongoAtlas from '../ContenedorMongoAtlas.class.js';
+import ContenedorMongoAtlas from '../container/ContenedorMongoAtlas.class.js';
 import ContenedorFirebase from '../ContenedorFirebase.class.js';
 import * as msgController from './messagesController.js';
 import { faker } from '@faker-js/faker';

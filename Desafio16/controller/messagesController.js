@@ -1,5 +1,5 @@
 import ContenedorArchivo from '../ContenedorArchivo.class.js';
-import ContenedorMongoAtlas from '../ContenedorMongoAtlas.class.js';
+import ContenedorMongoAtlas from '../container/ContenedorMongoAtlas.class.js';
 import ContenedorFirebase from '../ContenedorFirebase.class.js';
 import {schema, normalize, denormalize} from 'normalizr';
 import { messagesCollection} from '../server.js';

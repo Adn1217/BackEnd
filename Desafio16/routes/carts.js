@@ -1,7 +1,6 @@
 import express from 'express';
 import {onlyAdmin, isLogged} from '../functions.js';
 import * as cartController from '../controller/cartsController.js';
-import { sendMail, sendSmsMsg, sendWappMsg } from '../server.js';
 
 const { Router } = express;
 export const carrito = new Router();
@@ -13,55 +12,29 @@ carrito.get('/', (req, res) => {
 })
 
 carrito.get('/:id/productos', (req, res) => {
-    const id = req.params.id;
-    // console.log(id);
-    cartController.showCartById(res, id);
+    cartController.showCartById(req, res);
 })
 
 carrito.post('/:id/productosCompra', (req, res) => {
-    const id = req.params.id;
-    const cart = req.body;
-    // console.log(cart);
-    sendMail('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${req.user?.username} - ${req.user?.mail}`);
-    sendWappMsg('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${req.user?.username} - ${req.user?.mail}`);
-    sendSmsMsg('Su pedido ha sido recibido y se encuentra en proceso', req.user?.tel)
-    res.status(200).send({compraRegistrada: 'Ok'});
+    cartController.buyCartById(req,res);
 })
 
 carrito.post('/', (req, res) => {
-    const cart = req.body;
-    if (Object.keys(cart).length === 0){
-        res.send({Error: "Carrito no recibido"})
-    }else{
-        console.log('Carrito: ', JSON.stringify(cart));
-        onlyAdmin(req, res, cartController.doSaveCart, [res, cart]);
-    }
+    onlyAdmin(req, res, cartController.doSaveCart, [req, res]);
 })
 
 carrito.post('/:id/productos', (req, res) => {
-    const prod = req.body;
-    const {id} = req.params;
-    if (Object.keys(prod).length === 0){
-        res.send({Error: "Producto no recibido"})
-    }else{
-        console.log('ProductoEnFront: ', JSON.stringify(prod));
-        onlyAdmin(req, res,cartController.doSaveProductInCart, [res, prod, id]);
-    }
+    onlyAdmin(req, res,cartController.doSaveProductInCart, [req, res]);
 })
 
 carrito.put('/:id/productos', (req, res) => {// No se expone a Front.
-    const cart = req.body;
-    const id = req.params.id;
-    onlyAdmin(req, res,cartController.updateCartById, [res, cart, id]);
+    onlyAdmin(req, res,cartController.updateCartById, [req, res]);
 })
 
 carrito.delete('/:id', (req, res) => {
-    const {id} = req.params;
-    onlyAdmin(req, res, cartController.doDeleteCartById, [res, id]);
+    onlyAdmin(req, res, cartController.doDeleteCartById, [req, res]);
 })
 
 carrito.delete('/:id/productos/:id_prod', (req, res) => {
-    const {id, id_prod} = req.params;
-    const id_cart = id;
-    onlyAdmin(req, res, cartController.doDeleteProductInCartById, [res, id_prod,  id_cart]);
+    onlyAdmin(req, res, cartController.doDeleteProductInCartById, [req, res]);
 })
