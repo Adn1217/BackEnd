@@ -17,5 +17,5 @@ mensajes.post('/', (req, res) => {
 })
 
 mensajes.post('/normalized', (req, res) => {
-    msgController.doSaveNormMessage(res, msg);
+    msgController.doSaveNormMessage(req, res);
 })

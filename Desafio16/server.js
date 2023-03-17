@@ -435,7 +435,7 @@ io.on('connection', (socket) => {
     })
     
     socket.on('messageRequest', async () => {
-        let allMsgs = await msgController.getMessages();
+        let allMsgs = await msgController.getMsgs();
         io.sockets.emit('mensajes', {msgs: allMsgs});
     })
 

@@ -12,5 +12,12 @@
     "mensaje": "Prueba con Nginx+Socket",
     "id": 2,
     "timestamp": "11/02/2023, 17:51:01"
+  },
+  {
+    "fecha": "2023-03-17T02:51:21.418Z",
+    "usuario": "Adrian",
+    "mensaje": "Prueba con funcionalidad en capas",
+    "id": 3,
+    "timestamp": "16/03/2023, 21:51:22"
   }
 ]

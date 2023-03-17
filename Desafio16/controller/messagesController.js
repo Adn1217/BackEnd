@@ -23,3 +23,8 @@ export async function doSaveNormMessage(req, res) {
     const newMsg = await service.saveNormalizedMessage(msg); 
     res.send({Guardado: newMsg})
 }
+
+export async function getNormMessages(req, res) {
+    const allNormMessages = await service.getNormMessages();
+    return allNormMessages;
+}

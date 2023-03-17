@@ -4,6 +4,7 @@ import ContenedorMongoAtlas from './ContenedorMongoAtlas.class.js';
 import ContenedorFirebase from './ContenedorFirebase.class.js';
 import { messagesCollection} from '../server.js';
 import {schema, normalize, denormalize} from 'normalizr';
+import logger from '../logger.js';
 
 export async function getMessages() {
     const messages = new ContenedorArchivo('./mensajes.json');
