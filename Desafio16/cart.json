@@ -54,29 +54,5 @@
     "productos": [],
     "id": 3,
     "timestamp": "10/12/2022, 19:48:21"
-  },
-  {
-    "usuario": "Adn",
-    "productos": [],
-    "id": 4,
-    "timestamp": "15/01/2023, 19:19:55"
-  },
-  {
-    "usuario": "Alejandra",
-    "productos": [],
-    "id": 5,
-    "timestamp": "22/01/2023, 14:06:45"
-  },
-  {
-    "usuario": "Alu",
-    "productos": [],
-    "id": 6,
-    "timestamp": "22/01/2023, 14:22:27"
-  },
-  {
-    "usuario": "Adrianf",
-    "productos": [],
-    "id": 7,
-    "timestamp": "01/02/2023, 21:03:58"
   }
 ]

@@ -13,21 +13,9 @@ mensajes.get('/', async (req, res) => {
 })
 
 mensajes.post('/', (req, res) => {
-    const msg = req.body;
-    if (Object.keys(msg).length === 0){
-        res.send({Error: "Mensage no recibido"})
-    }else{
-        // console.log('Mensaje: ', msg);
-        msgController.doSaveMessage(res, msg);
-    }
+    msgController.doSaveMessage(req, res);
 })
 
 mensajes.post('/normalized', (req, res) => {
-    const msg = req.body;
-    if (Object.keys(msg).length === 0){
-        res.send({Error: "Mensage no recibido"})
-    }else{
-        // console.log('Mensaje: ', msg);
-        msgController.doSaveNormMessage(res, msg);
-    }
+    msgController.doSaveNormMessage(req, res);
 })

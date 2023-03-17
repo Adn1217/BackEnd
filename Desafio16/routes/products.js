@@ -1,7 +1,6 @@
 import express from 'express';
 import {onlyAdmin, isLogged} from '../functions.js';
 import * as prdController from '../controller/productsController.js';
-import logger from '../logger.js';
 
 const { Router } = express;
 export const productos = new Router();
@@ -11,32 +10,22 @@ productos.use('/', isLogged);
 productosTest.use('/', isLogged);
 
 productos.get('/:id?', async(req, res) => {
-    if(Object.keys(req.query).length > 0 || req.params.id){
-        const id = req.query.id || req.params.id
-        prdController.showProductById(res, id);
-    }else{
-        let allProducts = await prdController.getProducts()
-        res.send(allProducts);
-    }
-})
+    await prdController.getProducts(req, res);
+    })
 
 productosTest.get('/', async(req, res) => {
-    let allRandomProducts = prdController.getRandomProducts(5);
-    res.send(allRandomProducts);
+    prdController.getRandomProducts(res, 5);
 })
 
 productos.post('/', (req, res) => {
-    onlyAdmin(req, res, prdController.doSaveProduct, [req.body, res]);
+    onlyAdmin(req, res, prdController.doSaveProduct, [req, res]);
 })
 
 
 productos.put('/:id', (req, res) => { 
-    const prod = req.body;
-    const id = req.params.id;
-    onlyAdmin(req, res, prdController.updateProductById, [res, prod, id]);
+    onlyAdmin(req, res, prdController.updateProductById, [req, res]);
 })
 
 productos.delete('/:id', (req, res) => {
-    const {id} = req.params;
-    onlyAdmin(req, res, prdController.doDeleteProductById, [res, id]);
+    onlyAdmin(req, res, prdController.doDeleteProductById, [req, res]);
 })

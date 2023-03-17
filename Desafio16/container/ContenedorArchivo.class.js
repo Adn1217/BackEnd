@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import {calculateId} from './functions.js';
+import {calculateId} from '../functions.js';
 
 export default class ContenedorArchivo {
   constructor(ubicacion) {
