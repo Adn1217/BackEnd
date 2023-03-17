@@ -8,33 +8,14 @@ if (port){
 const server ='localhost';
 const uri = `http://${server}${port}`;
 
-function checkInputs(){
-    if(titleInput.value === '' || codeInput.value === '' || priceInput.value === ''
-       || stockInput.value === ''|| thumbnailInput.value === ''){
-        titleInput.classList.add('errorInput');
-        codeInput.classList.add('errorInput');
-        priceInput.classList.add('errorInput');
-        stockInput.classList.add('errorInput');
-        thumbnailInput.classList.add('errorInput');
-        results.classList.add('errorLabel');
-        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
-        return false
-    }else{
-        titleInput.classList.remove('errorInput');
-        codeInput.classList.remove('errorInput');
-        priceInput.classList.remove('errorInput');
-        stockInput.classList.remove('errorInput');
-        thumbnailInput.classList.remove('errorInput');
-        idInput.classList.remove('errorInput');
-        results.classList.remove('errorLabel');
-        results.innerHTML='';
-        return true
-    }
-}
-
-function checkMsgInputs(fields){
-    
+function checkInputs(fields, type='products'){
+    let errorDiv = results;
     let invalide = false;
+
+    if(type=='carts'){
+        errorDiv = cartResults;
+    }
+
     fields.forEach((field) => {
             if (field.value === ''){
                 field.classList.add('errorInput');
@@ -42,23 +23,25 @@ function checkMsgInputs(fields){
             }
         })
     if(invalide){
-        results.classList.add('errorLabel');
-        results.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
+        errorDiv.classList.add('errorLabel');
+        errorDiv.innerHTML=`<p>Los campos resaltados son obligatorios</p>`;
         return false
     }else{
         fields.forEach((field) => {
             field.classList.remove('errorInput');
         })
-        if (results.classList.contains("errorLabel")) {
-            results.classList.remove("errorLabel");
-            results.innerHTML = "";
+        if (errorDiv.classList.contains("errorLabel")) {
+            errorDiv.classList.remove("errorLabel");
+            errorDiv.innerHTML = "";
           }
         return true
     }
 }
+
 //-----------PRODUCTS FORM -------------------------
 async function submitForm(id) {
-    let valideInputs = checkInputs();
+    let inputFields = [titleInput, codeInput, priceInput, stockInput, thumbnailInput];
+    let valideInputs = checkInputs(inputFields, 'products');
     if(valideInputs){
         let newProd = {
             code: codeInput.value,
@@ -262,7 +245,8 @@ async function saveCart(user){
 }
 
 async function saveProdInCart(idCart){
-    let valideInputs = checkInputs();
+    let inputFields = [titleInput, codeInput, priceInput, stockInput, thumbnailInput];
+    let valideInputs = checkInputs(inputFields, 'products');
     if((valideInputs && idCart !== '')){
         let newProd = {
                 code: codeInput.value,
@@ -371,6 +355,8 @@ async function getOneCart(id){
     }
 }
 
+
+
 async function deleteOneProductInCart(idCart, idProd){
     if (idCart === '' || idProd === ''){
         idCartInput.classList.add('errorInput');
@@ -463,27 +449,30 @@ async function buyCart(id){
 }
 
 async function buyCart2(id){
-    let response = await fetch(`${uri}/carrito/${id}/productosCompra2`, { method: 'POST',
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Auth: true
+    let valideInputs = checkInputs([idCartInput], 'carts')
+    if (valideInputs){
+        let response = await fetch(`${uri}/carrito/${id}/productosCompra2`, { method: 'POST',
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                Auth: true
+            }
+        })
+        let resp = await response.json();
+        let cart = resp[0];
+        console.log(resp);
+        if(!("error" in cart)){
+            cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha registrado la compra de los siguientes productos: <br></strong>${JSON.stringify(cart)}</p>`
+        }else{
+            cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha presentado error durante la compra: <br></strong>${JSON.stringify(cart)}</p>`
         }
-    })
-    let resp = await response.json();
-    let cart = resp[0];
-    console.log(resp);
-    if(!("error" in cart)){
-        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha registrado la compra de los siguientes productos: <br></strong>${JSON.stringify(cart)}</p>`
-    }else{
-        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha presentado error durante la compra: <br></strong>${JSON.stringify(cart)}</p>`
     }
 }
 
 //-----------MESSAGES----------------------------------------
 async function sendMessage() {
     const fields = [userInput, msgInput];
-    let valideInputs = checkMsgInputs(fields);
+    let valideInputs = checkInputs(fields);
     if(valideInputs){
         let newMessage = {
             // fecha: new Date().toLocaleString("en-GB"),
@@ -554,7 +543,7 @@ function createMessage() {
 
 async function sendNormalizedMessage() {
     const fields = [userIdInput, userInput, userLastnameInput, userAgeInput, userAliasInput, userAvatarInput, msgInput];
-    let valideInputs = checkMsgInputs(fields);
+    let valideInputs = checkInputs(fields);
 
     if(valideInputs){
         let newMessage = createMessage();
