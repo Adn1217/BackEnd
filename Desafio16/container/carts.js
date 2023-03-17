@@ -2,6 +2,7 @@ import ContenedorArchivo from './ContenedorArchivo.class.js';
 import ContenedorMongoAtlas from './ContenedorMongoAtlas.class.js';
 import ContenedorFirebase from './ContenedorFirebase.class.js';
 import { cartsCollection } from '../server.js'
+import logger from '../logger.js';
 
 export async function saveCart(cart) {
     const carritoFirebase = new ContenedorFirebase(cartsCollection);

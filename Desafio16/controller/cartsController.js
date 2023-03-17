@@ -14,7 +14,7 @@ export async function showCartById(req, res) {
     const id = req.params.id;
     // console.log(id);
     let cartById = await service.getCartById(id);
-    return cartById
+    res.send(cartById);
 }
 
 export async function doDeleteCartById(req, res) {

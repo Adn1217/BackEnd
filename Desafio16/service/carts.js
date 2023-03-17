@@ -4,6 +4,12 @@ import * as container from '../container/carts.js';
 import { sendMail, sendSmsMsg, sendWappMsg } from '../server.js';
 import { calculateId } from '../functions.js';
 import { cartsCollection } from '../server.js';
+import logger from '../logger.js';
+
+export async function getCarts(){
+    const carts = await container.getCarts(); 
+    return carts;
+}
 
 export async function saveCart(cart){
     if (Object.keys(cart).length === 0){
