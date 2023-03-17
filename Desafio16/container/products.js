@@ -1,7 +1,7 @@
-
 import ContenedorArchivo from './ContenedorArchivo.class.js';
 import ContenedorMongoAtlas from './ContenedorMongoAtlas.class.js';
 import ContenedorFirebase from './ContenedorFirebase.class.js';
+import { productsCollection } from '../server.js'
 
 export async function getProducts() {
     const productos = new ContenedorArchivo('./productos.json');

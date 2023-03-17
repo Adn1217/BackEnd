@@ -1,5 +1,10 @@
+import ContenedorArchivo from '../container/ContenedorArchivo.class.js';
+import ContenedorMongoAtlas from '../container/ContenedorMongoAtlas.class.js';
+import ContenedorFirebase from '../container/ContenedorFirebase.class.js';
 import * as container from '../container/products.js';
 import { productsCollection } from '../server.js'
+import * as msgController from '../controller/messagesController.js';
+import logger from '../logger.js';
 
 export async function saveProduct(product){
     if (Object.keys(product).length === 0){
@@ -14,17 +19,17 @@ export async function saveProduct(product){
 
 export async function getProducts(req, res){
     if(Object.keys(req.query).length > 0 || req.params.id){
-        const id = req.query.id || req.params.id
+        const id = req.query.id || req.params.id;
         await showProductById(res, id);
     }else{
-        const allProducts = await service.getProducts();
+        const allProducts = await container.getProducts();
         res.send(allProducts);
     }
 }
 
 export async function showProducts(req) {
-    const allProducts = await getProducts(); 
-    const allMessages = await msgController.getMessages();
+    const allProducts = await container.getProducts(); 
+    const allMessages = await msgController.getMsgs();
     // console.log('Los productos son: \n', allProducts);
     const user = req.user.username;
     let renderData = {user: user, products: allProducts, msgs: allMessages};

@@ -1,7 +1,7 @@
 import * as msgController from './messagesController.js';
 import { faker } from '@faker-js/faker';
 import logger from '../logger.js';
-import * as service from '../service/carts';
+import * as service from '../service/products.js';
 
 function createRandomProducts(n){
     const randomProducts = [];
@@ -24,7 +24,7 @@ export async function getProducts(req, res) {
     await service.getProducts(req, res);
 } 
 
-export function getRandomProducts(n) {
+export function getRandomProducts(res, n) {
     const allProductsRandom = createRandomProducts(n);
     // console.log(allProductsRandom);
     logger.debug(`${JSON.stringify(allProductsRandom)}`);

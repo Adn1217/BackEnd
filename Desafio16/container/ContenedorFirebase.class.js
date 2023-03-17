@@ -1,4 +1,4 @@
-import {dbFS} from './server.js';
+import {dbFS} from '../server.js';
 // import {doc, getDoc} from 'firebase/firestore';
 
 export default class ContenedorFirebase {
