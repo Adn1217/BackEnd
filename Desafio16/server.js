@@ -16,6 +16,7 @@ import parseArgs from 'minimist';
 
 import * as prdController from './controller/productsController.js';
 import * as msgController from './controller/messagesController.js';
+import * as prdService from './service/products.js';
 // import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics"
 import admin from 'firebase-admin';
@@ -429,7 +430,7 @@ io.on('connection', (socket) => {
     // mongoAtlasConnect('ecommerce');
 
     socket.on('productRequest', async () => {
-        const allProducts = await prdController.getProducts();
+        const allProducts = await prdService.getProducts();
         io.sockets.emit('productos', {productos: allProducts});
     })
     

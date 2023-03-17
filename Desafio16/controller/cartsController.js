@@ -1,6 +1,3 @@
-import ContenedorArchivo from '../container/ContenedorArchivo.class.js';
-import ContenedorMongoAtlas from '../container/ContenedorMongoAtlas.class.js';
-import ContenedorFirebase from '../container/ContenedorFirebase.class.js';
 import logger from '../logger.js';
 import * as service from '../service/carts';
 
