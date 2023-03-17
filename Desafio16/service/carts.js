@@ -147,3 +147,18 @@ export async function buyCartById(cart, user){
     sendWappMsg('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${user?.username} - ${user?.mail}`);
     sendSmsMsg('Su pedido ha sido recibido y se encuentra en proceso', user?.tel)
 }
+
+export async function buyCartById2(id, user){
+    let response = [];
+    let cart = await getCartById(id);
+    response.push(cart);
+    if(!("error" in cart)){
+        response.push({compraRegistrada: 'Ok'});
+        sendMail('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${user?.username} - ${user?.mail}`);
+        sendWappMsg('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${user?.username} - ${user?.mail}`);
+        sendSmsMsg('Su pedido ha sido recibido y se encuentra en proceso', user?.tel)
+    }else{
+        response.push({compraRegistrada: 'Error'});
+    }
+    return response;
+}

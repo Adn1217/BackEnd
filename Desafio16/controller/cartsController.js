@@ -63,3 +63,13 @@ export async function buyCartById(req,res){
     // console.log(cart);
     res.status(200).send({compraRegistrada: 'Ok'});
 }
+
+
+export async function buyCartById2(req,res){
+    const id = req.params.id;
+    const user = req.user;
+    const response = await service.buyCartById2(id, user);
+    console.log(response);
+    // res.status(200).send({compraRegistrada: 'Ok'});
+    res.status(200).send(response)
+}

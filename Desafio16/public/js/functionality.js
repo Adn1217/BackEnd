@@ -462,7 +462,23 @@ async function buyCart(id){
     }
 }
 
-
+async function buyCart2(id){
+    let response = await fetch(`${uri}/carrito/${id}/productosCompra2`, { method: 'POST',
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Auth: true
+        }
+    })
+    let resp = await response.json();
+    let cart = resp[0];
+    console.log(resp);
+    if(!("error" in cart)){
+        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha registrado la compra de los siguientes productos: <br></strong>${JSON.stringify(cart)}</p>`
+    }else{
+        cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha presentado error durante la compra: <br></strong>${JSON.stringify(cart)}</p>`
+    }
+}
 
 //-----------MESSAGES----------------------------------------
 async function sendMessage() {
@@ -613,7 +629,7 @@ getAllCartsButton.addEventListener('click', getAllCarts)
 getCartButton.addEventListener('click', () => getOneCart(idCartInput.value))
 deleteProductInCartButton.addEventListener('click', () => deleteOneProductInCart(idCartInput.value, idProdInput.value));
 deleteCartButton.addEventListener('click', () => deleteOneCart(idCartInput.value))
-buyCartButton.addEventListener('click', () => buyCart(idCartInput.value))
+buyCartButton.addEventListener('click', () => buyCart2(idCartInput.value))
 
 //-------MESSAGES------------------------------------
 sendNormMsgButton.addEventListener('click', () => sendNormalizedMessage())

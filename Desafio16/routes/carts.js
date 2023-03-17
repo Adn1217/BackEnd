@@ -19,6 +19,10 @@ carrito.post('/:id/productosCompra', (req, res) => {
     cartController.buyCartById(req,res);
 })
 
+carrito.post('/:id/productosCompra2', (req, res) => {
+    cartController.buyCartById2(req,res);
+})
+
 carrito.post('/', (req, res) => {
     onlyAdmin(req, res, cartController.doSaveCart, [req, res]);
 })
