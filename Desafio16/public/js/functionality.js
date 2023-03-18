@@ -424,7 +424,7 @@ async function deleteOneCart(id){
             }
         }else{
             console.log("Carrito eliminado: ", cart);
-            results.classList.remove('errorLabel');
+            cartResults.classList.remove('errorLabel');
             // socket.emit("productRequest", "msj");
             cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Carrito${id}Eliminado: <br></strong>${JSON.stringify(cart)}</p>`;
             idCartInput.value = '';
@@ -434,24 +434,9 @@ async function deleteOneCart(id){
 }
 
 async function buyCart(id){
-    let cart = await getOneCart(id);
-    if(!("error" in cart)){
-        let response = await fetch(`${uri}/carrito/${id}/productosCompra`, { method: 'POST',
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Auth: true
-            },
-            body: JSON.stringify(cart)
-        })
-    cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha registrado la compra de los siguientes productos: <br></strong>${JSON.stringify(cart)}</p>`;
-    }
-}
-
-async function buyCart2(id){
     let valideInputs = checkInputs([idCartInput], 'carts')
     if (valideInputs){
-        let response = await fetch(`${uri}/carrito/${id}/productosCompra2`, { method: 'POST',
+        let response = await fetch(`${uri}/carrito/${id}/productosCompra`, { method: 'POST',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
@@ -462,9 +447,11 @@ async function buyCart2(id){
         let cart = resp[0];
         console.log(resp);
         if(!("error" in cart)){
+            cartResults.classList.remove('errorLabel');
             cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha registrado la compra de los siguientes productos: <br></strong>${JSON.stringify(cart)}</p>`
         }else{
-            cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>Se ha presentado error durante la compra: <br></strong>${JSON.stringify(cart)}</p>`
+            cartResults.classList.add('errorLabel');
+            cartResults.innerHTML=`<h1>Error</h1><p><strong>Se ha presentado error durante la compra: <br></strong>${JSON.stringify(cart)}</p>`
         }
     }
 }
@@ -472,7 +459,7 @@ async function buyCart2(id){
 //-----------MESSAGES----------------------------------------
 async function sendMessage() {
     const fields = [userInput, msgInput];
-    let valideInputs = checkInputs(fields);
+    let valideInputs = checkInputs(fields, 'messages');
     if(valideInputs){
         let newMessage = {
             // fecha: new Date().toLocaleString("en-GB"),
@@ -543,7 +530,7 @@ function createMessage() {
 
 async function sendNormalizedMessage() {
     const fields = [userIdInput, userInput, userLastnameInput, userAgeInput, userAliasInput, userAvatarInput, msgInput];
-    let valideInputs = checkInputs(fields);
+    let valideInputs = checkInputs(fields, 'messages');
 
     if(valideInputs){
         let newMessage = createMessage();
@@ -618,7 +605,7 @@ getAllCartsButton.addEventListener('click', getAllCarts)
 getCartButton.addEventListener('click', () => getOneCart(idCartInput.value))
 deleteProductInCartButton.addEventListener('click', () => deleteOneProductInCart(idCartInput.value, idProdInput.value));
 deleteCartButton.addEventListener('click', () => deleteOneCart(idCartInput.value))
-buyCartButton.addEventListener('click', () => buyCart2(idCartInput.value))
+buyCartButton.addEventListener('click', () => buyCart(idCartInput.value))
 
 //-------MESSAGES------------------------------------
 sendNormMsgButton.addEventListener('click', () => sendNormalizedMessage())

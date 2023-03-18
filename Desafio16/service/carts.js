@@ -142,13 +142,7 @@ export async function updateCartById(updatedCart, id){
     
 }
 
-export async function buyCartById(cart, user){
-    sendMail('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${user?.username} - ${user?.mail}`);
-    sendWappMsg('Se ha registrado una nueva compra', cart, `Nuevo pedido de ${user?.username} - ${user?.mail}`);
-    sendSmsMsg('Su pedido ha sido recibido y se encuentra en proceso', user?.tel)
-}
-
-export async function buyCartById2(id, user){
+export async function buyCartById(id, user){
     let response = [];
     let cart = await getCartById(id);
     response.push(cart);
