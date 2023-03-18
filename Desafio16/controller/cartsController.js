@@ -58,8 +58,8 @@ export async function updateCartById(req, res) {
 export async function buyCartById(req,res){
     const id = req.params.id;
     const user = req.user;
-    const cart = req.body;
-    service.buyCartById(cart, user);
-    // console.log(cart);
-    res.status(200).send({compraRegistrada: 'Ok'});
+    const response = await service.buyCartById(id, user);
+    console.log(response);
+    // res.status(200).send({compraRegistrada: 'Ok'});
+    res.status(200).send(response)
 }

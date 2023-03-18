@@ -24,9 +24,10 @@
     const server ='localhost';
     const uri = `http://${server}${port}`;
     async function login(user, pwd){
-        if (user !== ''){
+        if (user !== '' && pwd !== ''){
             errors.classList.remove('errorLabel');
             loginUserInput.classList.remove('errorInput');
+            loginPwdInput.classList.remove('errorInput');
             let response = await fetch(`${uri}/login`, { method: 'POST',
                 headers: {
                     Accept: "application/json",
