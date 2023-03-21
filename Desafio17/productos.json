@@ -48,5 +48,15 @@
     "thumbnail": "1",
     "id": 5,
     "timestamp": "17/03/2023, 18:45:16"
+  },
+  {
+    "code": "1",
+    "title": "1",
+    "description": "1",
+    "price": "1",
+    "stock": "1",
+    "thumbnail": "1",
+    "id": 6,
+    "timestamp": "21/03/2023, 17:32:35"
   }
 ]
