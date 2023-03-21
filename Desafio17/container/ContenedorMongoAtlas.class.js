@@ -4,10 +4,58 @@ import {msgsModel} from '../models/messages.js';
 import {cartsModel} from '../models/carts.js';
 import {usersModel} from '../models/users.js';
 import { productsCollection, messagesCollection, cartsCollection } from "../server.js";
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import dbClient from "./dbClient.class.js";
+import {getURL} from '../functions.js';
+import logger from '../logger.js';
 
-export default class ContenedorMongoAtlas {
+dotenv.config({
+    path: './.env'
+})
+
+mongoose.set('strictQuery', false);
+
+let instance = null;
+const userName = process.env.DB_MONGO_USER;
+const pwd = process.env.DB_MONGO_PWD;
+const mongoAtlasDb = process.env.DB_MONGOATLAS;
+const advancedOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}
+export default class ContenedorMongoAtlas extends dbClient {
   constructor(collection) {
+    super();
     this.collection = collection;
+  }
+
+  static getInstance(collection){
+    if(!instance){ // SINGLETON
+      instance = new ContenedorMongoAtlas(collection);
+      instance.connect(mongoAtlasDb, userName, pwd);
+      return instance;
+    }else{
+      return instance;
+    }
+  }
+
+  async connect(db, userName, pwd) {
+      try{
+          const URL = getURL(db, userName, pwd);
+          await mongoose.connect(URL, advancedOptions)
+          logger.info(`Servidor ${process.pid} se ha conectado exitosamente a MongoAtlas`);
+      }catch(error){
+          logger.error(`Se ha presentado el siguiente error al intentar conectar el servidor ${process.pid} a mongoatlas: ${error}`);
+      }
+  }
+
+  async disconnect(){
+    try{
+        mongoose.disconnect();
+    }catch(error){
+        logger.error(`Se ha presentado el siguiente error al intentar desconectar de mongoatlas: ${error}`);
+    }
   }
 
   async save(elemento) {
@@ -137,6 +185,27 @@ export default class ContenedorMongoAtlas {
       }
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    }
+  }
+  
+  async deleteAll() {
+    let response; 
+    try {
+      if (this.collection === productsCollection){
+        response = await productsModel.deleteMany({});
+      }else{
+        response = await cartsModel.deleteMany({});
+      }
+      console.log(element);
+      if (response[0]?.acknowledged) {
+        console.log(`\nSe eliminan todos los elementos de la colección ${this.collection}\n`);
+        // console.log("Quedan los productos: ", data);
+      } else {
+        console.log(`No se ha podido eliminar la colección ${this.collection} `);
+      }
+      return response;
+    } catch (error) {
+      console.log(`Se ha presentado error al intentar borrar todos los documentos de la colección ${this.collection}: \n`, error);
     }
   }
   

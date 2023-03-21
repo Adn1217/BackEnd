@@ -3,7 +3,6 @@ import cluster from 'cluster';
 import os from 'os';
 // import {spawn} from 'child_process';
 import express from 'express';
-import mongoose from 'mongoose';
 import {Server as HttpServer} from 'http';
 import {Server as IOServer} from 'socket.io';
 import path from 'path';
@@ -14,12 +13,34 @@ import {getURL, loadMocktoFireBase, logRequest} from './functions.js';
 import dotenv from 'dotenv';
 import parseArgs from 'minimist';
 
+dotenv.config({
+    path: './.env'
+})
+
+const userName = process.env.DB_MONGO_USER;
+const pwd = process.env.DB_MONGO_PWD;
+const mongoAtlasDb = process.env.DB_MONGOATLAS;
+const usersCollection = process.env.DB_USERS_COLLECTION;
+const sessionsCollection = process.env.DB_SESSIONS_COLLECTION;
+export const productsCollection = process.env.DB_PRODUCTS_COLLECTION;
+export const cartsCollection = process.env.DB_CARTS_COLLECTION;
+export const messagesCollection = process.env.DB_MESSAGES_COLLECTION;
+const sessionSecret = process.env.SESSION_SECRET;
+const twilioAccountSID = process.env.TWILIO_ACCOUNT_SID;
+const twilioMsgSID = process.env.TWILIO_MSG_SERVICE_SID;
+const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+const twilioWappNumber = process.env.TWILIO_WAPP_NUMBER;
+const personalWappNumber = process.env.PERSONAL_WAPP_NUMBER;
+const personalMail = process.env.PERSONAL_MAIL;
+const gmailMail = process.env.GMAIL_MAIL;
+const gmailAppPass = process.env.GMAIL_APP_PASS;
+
 import * as prdController from './controller/productsController.js';
 import * as msgController from './controller/messagesController.js';
 import * as prdContainer from './container/products.js';
 // import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics"
-import admin from 'firebase-admin';
+// import admin from 'firebase-admin';
 // import { doc, getDoc } from "firebase/firestore"
 
 import cookieParser from 'cookie-parser';
@@ -42,30 +63,9 @@ import logger from './logger.js';
 
 import twilio from 'twilio';
 import {createTransport} from 'nodemailer';
+import {dbFS} from './container/ContenedorFirebase.class.js'
 
 const numCPUs = os.cpus().length;
-
-dotenv.config({
-    path: './.env'
-})
-const userName = process.env.DB_MONGO_USER;
-const pwd = process.env.DB_MONGO_PWD;
-const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT);
-const mongoAtlasDb = process.env.DB_MONGOATLAS;
-const usersCollection = process.env.DB_USERS_COLLECTION;
-const sessionsCollection = process.env.DB_SESSIONS_COLLECTION;
-export const productsCollection = process.env.DB_PRODUCTS_COLLECTION;
-export const cartsCollection = process.env.DB_CARTS_COLLECTION;
-export const messagesCollection = process.env.DB_MESSAGES_COLLECTION;
-const sessionSecret = process.env.SESSION_SECRET;
-const twilioAccountSID = process.env.TWILIO_ACCOUNT_SID;
-const twilioMsgSID = process.env.TWILIO_MSG_SERVICE_SID;
-const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioWappNumber = process.env.TWILIO_WAPP_NUMBER;
-const personalWappNumber = process.env.PERSONAL_WAPP_NUMBER;
-const personalMail = process.env.PERSONAL_MAIL;
-const gmailMail = process.env.GMAIL_MAIL;
-const gmailAppPass = process.env.GMAIL_APP_PASS;
 
 const transporter = createTransport({
     service: 'gmail',
@@ -88,7 +88,6 @@ const options = {
     }
 };
 const args = parseArgs(process.argv.slice(2), options);
-mongoose.set('strictQuery', false);
 
 const client = twilio(twilioAccountSID, twilioAuthToken);
 
@@ -121,7 +120,7 @@ const advancedOptions = {
     useUnifiedTopology: true
 }
 
-export let dbFS;
+// export let dbFS;
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json());
@@ -131,31 +130,6 @@ app.use(express.json());
 function encrypt(pwd){
     let encrypted = bCrypt.hashSync(pwd, bCrypt.genSaltSync(10), null)
     return encrypted
-}
-
-async function mongoAtlasConnect(db, userName, pwd){
-    try{
-        const URL = getURL(db, userName, pwd);
-        await mongoose.connect(URL, advancedOptions)
-        // console.log(`Servidor ${process.pid} se ha conectado exitosamente a MongoAtlas`);
-        logger.info(`Servidor ${process.pid} se ha conectado exitosamente a MongoAtlas`);
-    }catch(error){
-        // console.error(`se ha presentado el siguiente error al intentar conectar el servidor ${process.pid} a mongoatlas: ${error}`);
-        logger.error(`se ha presentado el siguiente error al intentar conectar el servidor ${process.pid} a mongoatlas: ${error}`);
-    }
-}
-
-function firebaseConnect(){
-    try{
-        admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-        });
-        // console.log(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
-        logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
-    }catch(error){
-        // console.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
-        logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
-    }
 }
 
 async function saveUserFirebase(newUser){
@@ -524,9 +498,9 @@ if(cluster.isPrimary && mode === 'cluster'){
 
 }else{
     let serverType='';
-    mongoAtlasConnect(mongoAtlasDb, userName, pwd);
-    firebaseConnect();
-    dbFS = admin.firestore();
+    // mongoAtlasConnect(mongoAtlasDb, userName, pwd);
+    // firebaseConnect();
+    // dbFS = admin.firestore();
     const server = httpServer.listen(port, () => {
         if(mode === 'cluster'){
             serverType = ' hijo';

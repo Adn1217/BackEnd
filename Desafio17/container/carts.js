@@ -1,28 +1,32 @@
-import ContenedorArchivo from './ContenedorArchivo.class.js';
-import ContenedorMongoAtlas from './ContenedorMongoAtlas.class.js';
-import ContenedorFirebase from './ContenedorFirebase.class.js';
-import { cartsCollection } from '../server.js'
+import ContainerFactory from './ContainerFactory.class.js';
+// import { cartsCollection } from '../server.js'
 import logger from '../logger.js';
+import dotenv from 'dotenv';
+
+dotenv.config({
+    path: './.env'
+})
+
+const cartsCollection = process.env.DB_CARTS_COLLECTION;
+const factory = new ContainerFactory();    
+const carritoFirebase = factory.createContainer('Firebase', cartsCollection);
+const carritoMongoAtlas = factory.createContainer('MongoAtlas',cartsCollection);
+const carritoFile = factory.createContainer('File','./cart.json');
 
 export async function saveCart(cart) {
-    const carritoFirebase = new ContenedorFirebase(cartsCollection);
     const savedFirebase = await carritoFirebase.save(cart);
-    const carritoMongoAtlas = new ContenedorMongoAtlas(cartsCollection);
     const savedMongoAtlas = await carritoMongoAtlas.save(cart);
-    const carrito = new ContenedorArchivo('./cart.json');
-    const saved = await carrito.save(cart);
+    const saved = await carritoFile.save(cart);
     return savedFirebase
 } 
 
 export async function saveAllCarts(carts) {
-    const allCarts = new ContenedorArchivo('./cart.json');
-    const saved = await allCarts.saveAll(carts);
-    return saved 
+    const saved = await carritoFile.saveAll(carts);
+    return saved
 }
 
 export async function saveProductInCartByIdFile(res, newProd, id_cart){
-    const carrito = new ContenedorArchivo('./cart.json');
-    const allCarts = await carrito.getAll();
+    const allCarts = await carritoFile.getAll();
     const cart = allCarts.find( (cart) => cart.id === id_cart);
     let actualizadoArchivo = {actualizadoArchivo: cart};
     if(!cart){
@@ -45,41 +49,29 @@ export async function saveProductInCartByIdFile(res, newProd, id_cart){
 }
 
 export async function getCarts() {
-    const carrito = new ContenedorArchivo('./cart.json');
-    const cart = await carrito.getAll();
-    const carritoMongoAtlas = new ContenedorMongoAtlas(cartsCollection);
+    const cart = await carritoFile.getAll();
     const cartMongoAtlas = await carritoMongoAtlas.getAll();
-    const carritoFirebase = new ContenedorFirebase(cartsCollection);
     const cartFirebase = await carritoFirebase.getAll();
     return cartFirebase
 } 
 
 export async function getCartById(id) {
-    const carritosFirebase = new ContenedorFirebase(cartsCollection);
-    const cartFirebase = await carritosFirebase.getById(id);
-    const carritos = new ContenedorArchivo('./cart.json');
-    const cart = await carritos.getById(id);
-    const carritoMongoAtlas = new ContenedorMongoAtlas(cartsCollection);
+    const cartFirebase = await carritoFirebase.getById(id);
+    const cart = await carritoFile.getById(id);
     const cartMongoAtlas = await carritoMongoAtlas.getById(id);
     return cartFirebase
 }
 
 export async function deleteCartById(id_cart) {
-    const cartsFirebase = new ContenedorFirebase(cartsCollection);
-    const cartFirebase = await cartsFirebase.deleteById(id_cart);
-    const carts = new ContenedorArchivo('./cart.json');
-    const cart = await carts.deleteById(id_cart);
-    const carritoMongoAtlas = new ContenedorMongoAtlas(cartsCollection);
+    const cartFirebase = await carritoFirebase.deleteById(id_cart);
+    const cart = await carritoFile.deleteById(id_cart);
     const cartMongoAtlas = await carritoMongoAtlas.deleteById(id_cart);
     return cartFirebase
 }
 
 export async function deleteProductInCartById(id_prod, id_cart) {
-    const cartsFirebase = new ContenedorFirebase(cartsCollection);
-    const cartFirebase = await cartsFirebase.deleteProductInCartById(id_prod, id_cart);
-    const carts = new ContenedorArchivo('./cart.json');
-    const cart = await carts.deleteProductInCartById(id_prod, id_cart);
-    const cartsMongoAtlas = new ContenedorMongoAtlas(cartsCollection);
-    const cartMongoAtlas = await cartsMongoAtlas.deleteProductInCartById(id_prod, id_cart);
+    const cartFirebase = await carritoFirebase.deleteProductInCartById(id_prod, id_cart);
+    const cart = await carritoFile.deleteProductInCartById(id_prod, id_cart);
+    const cartMongoAtlas = await carritoMongoAtlas.deleteProductInCartById(id_prod, id_cart);
     return cartFirebase
 }

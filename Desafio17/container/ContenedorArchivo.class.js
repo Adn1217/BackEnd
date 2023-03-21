@@ -1,9 +1,45 @@
 import * as fs from "fs";
 import {calculateId} from '../functions.js';
+import dotenv from 'dotenv';
+import dbClient from "./dbClient.class.js";
+import logger from '../logger.js';
 
-export default class ContenedorArchivo {
+dotenv.config({
+    path: './.env'
+})
+
+
+let instance = null;
+export default class ContenedorArchivo extends dbClient {
   constructor(ubicacion) {
+    super();
     this.ruta = ubicacion;
+  }
+
+  static getInstance(ruta){
+    if(!instance){ // SINGLETON
+      instance = new ContenedorArchivo(ruta)
+      return instance;
+    }else{
+      return instance;
+    }
+  }
+  
+  async connect(){
+    try{
+        await fs.promises.readFile(this.ruta, "utf-8");
+        logger.info(`Servidor ${process.pid} se ha conectado exitosamente al archivo ${ubicacion}`)
+    }catch(error){
+        logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} archivo ${ubicacion}: ${error}`)
+    }
+  }
+
+  async disconnect(){
+    try{
+        logger.info(`Servidor ${process.pid} se ha desconectado exitosamente del archivo ${ubicacion}`)
+    }catch(error){
+        logger.error(`Se ha presentado error al intentar desconectar el servidor ${process.pid} del archivo ${ubicacion}: ${error}`)
+    }
   }
 
   async save(elemento) {

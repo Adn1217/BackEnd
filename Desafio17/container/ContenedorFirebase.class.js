@@ -1,10 +1,70 @@
-import {dbFS} from '../server.js';
-// import {doc, getDoc} from 'firebase/firestore';
 
-export default class ContenedorFirebase {
+import admin from 'firebase-admin';
+// import {doc, getDoc} from 'firebase/firestore';
+import dotenv from 'dotenv';
+import dbClient from "./dbClient.class.js";
+import logger from '../logger.js';
+
+dotenv.config({
+    path: './.env'
+})
+
+const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT);
+let instance = null;
+export let dbFS;
+
+function fireBaseConnect(account){
+    try{
+        admin.initializeApp({
+        credential: admin.credential.cert(account)
+        });
+        logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+        return admin.firestore();
+    }catch(error){
+        logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
+    }
+}
+
+
+if (!dbFS){
+  dbFS = fireBaseConnect(serviceAccount)
+}
+
+export class ContenedorFirebase extends dbClient {
   constructor(collection) {
+    super();
     this.collection = collection;
     this.query = dbFS.collection(this.collection);
+  }
+
+  static getInstance(collection){
+    if(!instance){ // SINGLETON
+      instance = new ContenedorFirebase(collection);
+      return instance
+    }else{
+      return instance;
+    }
+  }
+
+  async connect(){
+    try{
+        if(dbFS){
+          logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+        }else{
+          dbFS = fireBaseConnect(serviceAccount);
+          logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+        }
+    }catch(error){
+        logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
+    }
+  }
+
+  async disconnect(){
+    try{
+      admin.app.delete()
+    }catch(error){
+        logger.error(`Se ha presentado error al intentar desconectar el servidor ${process.pid} con Firebase: ${error}`)
+    }
   }
 
   async save(elemento) {
@@ -116,6 +176,20 @@ export default class ContenedorFirebase {
       }
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    }
+  }
+
+  async deleteByAll() {
+    try {
+      let data = await this.query.get();
+      data.forEach( doc => {
+        doc.ref.delete()
+      })
+      console.log(`\nSe eliminan los documentos de la colección ${this.collection} \n`);
+      // console.log("Quedan los productos: ", data);
+      return data;
+    } catch (error) {
+      console.log(`Se ha presentado error al intentar todos los documentos de la colección ${this.collection} \n`, error);
     }
   }
   
