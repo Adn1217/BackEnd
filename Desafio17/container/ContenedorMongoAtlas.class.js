@@ -16,7 +16,7 @@ dotenv.config({
 
 mongoose.set('strictQuery', false);
 
-let instance = null;
+let instance = {};
 const userName = process.env.DB_MONGO_USER;
 const pwd = process.env.DB_MONGO_PWD;
 const mongoAtlasDb = process.env.DB_MONGOATLAS;
@@ -31,12 +31,13 @@ export default class ContenedorMongoAtlas extends dbClient {
   }
 
   static getInstance(collection){
-    if(!instance){ // SINGLETON
-      instance = new ContenedorMongoAtlas(collection);
-      instance.connect(mongoAtlasDb, userName, pwd);
-      return instance;
+    if(!instance[collection]){ // SINGLETON
+      instance[collection] = new ContenedorMongoAtlas(collection);
+      instance[collection].connect(mongoAtlasDb, userName, pwd);
+      // console.log('Instancias: ', instance);
+      return instance[collection]
     }else{
-      return instance;
+      return instance[collection];
     }
   }
 
@@ -75,10 +76,9 @@ export default class ContenedorMongoAtlas extends dbClient {
       return data;
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
-    //  finally {
-    //   mongoose.disconnect();
-    // }
   }
 
   async getById(Id) {
@@ -98,6 +98,8 @@ export default class ContenedorMongoAtlas extends dbClient {
       }
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
   }
 
@@ -114,10 +116,9 @@ export default class ContenedorMongoAtlas extends dbClient {
       return data;
     } catch (error) {
       console.log("Se ha presentado error ", error);
-    } 
-    // finally {
-    //   mongoose.disconnect();
-    // }
+    } finally {
+      // instance[this.collection].disconnect();
+    }
   }
 
   async deleteById(Id) {
@@ -138,6 +139,8 @@ export default class ContenedorMongoAtlas extends dbClient {
       return element;
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
   }
   
@@ -152,10 +155,9 @@ export default class ContenedorMongoAtlas extends dbClient {
       return element;
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
-    //  finally {
-    //   mongoose.disconnect();
-    // }
   }
   
   async deleteProductInCartById(Id_prod, Id_cart = undefined) {
@@ -185,6 +187,8 @@ export default class ContenedorMongoAtlas extends dbClient {
       }
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
   }
   
@@ -206,6 +210,8 @@ export default class ContenedorMongoAtlas extends dbClient {
       return response;
     } catch (error) {
       console.log(`Se ha presentado error al intentar borrar todos los documentos de la colección ${this.collection}: \n`, error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
   }
   
