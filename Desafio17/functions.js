@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { dbFS } from './server.js';
+import { dbFS } from './container/ContenedorFirebase.class.js';
 import logger from './logger.js';
 
 export function getURL(db, userName, pwd) {
@@ -15,7 +15,7 @@ export function calculateId(elemento, data){
     });
     id = idMax + 1;
     elemento.id = id;
-    console.log('ElementoWithId', elemento)
+    // console.log('ElementoWithId', elemento)
     return elemento
 }
 

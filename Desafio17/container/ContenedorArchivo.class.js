@@ -1,9 +1,47 @@
 import * as fs from "fs";
 import {calculateId} from '../functions.js';
+import dotenv from 'dotenv';
+import dbClient from "./dbClient.class.js";
+import logger from '../logger.js';
 
-export default class ContenedorArchivo {
+dotenv.config({
+    path: './.env'
+})
+
+
+let instance = {};
+export default class ContenedorArchivo extends dbClient {
   constructor(ubicacion) {
+    super();
     this.ruta = ubicacion;
+  }
+
+  static getInstance(ruta){
+    let key = ruta.substring(2);
+    if(!instance[key]){ // SINGLETON
+      instance[key] = new ContenedorArchivo(ruta);
+      // console.log('Instancias: ', instance);
+      return instance[key]
+    }else{
+      return instance[key];
+    }
+  }
+  
+  async connect(){
+    try{
+        await fs.promises.readFile(this.ruta, "utf-8");
+        logger.info(`Servidor ${process.pid} se ha conectado exitosamente al archivo ${ubicacion}`)
+    }catch(error){
+        logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} archivo ${ubicacion}: ${error}`)
+    }
+  }
+
+  async disconnect(){
+    try{
+        logger.info(`Servidor ${process.pid} se ha desconectado exitosamente del archivo ${ubicacion}`)
+    }catch(error){
+        logger.error(`Se ha presentado error al intentar desconectar el servidor ${process.pid} del archivo ${ubicacion}: ${error}`)
+    }
   }
 
   async save(elemento) {
@@ -15,13 +53,13 @@ export default class ContenedorArchivo {
         console.log("No hay datos.");
       }
       elementoWithId = calculateId(elemento, data);
-      console.log('elementoWithId', elementoWithId);
       elementoWithId.timestamp = new Date().toLocaleString("en-GB");
       if (elementoWithId.length > 1){
         await fs.promises.writeFile(this.ruta,JSON.stringify([...elementoWithId], null, 2));
       }else{
         await fs.promises.writeFile(this.ruta,JSON.stringify([...data, elementoWithId], null, 2));
       }
+      console.log('GuardadoFile: ', elementoWithId)
       return elementoWithId;
     } catch (error) {
       console.log("Se ha presentado error ", error);
