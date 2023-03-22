@@ -40,9 +40,11 @@ export class ContenedorFirebase extends dbClient {
   static getInstance(collection){
     if(!instance[collection]){ // SINGLETON
       instance[collection] = new ContenedorFirebase(collection);
+      console.log(`Se crea instancia tipo Firebase para ${collection}.`);
       // console.log('Instancias: ', instance);
       return instance[collection]
     }else{
+      console.log(`Ya existe instancia tipo Firebase para ${collection}.`);
       return instance[collection];
     }
   }
@@ -78,7 +80,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -97,7 +99,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally{
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   
@@ -115,7 +117,8 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
+      console.log(`ContenedorFirebase: Se eliminó la instancia ${this.collection} desde GetAll. Intancia: `,instance[this.collection])
     }
   }
 
@@ -133,7 +136,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally{
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   
@@ -150,7 +153,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally{
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -181,7 +184,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -197,7 +200,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log(`Se ha presentado error al intentar todos los documentos de la colección ${this.collection} \n`, error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   

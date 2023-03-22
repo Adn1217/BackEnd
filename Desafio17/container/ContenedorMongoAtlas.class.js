@@ -34,6 +34,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     if(!instance[collection]){ // SINGLETON
       instance[collection] = new ContenedorMongoAtlas(collection);
       instance[collection].connect(mongoAtlasDb, userName, pwd);
+      console.log(`Se crea instancia tipo MongoAtlas para ${collection}.`);
       // console.log('Instancias: ', instance);
       return instance[collection]
     }else{
@@ -77,7 +78,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -99,7 +100,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -117,7 +118,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -140,7 +141,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   
@@ -156,7 +157,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   
@@ -188,7 +189,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   
@@ -211,7 +212,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log(`Se ha presentado error al intentar borrar todos los documentos de la colección ${this.collection}: \n`, error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   

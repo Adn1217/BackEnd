@@ -28,6 +28,7 @@ export async function getProducts(req, res){
 }
 
 export async function showProducts(req) {
+    console.log("---Service: showProducts---")
     const allProducts = await container.getProducts(); 
     const allMessages = await msgController.getMsgs();
     // console.log('Los productos son: \n', allProducts);

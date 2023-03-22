@@ -404,6 +404,7 @@ io.on('connection', (socket) => {
     // mongoAtlasConnect('ecommerce');
 
     socket.on('productRequest', async () => {
+        console.log("---Server socket: prdContainer.getProducts---")
         const allProducts = await prdContainer.getProducts();
         io.sockets.emit('productos', {productos: allProducts});
     })
@@ -428,6 +429,7 @@ app.get('/home', compression(), (req, res) => {
     if(req.isAuthenticated()){
         // console.log('SesiónIniciada: ', req.session);
         logger.info(`SesiónIniciada: ${JSON.stringify(req.session)}`);
+        console.log("---Server: prdController.showProducts---")
         prdController.showProducts(req, res);
     }else{
         // res.sendStatus(401); //Unauthorized
