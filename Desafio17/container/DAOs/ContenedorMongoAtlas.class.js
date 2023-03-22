@@ -38,6 +38,7 @@ export default class ContenedorMongoAtlas extends dbClient {
       // console.log('Instancias: ', instance);
       return instance[collection]
     }else{
+      // console.log(`Ya existe instancia tipo MongoAtlas para ${collection}.`);
       return instance[collection];
     }
   }

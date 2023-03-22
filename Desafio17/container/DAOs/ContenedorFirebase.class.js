@@ -45,7 +45,7 @@ export class ContenedorFirebase extends dbClient {
       // console.log('Instancias: ', instance);
       return instance[collection]
     }else{
-      console.log(`Ya existe instancia tipo Firebase para ${collection}.`);
+      // console.log(`Ya existe instancia tipo Firebase para ${collection}.`);
       return instance[collection];
     }
   }

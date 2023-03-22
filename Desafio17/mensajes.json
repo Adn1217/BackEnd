@@ -19,19 +19,5 @@
     "mensaje": "Prueba con funcionalidad en capas",
     "id": 3,
     "timestamp": "16/03/2023, 21:51:22"
-  },
-  {
-    "fecha": "2023-03-22T23:46:56.189Z",
-    "usuario": "55",
-    "mensaje": "55",
-    "id": 4,
-    "timestamp": "22/03/2023, 18:47:04"
-  },
-  {
-    "fecha": "2023-03-22T23:47:09.570Z",
-    "usuario": "55",
-    "mensaje": "666",
-    "id": 5,
-    "timestamp": "22/03/2023, 18:47:10"
   }
 ]

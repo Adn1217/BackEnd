@@ -24,6 +24,7 @@ export default class ContenedorArchivo extends dbClient {
       // console.log('Instancias: ', instance);
       return instance[key]
     }else{
+      // console.log(`Ya existe instancia tipo File para ${ruta}.`);
       return instance[key];
     }
   }
