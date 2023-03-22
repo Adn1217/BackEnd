@@ -9,7 +9,7 @@ dotenv.config({
 })
 
 
-let instance = null;
+let instance = {};
 export default class ContenedorArchivo extends dbClient {
   constructor(ubicacion) {
     super();
@@ -17,11 +17,13 @@ export default class ContenedorArchivo extends dbClient {
   }
 
   static getInstance(ruta){
-    if(!instance){ // SINGLETON
-      instance = new ContenedorArchivo(ruta)
-      return instance;
+    let key = ruta.substring(2);
+    if(!instance[key]){ // SINGLETON
+      instance[key] = new ContenedorArchivo(ruta);
+      // console.log('Instancias: ', instance);
+      return instance[key]
     }else{
-      return instance;
+      return instance[key];
     }
   }
   
@@ -51,13 +53,13 @@ export default class ContenedorArchivo extends dbClient {
         console.log("No hay datos.");
       }
       elementoWithId = calculateId(elemento, data);
-      console.log('elementoWithId', elementoWithId);
       elementoWithId.timestamp = new Date().toLocaleString("en-GB");
       if (elementoWithId.length > 1){
         await fs.promises.writeFile(this.ruta,JSON.stringify([...elementoWithId], null, 2));
       }else{
         await fs.promises.writeFile(this.ruta,JSON.stringify([...data, elementoWithId], null, 2));
       }
+      console.log('GuardadoFile: ', elementoWithId)
       return elementoWithId;
     } catch (error) {
       console.log("Se ha presentado error ", error);

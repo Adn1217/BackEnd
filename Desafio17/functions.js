@@ -15,7 +15,7 @@ export function calculateId(elemento, data){
     });
     id = idMax + 1;
     elemento.id = id;
-    console.log('ElementoWithId', elemento)
+    // console.log('ElementoWithId', elemento)
     return elemento
 }
 
