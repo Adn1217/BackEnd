@@ -63,7 +63,7 @@ import logger from './logger.js';
 
 import twilio from 'twilio';
 import {createTransport} from 'nodemailer';
-import {dbFS} from './container/ContenedorFirebase.class.js'
+import {dbFS} from './container/DAOs/ContenedorFirebase.class.js'
 
 const numCPUs = os.cpus().length;
 
@@ -404,7 +404,6 @@ io.on('connection', (socket) => {
     // mongoAtlasConnect('ecommerce');
 
     socket.on('productRequest', async () => {
-        console.log("---Server socket: prdContainer.getProducts---")
         const allProducts = await prdContainer.getProducts();
         io.sockets.emit('productos', {productos: allProducts});
     })
@@ -429,7 +428,6 @@ app.get('/home', compression(), (req, res) => {
     if(req.isAuthenticated()){
         // console.log('SesiónIniciada: ', req.session);
         logger.info(`SesiónIniciada: ${JSON.stringify(req.session)}`);
-        console.log("---Server: prdController.showProducts---")
         prdController.showProducts(req, res);
     }else{
         // res.sendStatus(401); //Unauthorized
@@ -487,7 +485,7 @@ app.use('*', (req, res) =>{
 if(cluster.isPrimary && mode === 'cluster'){
     // console.log('CPUs: ', numCPUs );
     logger.silly(`CPUs: ${numCPUs}`);
-    // console.log(`Servidor maestro ${process.pid} escuchando en el puerto ${port}`)
+    console.log(`Servidor maestro ${process.pid} escuchando en el puerto ${port}`)
     logger.debug(`Servidor maestro ${process.pid} escuchando en el puerto ${port}`)
     for(let i=0; i<numCPUs; i++){
         cluster.fork();
@@ -507,13 +505,13 @@ if(cluster.isPrimary && mode === 'cluster'){
         if(mode === 'cluster'){
             serverType = ' hijo';
         }
-        // console.log(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
+        console.log(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
         logger.debug(`Servidor${serverType} ${process.pid} escuchando en el puerto ${port}`);
     })
     server.on('error', (error) => {
         // console.log('Se presentó error: ', error.message)
         logger.error(`Se presentó error: ${error.message}`)
     }) 
-    // console.log('\n################INICIO DE SERVIDOR################\n')
+    console.log('\n################INICIO DE SERVIDOR################\n')
     logger.silly('################INICIO DE SERVIDOR################')
 }

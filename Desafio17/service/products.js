@@ -1,6 +1,6 @@
-import ContenedorArchivo from '../container/ContenedorArchivo.class.js';
-import ContenedorMongoAtlas from '../container/ContenedorMongoAtlas.class.js';
-import { ContenedorFirebase } from '../container/ContenedorFirebase.class.js';
+import ContenedorArchivo from '../container/DAOs/ContenedorArchivo.class.js';
+import ContenedorMongoAtlas from '../container/DAOs/ContenedorMongoAtlas.class.js';
+import { ContenedorFirebase } from '../container/DAOs/ContenedorFirebase.class.js';
 import * as container from '../container/products.js';
 import { productsCollection } from '../server.js'
 import * as msgController from '../controller/messagesController.js';
@@ -28,7 +28,6 @@ export async function getProducts(req, res){
 }
 
 export async function showProducts(req) {
-    console.log("---Service: showProducts---")
     const allProducts = await container.getProducts(); 
     const allMessages = await msgController.getMsgs();
     // console.log('Los productos son: \n', allProducts);

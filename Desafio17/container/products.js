@@ -1,4 +1,4 @@
-import ContainerFactory from './ContainerFactory.class.js';
+import ContainerFactory from './DAOs/ContainerFactory.class.js';
 import dotenv from 'dotenv';
 
 dotenv.config({
@@ -16,7 +16,6 @@ function createContainers(){
 }
 
 export async function getProducts() {
-    console.log("---Container: getProducts---")
     const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
     const allProducts = await productosFile.getAll();
     const allProductsMongoAtlas = await productosMongoAtlas.getAll();

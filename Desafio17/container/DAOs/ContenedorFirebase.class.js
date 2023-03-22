@@ -3,7 +3,7 @@ import admin from 'firebase-admin';
 // import {doc, getDoc} from 'firebase/firestore';
 import dotenv from 'dotenv';
 import dbClient from "./dbClient.class.js";
-import logger from '../logger.js';
+import logger from '../../logger.js';
 
 dotenv.config({
     path: './.env'
@@ -19,7 +19,8 @@ function fireBaseConnect(account){
         credential: admin.credential.cert(account)
         });
         logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
-        return admin.firestore();
+        dbFS = admin.firestore();
+        return dbFS;
     }catch(error){
         logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
     }
@@ -52,7 +53,7 @@ export class ContenedorFirebase extends dbClient {
   async connect(){
     try{
         if(dbFS){
-          logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+          logger.info(`Servidor ${process.pid} ya se encuentra conectado a FireBase`)
         }else{
           dbFS = fireBaseConnect(serviceAccount);
           logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
@@ -118,7 +119,6 @@ export class ContenedorFirebase extends dbClient {
       console.log("Se ha presentado error ", error);
     } finally {
       instance[this.collection]?.disconnect();
-      console.log(`ContenedorFirebase: Se eliminó la instancia ${this.collection} desde GetAll. Intancia: `,instance[this.collection])
     }
   }
 

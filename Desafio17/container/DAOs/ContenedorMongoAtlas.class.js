@@ -1,14 +1,14 @@
 import { ObjectId } from "mongodb";
-import {productsModel} from '../models/products.js';
-import {msgsModel} from '../models/messages.js';
-import {cartsModel} from '../models/carts.js';
-import {usersModel} from '../models/users.js';
-import { productsCollection, messagesCollection, cartsCollection } from "../server.js";
+import {productsModel} from '../../models/products.js';
+import {msgsModel} from '../../models/messages.js';
+import {cartsModel} from '../../models/carts.js';
+import {usersModel} from '../../models/users.js';
+import { productsCollection, messagesCollection, cartsCollection } from "../../server.js";
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import dbClient from "./dbClient.class.js";
-import {getURL} from '../functions.js';
-import logger from '../logger.js';
+import {getURL} from '../../functions.js';
+import logger from '../../logger.js';
 
 dotenv.config({
     path: './.env'
@@ -54,7 +54,9 @@ export default class ContenedorMongoAtlas extends dbClient {
 
   async disconnect(){
     try{
-        mongoose.disconnect();
+        instance[this.collection].disconnect();
+        // mongoose.disconnect();
+        logger.info(`El servidor ${process.pid} se ha desconectado exitosamente de MongoAtlas.`)
     }catch(error){
         logger.error(`Se ha presentado el siguiente error al intentar desconectar de mongoatlas: ${error}`);
     }
@@ -78,7 +80,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      instance[this.collection]?.disconnect();
+      // instance[this.collection]?.disconnect();
     }
   }
 
@@ -100,7 +102,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      instance[this.collection]?.disconnect();
+      // instance[this.collection]?.disconnect();
     }
   }
 
@@ -118,7 +120,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      instance[this.collection]?.disconnect();
+      // instance[this.collection]?.disconnect();
     }
   }
 
@@ -141,7 +143,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      instance[this.collection]?.disconnect();
+      // instance[this.collection]?.disconnect();
     }
   }
   
@@ -157,7 +159,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      instance[this.collection]?.disconnect();
+      // instance[this.collection]?.disconnect();
     }
   }
   
@@ -189,7 +191,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      instance[this.collection]?.disconnect();
+      // instance[this.collection]?.disconnect();
     }
   }
   
@@ -212,7 +214,7 @@ export default class ContenedorMongoAtlas extends dbClient {
     } catch (error) {
       console.log(`Se ha presentado error al intentar borrar todos los documentos de la colección ${this.collection}: \n`, error);
     } finally {
-      instance[this.collection]?.disconnect();
+      // instance[this.collection]?.disconnect();
     }
   }
   
