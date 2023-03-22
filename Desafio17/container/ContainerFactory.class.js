@@ -20,8 +20,5 @@ export default class containerFactory {
     } catch (error) {
       console.log(`Se ha presentado error al intentar crear instancia tipo ${db} para ${type} \n`, error);
     }
-    //  finally {
-    //   mongoose.disconnect();
-    // }
   }
 }

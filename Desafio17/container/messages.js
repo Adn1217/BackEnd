@@ -1,29 +1,34 @@
 
-import ContenedorArchivo from './ContenedorArchivo.class.js';
-import ContenedorMongoAtlas from './ContenedorMongoAtlas.class.js';
-import { ContenedorFirebase } from './ContenedorFirebase.class.js';
-import { messagesCollection} from '../server.js';
+import ContainerFactory from './ContainerFactory.class.js';
 import {schema, normalize, denormalize} from 'normalizr';
 import logger from '../logger.js';
+import dotenv from 'dotenv';
+
+dotenv.config({
+    path: './.env'
+})
+
+const messagesCollection = process.env.DB_MESSAGES_COLLECTION;
+const normMessagesCollection = process.env.DB_NORM_MESSAGES_COLLECTION;
+
+const factory = new ContainerFactory();    
+const messagesFirebase = factory.createContainer('Firebase', messagesCollection);
+const messagesFirebaseNorm = factory.createContainer('Firebase', normMessagesCollection);
+const messagesMongoAtlas = factory.createContainer('MongoAtlas', messagesCollection);
+const messagesFile = factory.createContainer('File','./mensajes.json');
 
 export async function getMessages() {
-    const messages = new ContenedorArchivo('./mensajes.json');
-    const allMessages = await messages.getAll();
-    const messagesMongoAtlas = new ContenedorMongoAtlas(messagesCollection);
+    const allMessages = await messagesFile.getAll();
     let allMessagesMongoAtlas = await messagesMongoAtlas.getAll();
     (allMessagesMongoAtlas[0]?.fecha) ?? (allMessagesMongoAtlas = allMessagesMongoAtlas.map( (msg) => ({...msg._doc, fecha: new Date(msg._id.getTimestamp()).toLocaleString('en-GB')})))
-    const messagesFirebase = new ContenedorFirebase(messagesCollection);
     const allMessagesFirebase = await messagesFirebase.getAll();
     return allMessagesFirebase;
 } 
 
 export async function saveMessage(msg) {
-    const messagesFirebase = new ContenedorFirebase(messagesCollection);
     const newMessageFirebase = await messagesFirebase.save(msg);
-    const messagesMongoAtlas = new ContenedorMongoAtlas(messagesCollection);
     const newMessageMongoAtlas = await messagesMongoAtlas.save(msg);
-    const messages = new ContenedorArchivo('./mensajes.json');
-    const newMessage = await messages.save(msg);
+    const newMessage = await messagesFile.save(msg);
     return newMessageFirebase;
 } 
 
@@ -42,9 +47,8 @@ function denormalizeMessage(msg){
 }
 
 export async function saveNormalizedMessage(msg){
-    const messagesFirebase = new ContenedorFirebase('normMsgs');
     const denormMsgFirebase = denormalizeMessage(msg);
-    const newMessageFirebase = await messagesFirebase.save(denormMsgFirebase);
+    const newMessageFirebase = await messagesFirebaseNorm.save(denormMsgFirebase);
     return newMessageFirebase;
 }
 
@@ -69,9 +73,7 @@ function normalizeMessage(msg){
 
 
 export async function getNormMessages() {
-    const messagesFirebase = new ContenedorFirebase('normMsgs');
-    const allMessagesFirebase = await messagesFirebase.getAll();
-    // console.log('Mensajes desde Firebase: ', allMessagesFirebase);
+    const allMessagesFirebase = await messagesFirebaseNorm.getAll();
     logger.debug(`Mensajes desde Firebase: ${JSON.stringify(allMessagesFirebase)}`);
     let newAllMessages  = [];
     let cont = 0;

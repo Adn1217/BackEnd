@@ -10,7 +10,7 @@ dotenv.config({
 })
 
 const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT);
-let instance = null;
+let instance = {};
 export let dbFS;
 
 function fireBaseConnect(account){
@@ -38,11 +38,12 @@ export class ContenedorFirebase extends dbClient {
   }
 
   static getInstance(collection){
-    if(!instance){ // SINGLETON
-      instance = new ContenedorFirebase(collection);
-      return instance
+    if(!instance[collection]){ // SINGLETON
+      instance[collection] = new ContenedorFirebase(collection);
+      // console.log('Instancias: ', instance);
+      return instance[collection]
     }else{
-      return instance;
+      return instance[collection];
     }
   }
 
@@ -61,9 +62,11 @@ export class ContenedorFirebase extends dbClient {
 
   async disconnect(){
     try{
-      admin.app.delete()
+      // await admin.app().delete();
+      delete instance[this.collection];
+      logger.info(`El servidor ${process.pid} se ha desconectado exitosamente de Firebase.`)
     }catch(error){
-        logger.error(`Se ha presentado error al intentar desconectar el servidor ${process.pid} con Firebase: ${error}`)
+        logger.error(`Se ha presentado error al intentar desconectar el servidor ${process.pid} de Firebase: ${error}`)
     }
   }
 
@@ -74,10 +77,9 @@ export class ContenedorFirebase extends dbClient {
       return data.id;
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
-    //  finally {
-    //   mongoose.disconnect();
-    // }
   }
 
   async getById(Id) {
@@ -94,6 +96,8 @@ export class ContenedorFirebase extends dbClient {
       }
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally{
+      // instance[this.collection].disconnect();
     }
   }
   
@@ -110,10 +114,9 @@ export class ContenedorFirebase extends dbClient {
       return docs;
     } catch (error) {
       console.log("Se ha presentado error ", error);
-    } 
-    // finally {
-    //   mongoose.disconnect();
-    // }
+    } finally {
+      // instance[this.collection].disconnect();
+    }
   }
 
   async deleteById(Id) {
@@ -129,6 +132,8 @@ export class ContenedorFirebase extends dbClient {
       return data?.data();
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally{
+      // instance[this.collection].disconnect();
     }
   }
   
@@ -144,10 +149,9 @@ export class ContenedorFirebase extends dbClient {
       return data?.data();
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally{
+      // instance[this.collection].disconnect();
     }
-    //  finally {
-    //   mongoose.disconnect();
-    // }
   }
 
   async deleteProductInCartById(Id_prod, Id_cart= undefined) {
@@ -176,6 +180,8 @@ export class ContenedorFirebase extends dbClient {
       }
     } catch (error) {
       console.log("Se ha presentado error ", error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
   }
 
@@ -190,6 +196,8 @@ export class ContenedorFirebase extends dbClient {
       return data;
     } catch (error) {
       console.log(`Se ha presentado error al intentar todos los documentos de la colección ${this.collection} \n`, error);
+    } finally {
+      // instance[this.collection].disconnect();
     }
   }
   

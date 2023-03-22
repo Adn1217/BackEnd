@@ -15,6 +15,7 @@ export async function getProducts() {
     const allProducts = await productosFile.getAll();
     const allProductsMongoAtlas = await productosMongoAtlas.getAll();
     const allProductsFirebase = await productosFirebase.getAll();
+    // console.log('Productos recibidos: ', allProductsFirebase)
     return allProductsFirebase
 }
 
