@@ -3,7 +3,7 @@ import admin from 'firebase-admin';
 // import {doc, getDoc} from 'firebase/firestore';
 import dotenv from 'dotenv';
 import dbClient from "./dbClient.class.js";
-import logger from '../logger.js';
+import logger from '../../logger.js';
 
 dotenv.config({
     path: './.env'
@@ -19,7 +19,8 @@ function fireBaseConnect(account){
         credential: admin.credential.cert(account)
         });
         logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
-        return admin.firestore();
+        dbFS = admin.firestore();
+        return dbFS;
     }catch(error){
         logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
     }
@@ -40,9 +41,11 @@ export class ContenedorFirebase extends dbClient {
   static getInstance(collection){
     if(!instance[collection]){ // SINGLETON
       instance[collection] = new ContenedorFirebase(collection);
+      console.log(`Se crea instancia tipo Firebase para ${collection}.`);
       // console.log('Instancias: ', instance);
       return instance[collection]
     }else{
+      // console.log(`Ya existe instancia tipo Firebase para ${collection}.`);
       return instance[collection];
     }
   }
@@ -50,7 +53,7 @@ export class ContenedorFirebase extends dbClient {
   async connect(){
     try{
         if(dbFS){
-          logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+          logger.info(`Servidor ${process.pid} ya se encuentra conectado a FireBase`)
         }else{
           dbFS = fireBaseConnect(serviceAccount);
           logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
@@ -78,7 +81,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -97,7 +100,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally{
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   
@@ -115,7 +118,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -133,7 +136,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally{
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   
@@ -150,7 +153,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally{
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -181,7 +184,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log("Se ha presentado error ", error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
 
@@ -197,7 +200,7 @@ export class ContenedorFirebase extends dbClient {
     } catch (error) {
       console.log(`Se ha presentado error al intentar todos los documentos de la colección ${this.collection} \n`, error);
     } finally {
-      // instance[this.collection].disconnect();
+      instance[this.collection]?.disconnect();
     }
   }
   

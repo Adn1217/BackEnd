@@ -1,8 +1,8 @@
 import * as fs from "fs";
-import {calculateId} from '../functions.js';
+import {calculateId} from '../../functions.js';
 import dotenv from 'dotenv';
 import dbClient from "./dbClient.class.js";
-import logger from '../logger.js';
+import logger from '../../logger.js';
 
 dotenv.config({
     path: './.env'
@@ -20,9 +20,11 @@ export default class ContenedorArchivo extends dbClient {
     let key = ruta.substring(2);
     if(!instance[key]){ // SINGLETON
       instance[key] = new ContenedorArchivo(ruta);
+      console.log(`Se crea instancia tipo File para ${ruta}.`);
       // console.log('Instancias: ', instance);
       return instance[key]
     }else{
+      // console.log(`Ya existe instancia tipo File para ${ruta}.`);
       return instance[key];
     }
   }
@@ -63,7 +65,7 @@ export default class ContenedorArchivo extends dbClient {
       return elementoWithId;
     } catch (error) {
       console.log("Se ha presentado error ", error);
-    }
+    } 
   }
 
   async saveAll(productos) {

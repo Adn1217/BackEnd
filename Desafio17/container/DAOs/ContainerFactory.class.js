@@ -15,7 +15,6 @@ export default class containerFactory {
       }else if (db === 'File'){
         container = ContenedorArchivo.getInstance(type)
       }
-      console.log(`Se crea instancia tipo ${db} para ${type}.`);
       return container;
     } catch (error) {
       console.log(`Se ha presentado error al intentar crear instancia tipo ${db} para ${type} \n`, error);
