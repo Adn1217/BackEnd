@@ -38,5 +38,24 @@
     "thumbnail": "https://firebasestorage.googleapis.com/v0/b/ecommerce-28be7.appspot.com/o/cojin.png?alt=media&token=83b0b601-2013-40e2-bbbc-b45a76c5d96f",
     "id": 4,
     "timestamp": "04/12/2022, 20:20:21"
+  },
+  {
+    "code": "2",
+    "title": "2",
+    "description": "2",
+    "price": "2",
+    "stock": "2",
+    "thumbnail": "2",
+    "id": 5
+  },
+  {
+    "code": "2",
+    "title": "2",
+    "description": "2",
+    "price": "2",
+    "stock": "2",
+    "thumbnail": "2",
+    "id": 6,
+    "timestamp": "23/03/2023, 18:17:10"
   }
 ]

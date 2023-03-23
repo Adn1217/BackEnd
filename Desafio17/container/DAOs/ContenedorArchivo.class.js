@@ -107,10 +107,10 @@ export default class ContenedorArchivo extends dbClient {
   }
 
   async deleteById(Id) {
-    Id = parseInt(Id);
+    let Id_int = parseInt(Id);
     try {
       let data = await fs.promises.readFile(this.ruta, "utf-8");
-      let id = Id;
+      let id = Id_int;
       data = await JSON.parse(data);
       let prod = data.find((producto) => producto.id === id);
       if (prod?.id) {
@@ -122,7 +122,7 @@ export default class ContenedorArchivo extends dbClient {
         console.log(`\nSe elimina el producto con id=${id} (deleteById(${id})): \n`, prod);
         // console.log("Quedan los productos: ", data);
       } else {
-        console.log("No existe el producto con id: ", id);
+        console.log("No existe el producto con id: ", Id);
       }
       return prod;
     } catch (error) {

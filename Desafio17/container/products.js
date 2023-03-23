@@ -1,4 +1,5 @@
 import ContainerFactory from './DAOs/ContainerFactory.class.js';
+import { transformToDTO } from './DTOs/productos.js';
 import dotenv from 'dotenv';
 
 dotenv.config({
@@ -21,7 +22,9 @@ export async function getProducts() {
     const allProductsMongoAtlas = await productosMongoAtlas.getAll();
     const allProductsFirebase = await productosFirebase.getAll();
     // console.log('Productos recibidos: ', allProductsFirebase)
-    return allProductsFirebase
+    const allProductsDTO = transformToDTO(allProductsFirebase);
+    console.log(allProductsDTO);
+    return allProductsDTO
 }
 
 export async function getProductById(id) {
@@ -29,7 +32,10 @@ export async function getProductById(id) {
     const product = await productosFile.getById(id);
     const productMongoAtlas = await productosMongoAtlas.getById(id);
     const productFirebase = await productosFirebase.getById(id);
-    return productFirebase
+    console.log(productFirebase);
+    const productDTO = transformToDTO(productFirebase);
+    console.log(productDTO);
+    return productDTO
 }
 
 export async function saveProduct(prod) {
@@ -37,19 +43,72 @@ export async function saveProduct(prod) {
     const newProductIdMongoAtlas = await productosMongoAtlas.save(prod);
     const newProductIdFirebase = await productosFirebase.save(prod);
     const newProductId = await productosFile.save(prod);
-    return newProductIdFirebase
+    console.log(newProductIdFirebase);
+    const newProductDTO = transformToDTO({id:newProductIdFirebase});
+    console.log(newProductDTO);
+    return newProductDTO
 }
 
-export async function saveAllProducts(prods) {
+export async function updateProductByIdFB(updatedProd, id){
     const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
-    const saved = await productosFile.saveAll(prods);
-    return saved 
+    const productFirebase = await productosFirebase.updateById(updatedProd, id);
+    console.log(productFirebase);
+    const productDTO = transformToDTO(productFirebase);
+    console.log(productDTO);
+    if (productFirebase){
+        return({actualizadoFirebase: productDTO})
+    }else{
+        return({error: "Producto no encontrado"});
+    }
+}
+
+export async function updateProductByIdMongo(updatedProd, id){
+    const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
+    const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
+    const productDTO = transformToDTO(productMongoAtlas);
+    if (productMongoAtlas){
+        return({actualizadoMongo: productDTO})
+    }else{
+        return({error: "Producto no encontrado"})
+    }
+}
+
+export async function saveProductByIdFile(updatedProd, id){
+    id = parseInt(id);
+    const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
+    const allProducts = await productosFile.getAll();
+    updatedProd.id = id;
+    let updatedProdDTO = transformToDTO(updatedProd);
+    let actualizadoArchivo = {actualizadoArchivo: updatedProdDTO};
+    let productById = allProducts.find((product) => product.id === id) 
+    if (!productById){
+        actualizadoArchivo = {error: "Producto no encontrado"};
+    }else{
+        let newAllProducts = allProducts.map((prod) => {
+            if(prod.id === id){
+                prod = updatedProd;
+                // console.log(prod);
+            }
+            return prod;
+        })
+        // console.log('La nueva lista es: ', newAllProducts);
+        const allSaved = await productosFile.saveAll(newAllProducts);
+        if (allSaved === 'ok'){
+            // return({actualizado: updatedProd})
+        }else{
+            actualizadoArchivo = {error: allSaved};
+        }
+    }
+    return(actualizadoArchivo);
 }
 
 export async function deleteProductById(id){
     const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
     const productFirebase = await productosFirebase.deleteById(id);
     // const productMongoAtlas = await productosMongoAtlas.deleteById(id);
+    console.log(productFirebase);
     const product = await productosFile.deleteById(id);
-    return productFirebase;
+    const productDTO = transformToDTO(productFirebase);
+    console.log(productDTO);
+    return productDTO;
 }

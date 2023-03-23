@@ -1,8 +1,4 @@
-import ContenedorArchivo from '../container/DAOs/ContenedorArchivo.class.js';
-import ContenedorMongoAtlas from '../container/DAOs/ContenedorMongoAtlas.class.js';
-import { ContenedorFirebase } from '../container/DAOs/ContenedorFirebase.class.js';
 import * as container from '../container/products.js';
-import { productsCollection } from '../server.js'
 import * as msgController from '../controller/messagesController.js';
 import logger from '../logger.js';
 
@@ -11,7 +7,7 @@ export async function saveProduct(product){
         logger.error('Producto no recibido');
         return({Error: "Producto no recibido"})
     }else{
-        let newProd = container.saveProduct(product);
+        let newProd = await container.saveProduct(product);
         // console.log('ProductoFront', product);
         return({Guardado: newProd})
     }
@@ -38,7 +34,7 @@ export async function showProducts(req) {
 
 async function showProductById(res, id) {
     let productById = await container.getProductById(id);
-    if (!productById){
+    if (!productById || Object.keys(productById).length === 0){
         logger.error(`Producto ${id} no encontrado`);
         res.send({error:"Producto no encontrado"});
     }else{
@@ -49,72 +45,43 @@ async function showProductById(res, id) {
 }
 
 export async function updateProductByIdFB(updatedProd, id){
-    const productosFirebase = new ContenedorFirebase(productsCollection);
-    const productFirebase = await productosFirebase.updateById(updatedProd, id);
-    if (productFirebase){
-        // console.log("Se ha actualizado el producto: \n", productFirebase);
-        logger.info(`Se ha actualizado el producto: ${productFirebase}`);
-        return({actualizadoFirebase: productFirebase})
+    const updatedProductFB = await container.updateProductByIdFB(updatedProd, id);
+    if(!('error' in updatedProductFB)){
+        // console.log("Se ha actualizado el producto: \n", updatedProductFB);
+        logger.info(`Se ha actualizado en FB el producto: ${JSON.stringify(updatedProductFB.actualizadoFirebase)}`);
     }else{
         // console.log("Producto no actualizado");
         logger.warn('Producto no actualizado');
         logger.error(`Producto ${id} no encontrado`);
-        return({error: "Producto no encontrado"});
     }
+    return updatedProductFB;
 }
 
 export async function updateProductByIdMongo(updatedProd, id){
-    const productosMongoAtlas = new ContenedorMongoAtlas(productsCollection);
-    const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
-    if (productMongoAtlas){
+    const updatedProdMongo = await container.updateProductByIdMongo(updatedProd, id);
+    if (!('error' in updatedProdMongo)){
         // console.log("Se ha actualizado en Mongo el producto: \n", productMongoAtlas);
-        logger.info(`Se ha actualizado en Mongo el producto: ${JSON.stringify(productMongoAtlas)}`);
-        return({actualizadoMongo: productMongoAtlas})
+        logger.info(`Se ha actualizado en Mongo el producto: ${JSON.stringify(updatedProdMongo)}`);
     }else{
         // console.log("Producto no actualizado en Mongo");
-        logger.warn("Producto no actualizado en Mongo");
-        return({error: "Producto no encontrado"})
+        logger.warn(`Producto no actualizado en Mongo: ${JSON.stringify(updatedProdMongo)}`);
     }
+    return updatedProdMongo;
 }
 
 export async function saveProductByIdFile(updatedProd, id){
-    id = parseInt(id);
-    const productos = new ContenedorArchivo('./productos.json');
-    const allProducts = await productos.getAll();
-    let actualizadoArchivo = {actualizadoArchivo: updatedProd};
-    let productById = allProducts.find((product) => product.id === id) 
-    if (!productById){
-        actualizadoArchivo = {error: "Producto no encontrado"};
+    const updatedProdFile = await container.saveProductByIdFile(updatedProd, id);
+    if('error' in updatedProdFile){
+        logger.warn(`${JSON.stringify(updatedProdFile)}`);
     }else{
-        let newAllProducts = allProducts.map((prod) => {
-            if(prod.id === id){
-                prod = updatedProd;
-                prod.id = id;
-                // console.log(prod);
-            }
-            return prod;
-        })
-        // console.log('La nueva lista es: ', newAllProducts);
-        logger.debug(`La nueva lista es: ${JSON.stringify(newAllProducts)}`);
-        const allSaved = await container.saveAllProducts(newAllProducts);
-        if (allSaved === 'ok'){
-            // return({actualizado: updatedProd})
-        }else{
-            actualizadoArchivo = {error: allSaved};
-        }
+        logger.debug(`Actualizado en Archivo: ${JSON.stringify(updatedProdFile)}`);
     }
-    // console.log("Actualizado en Archivo: ", actualizadoArchivo)
-    if('error' in actualizadoArchivo){
-        logger.error(`${JSON.stringify(actualizadoArchivo)}`);
-    }else{
-        logger.debug(`Actualizado en Archivo: ${JSON.stringify(actualizadoArchivo)}`);
-    }
-    return({actualizadoArchivo});
+    return updatedProdFile;
 }
 
 export async function deleteProductById(id){
-    let deletedProduct = container.deleteProductById(id);
-    if (!deletedProduct){
+    let deletedProduct = await container.deleteProductById(id);
+    if (!deletedProduct || Object.keys(deletedProduct).length === 0){
         deletedProduct = {
             error: "Producto no encontrado"
         }
