@@ -1,5 +1,6 @@
 
 import ContainerFactory from './DAOs/ContainerFactory.class.js';
+import { transformToDTO } from './DTOs/messages.js';
 import {schema, normalize, denormalize} from 'normalizr';
 import logger from '../logger.js';
 import dotenv from 'dotenv';
@@ -26,7 +27,10 @@ export async function getMessages() {
     let allMessagesMongoAtlas = await messagesMongoAtlas.getAll();
     (allMessagesMongoAtlas[0]?.fecha) ?? (allMessagesMongoAtlas = allMessagesMongoAtlas.map( (msg) => ({...msg._doc, fecha: new Date(msg._id.getTimestamp()).toLocaleString('en-GB')})))
     const allMessagesFirebase = await messagesFirebase.getAll();
-    return allMessagesFirebase;
+    console.log(allMessagesFirebase);
+    const allMessagesDTO = transformToDTO(allMessagesFirebase, 'message');
+    console.log(allMessagesDTO)
+    return allMessagesDTO;
 } 
 
 export async function saveMessage(msg) {
@@ -34,7 +38,10 @@ export async function saveMessage(msg) {
     const newMessageFirebase = await messagesFirebase.save(msg);
     const newMessageMongoAtlas = await messagesMongoAtlas.save(msg);
     const newMessage = await messagesFile.save(msg);
-    return newMessageFirebase;
+    console.log(newMessageFirebase);
+    const newMessageDTO = transformToDTO(newMessageFirebase, 'message');
+    console.log(newMessageDTO);
+    return newMessageDTO;
 } 
 
 function denormalizeMessage(msg){
@@ -55,7 +62,10 @@ export async function saveNormalizedMessage(msg){
     const [messagesFirebase, messagesFirebaseNorm, messagesMongoAtlas, messagesFile] = createContainers();
     const denormMsgFirebase = denormalizeMessage(msg);
     const newMessageFirebase = await messagesFirebaseNorm.save(denormMsgFirebase);
-    return newMessageFirebase;
+    console.log('Saved norm message: ', denormMsgFirebase);
+    const newMessageDTO = transformToDTO(denormMsgFirebase, 'normMsg');
+    console.log(newMessageDTO);
+    return newMessageDTO;
 }
 
 function normalizeMessage(msg){
@@ -91,8 +101,11 @@ export async function getNormMessages() {
         newAllMessages.push(message);
         cont +=1;
     })
-    newAllMessages = {type: 'msgList', messages: newAllMessages};
+    console.log('Get Norm Messages : ', JSON.stringify(newAllMessages));
+    const newAllMessagesDTO = transformToDTO(newAllMessages, 'normMsgList');
+    console.log('Mensajes DTOs: ', newAllMessagesDTO);
+    newAllMessages = {type: 'msgList', messages: newAllMessagesDTO};
     // console.log('Mensajes desde Firebase restructurados', JSON.stringify(newAllMessages));
-    const allNormMessagesFirebase = normalizeMessage(newAllMessages);
+    const allNormMessagesFirebase = normalizeMessage(newAllMessagesDTO);
     return allNormMessagesFirebase;
 } 

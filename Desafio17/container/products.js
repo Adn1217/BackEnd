@@ -1,5 +1,5 @@
 import ContainerFactory from './DAOs/ContainerFactory.class.js';
-import { transformToDTO } from './DTOs/productos.js';
+import { transformToDTO } from './DTOs/products.js';
 import dotenv from 'dotenv';
 
 dotenv.config({
@@ -32,9 +32,7 @@ export async function getProductById(id) {
     const product = await productosFile.getById(id);
     const productMongoAtlas = await productosMongoAtlas.getById(id);
     const productFirebase = await productosFirebase.getById(id);
-    console.log(productFirebase);
     const productDTO = transformToDTO(productFirebase);
-    console.log(productDTO);
     return productDTO
 }
 
@@ -43,18 +41,14 @@ export async function saveProduct(prod) {
     const newProductIdMongoAtlas = await productosMongoAtlas.save(prod);
     const newProductIdFirebase = await productosFirebase.save(prod);
     const newProductId = await productosFile.save(prod);
-    console.log(newProductIdFirebase);
     const newProductDTO = transformToDTO({id:newProductIdFirebase});
-    console.log(newProductDTO);
     return newProductDTO
 }
 
 export async function updateProductByIdFB(updatedProd, id){
     const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
     const productFirebase = await productosFirebase.updateById(updatedProd, id);
-    console.log(productFirebase);
     const productDTO = transformToDTO(productFirebase);
-    console.log(productDTO);
     if (productFirebase){
         return({actualizadoFirebase: productDTO})
     }else{
@@ -106,9 +100,7 @@ export async function deleteProductById(id){
     const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
     const productFirebase = await productosFirebase.deleteById(id);
     // const productMongoAtlas = await productosMongoAtlas.deleteById(id);
-    console.log(productFirebase);
     const product = await productosFile.deleteById(id);
     const productDTO = transformToDTO(productFirebase);
-    console.log(productDTO);
     return productDTO;
 }
