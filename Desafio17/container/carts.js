@@ -1,6 +1,6 @@
 import ContainerFactory from './DAOs/ContainerFactory.class.js';
+import { calculateId } from '../functions.js';
 // import { cartsCollection } from '../server.js'
-import logger from '../logger.js';
 import dotenv from 'dotenv';
 
 dotenv.config({
@@ -31,6 +31,38 @@ export async function saveAllCarts(carts) {
     return savedFile
 }
 
+export async function saveProductInCartFB(newProd, id_cart){
+    const [carritoFirebase, carritoMongoAtlas, carritoFile] = createContainers();
+    const cartFirebase = await carritoFirebase.getById(id_cart);
+    // console.log('Carrito en Firebase', cartFirebase);
+    if (cartFirebase){
+        let newProdWithId = calculateId(newProd, cartFirebase.productos)
+        newProdWithId.timestamp = new Date().toLocaleString("en-GB");
+        cartFirebase.productos.push(newProdWithId);
+        carritoFirebase.updateById(cartFirebase, id_cart);
+        // console.log("Se ha agregado en Firebase el producto: \n", newProdWithId);
+        return({actualizadoFirebase: cartFirebase})
+    }else{
+        // console.log("Carrito no encontrado en Firebase.");
+        return({error: "Carrito no encontrado"})
+    }
+}
+
+export async function saveProductInCartMongo(newProd, id_cart){
+    const [carritoFirebase, carritoMongoAtlas, carritoFile] = createContainers();
+    const cartMongoAtlas = await carritoMongoAtlas.getById(id_cart);
+    let actualizadoMongo = {actualizadoMongo: cartMongoAtlas};
+    if (cartMongoAtlas){
+        cartMongoAtlas.productos.push(newProd);
+        let cart = await carritoMongoAtlas.updateById(cartMongoAtlas, id_cart);
+        // console.log("Se ha agregado en Mongo el producto al carrito: \n", cart);
+    }else{
+        actualizadoMongo = {error: "Carrito no encontrado en Mongo."}
+    }
+    // console.log(actualizadoMongo);
+    return actualizadoMongo;
+}
+
 export async function saveProductInCartByIdFile(res, newProd, id_cart){
     const [carritoFirebase, carritoMongoAtlas, carritoFile] = createContainers();
     const allCarts = await carritoFile.getAll();
@@ -44,15 +76,12 @@ export async function saveProductInCartByIdFile(res, newProd, id_cart){
         newProdWithId.timestamp = new Date().toLocaleString("en-GB");
         cart.productos.push(newProd);
         const allSaved = await saveAllCarts(allCarts);
-        if (allSaved === 'ok'){
-            // res.send({actualizado: cart})
-        }else{
-            actualizadoArchivo = {error: allSaved};
-            // res.send({error: allSaved})
+        if (allSaved.error){
+            actualizadoArchivo = allSaved;
         }
     }
     // console.log("Actualizado en Archivo: ", actualizadoArchivo)
-    logger.debug(`Actualizado en Archivo: ${JSON.stringify(actualizadoArchivo)}`)
+    return actualizadoArchivo
 }
 
 export async function getCarts() {

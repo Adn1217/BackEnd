@@ -1,9 +1,5 @@
-import ContenedorMongoAtlas from '../container/DAOs/ContenedorMongoAtlas.class.js';
-import {ContenedorFirebase} from '../container/DAOs/ContenedorFirebase.class.js';
 import * as container from '../container/carts.js';
 import { sendMail, sendSmsMsg, sendWappMsg } from '../server.js';
-import { calculateId } from '../functions.js';
-import { cartsCollection } from '../server.js';
 import logger from '../logger.js';
 
 export async function getCarts(){
@@ -22,48 +18,39 @@ export async function saveCart(cart){
 }
 
 export async function doSaveProductInCartFB(newProd, id_cart){
-    const cartsFirebase = new ContenedorFirebase(cartsCollection);
-    const cartFirebase = await cartsFirebase.getById(id_cart);
-    // console.log('Carrito en Firebase', cartFirebase);
-    logger.debug(`Carrito en Firebase ${cartFirebase}`);
-    if (cartFirebase){
-        let newProdWithId = calculateId(newProd, cartFirebase.productos)
-        newProdWithId.timestamp = new Date().toLocaleString("en-GB");
-        cartFirebase.productos.push(newProdWithId);
-        cartsFirebase.updateById(cartFirebase, id_cart);
-        // console.log("Se ha agregado en Firebase el producto: \n", newProdWithId);
-        logger.debug(`Se ha agregado en Firebase el producto: ${newProdWithId}`);
-        return({actualizadoFirebase: cartFirebase})
-    }else{
-        // console.log("Carrito no encontrado en Firebase.");
+    let savedProd = await container.saveProductInCartFB(newProd, id_cart);
+    if(savedProd.error){
         logger.error(`Carrito ${id_cart} no encontrado en Firebase.`);
         return({error: "Carrito no encontrado"})
+    }else{
+        // console.log("Se ha agregado en Firebase el producto: \n", newProdWithId);
+        logger.debug(`Se ha agregado en Firebase el producto: ${savedProd}`);
+        return(savedProd)
     }
-
 }
 
 export async function doSaveProductInCartMongo(newProd, id_cart){
-    const cartsMongoAtlas = new ContenedorMongoAtlas(cartsCollection);
-    const cartMongoAtlas = await cartsMongoAtlas.getById(id_cart);
-    let actualizadoMongo = {actualizadoMongo: cartMongoAtlas};
-    if (cartMongoAtlas){
-        cartMongoAtlas.productos.push(newProd);
-        let cart = await cartsMongoAtlas.updateById(cartMongoAtlas, id_cart);
+    let savedProd = await container.saveProductInCartMongo(newProd, id_cart);
+    if (savedProd.actualizadoMongo){
         // console.log("Se ha agregado en Mongo el producto al carrito: \n", cart);
-        logger.debug(`Se ha agregado en Mongo el producto al carrito: ${cart}`, cart);
+        logger.info(`Carrito actualizado en Mongo: ${JSON.stringify(savedProd.actualizadoMongo)}`);
         // res.send({actualizadoMongo: cartMongoAtlas})
     }else{
         // console.log("Carrito no encontrado en Mongo.");
         logger.error(`Carrito ${id_cart} no encontrado en Mongo.`);
-        actualizadoMongo = {error: "Carrito no encontrado en Mongo."}
         // res.send({error: "Carrito no encontrado"})
     }
-    // console.log(actualizadoMongo);
-    logger.info(`${JSON.stringify(actualizadoMongo)}`);
+    return savedProd;
 }
 
 export async function doSaveProductInCartFile(res, newProd, id_cart){
-    await container.saveProductInCartByIdFile(res, newProd, parseInt(id_cart));
+    let savedProd = await container.saveProductInCartByIdFile(res, newProd, parseInt(id_cart));
+    if(savedProd.error){
+        logger.debug(`Se ha presentado error al intentar guardar en Archivo: ${JSON.stringify(savedProd.error)}`)
+    }else{
+        logger.debug(`Actualizado en Archivo: ${JSON.stringify(savedProd.actualizadoArchivo)}`)
+    }
+    return savedProd;
 }
 
 export async function getCartById(id){
