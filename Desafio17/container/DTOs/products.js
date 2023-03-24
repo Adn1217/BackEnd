@@ -8,7 +8,7 @@ export default class ProductoDTO {
             this.description = producto.description,
             this.price = producto.price,
             this.stock = producto.stock,
-            this.thumbnail = producto.thumbnail,
+            this.thumbnail = producto.thumbnail
         }
     }
 }
