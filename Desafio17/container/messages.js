@@ -101,11 +101,11 @@ export async function getNormMessages() {
         newAllMessages.push(message);
         cont +=1;
     })
-    console.log('Get Norm Messages : ', JSON.stringify(newAllMessages));
-    const newAllMessagesDTO = transformToDTO(newAllMessages, 'normMsgList');
-    console.log('Mensajes DTOs: ', newAllMessagesDTO);
-    newAllMessages = {type: 'msgList', messages: newAllMessagesDTO};
+    newAllMessages = {type: 'msgList', messages: newAllMessages};
     // console.log('Mensajes desde Firebase restructurados', JSON.stringify(newAllMessages));
-    const allNormMessagesFirebase = normalizeMessage(newAllMessagesDTO);
+    // console.log('Messages to Norm : ', JSON.stringify(newAllMessages));
+    // const newAllMessagesDTO = transformToDTO(newAllMessages, 'normMsgList');
+    // console.log('Mensajes DTOs: ', newAllMessagesDTO);
+    const allNormMessagesFirebase = normalizeMessage(newAllMessages);
     return allNormMessagesFirebase;
 } 

@@ -9,7 +9,6 @@ export default class ProductoDTO {
             this.price = producto.price,
             this.stock = producto.stock,
             this.thumbnail = producto.thumbnail,
-            this.timestamp = producto.timestamp
         }
     }
 }
