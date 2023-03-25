@@ -270,12 +270,14 @@ async function saveProdInCart(idCart){
         })
         let carts = await response.json();
         console.log("Nuevo carrito: ",carts);
-        if (carts.error === 'Usuario no autenticado'){
+        if (carts.error){
             cartResults.classList.add('errorLabel');
             cartResults.innerHTML=`<h1>Error</h1>${JSON.stringify(carts)}</p>`;
+            if(carts.error === 'Usuario no autenticado'){
                 setTimeout(() => {
                     location.href=`${uri}/login`
                 }, 2000);
+            }
         }else{
             // results.innerHTML= tableRender(carts);
             cartResults.innerHTML=`<h1>Respuesta</h1><p><strong>CarritoActualizado: <br></strong>${JSON.stringify(carts)}</p>`;

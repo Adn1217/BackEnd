@@ -36,7 +36,7 @@ export default class MensajeDTO {
 }
 
 export function transformToDTO(mensajes, type) {
-    console.log('Tipo: ',type);
+    // console.log('Tipo: ',type);
     if(Array.isArray(mensajes)){
         let mensajesDTO = mensajes.map((mensaje) => new MensajeDTO(mensaje, type));
         return mensajesDTO

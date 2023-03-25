@@ -149,6 +149,7 @@ export class ContenedorFirebase extends dbClient {
       }else{
         console.log(`El elemento ${id} no existe`);
       }
+      data = await this.query.doc(id).get();
       return data?.data();
     } catch (error) {
       console.log("Se ha presentado error ", error);

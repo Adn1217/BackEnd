@@ -71,10 +71,10 @@ export default class ContenedorArchivo extends dbClient {
   async saveAll(productos) {
     try {
       await fs.promises.writeFile(this.ruta,JSON.stringify(productos, null, 2));
-      return 'ok'
+      return {actualizadoArchivo: 'Ok'};
     } catch (error) {
       console.log("Se ha presentado error ", error);
-      return error
+      return {error: error};
     }
   }
 

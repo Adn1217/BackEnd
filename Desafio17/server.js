@@ -328,14 +328,14 @@ app.use(session({
         mongoUrl: getURL(mongoAtlasDb, userName, pwd),
         mongoOptions: advancedOptions,
         collectionName: sessionsCollection,
-        ttl: 60,
+        ttl: 600,
     }),
     secret: sessionSecret,
     resave: false,
     rolling: true,
     saveUninitialized: false,
     cookie: {
-        maxAge: 60000,
+        maxAge: 600000,
         // httpOnly: false
     }
 }))
