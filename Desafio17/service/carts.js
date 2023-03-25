@@ -21,12 +21,11 @@ export async function doSaveProductInCartFB(newProd, id_cart){
     let savedProd = await container.saveProductInCartFB(newProd, id_cart);
     if(savedProd.error){
         logger.error(`Carrito ${id_cart} no encontrado en Firebase.`);
-        return({error: "Carrito no encontrado"})
     }else{
         // console.log("Se ha agregado en Firebase el producto: \n", newProdWithId);
         logger.debug(`Se ha agregado en Firebase el producto: ${savedProd}`);
-        return(savedProd)
     }
+    return(savedProd)
 }
 
 export async function doSaveProductInCartMongo(newProd, id_cart){
@@ -57,7 +56,7 @@ export async function getCartById(id){
     // console.log(cartById);
     // logger.debug(`El carrito es: ${JSON.stringify(cartById)}`)
     let cartById = await container.getCartById(id);
-    if (!cartById){
+    if (!cartById || Object.keys(cartById).length === 0 ){
         return({error:"Carrito no encontrado"});
     }else{
         // console.log(cartById.productos);
@@ -68,7 +67,7 @@ export async function getCartById(id){
 
 export async function deleteCartById(id){
     let deletedCart = await container.deleteCartById(id);
-    if (!deletedCart || deletedCart?.deletedCount == 0){
+    if (!deletedCart || deletedCart?.deletedCount == 0 || Object.keys(deletedCart).length === 0){
         deletedCart = {
             error: "Carrito no encontrado"
         }
@@ -82,14 +81,14 @@ export async function deleteCartById(id){
 export async function deleteProductInCartById(id_prod, id_cart){
     let deletedProduct = await container.deleteProductInCartById(id_prod, id_cart);
     // console.log("Producto eliminado: ", deletedProduct);
-    logger.info(`Producto eliminado: ${deletedProduct}`);
-    if (!deletedProduct && deletedProduct !== undefined){
+    logger.info(`Producto eliminado: ${JSON.stringify(deletedProduct)}`);
+    if (deletedProduct.carritoEncontrado === false){
         deletedProduct = {
             error: `Carrito ${id_cart} no encontrado`
         }
         return(deletedProduct)
     }else{
-        if (deletedProduct === undefined){
+        if (Object.keys(deletedProduct).length === 0){
             deletedProduct = {
                 error: `Producto ${id_prod} no encontrado en el carrito ${id_cart}`
             }
