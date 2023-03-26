@@ -24,8 +24,8 @@ export async function saveCart(cart) {
     const savedFile = await carritoFile.save(cart);
     console.log('Carrito Firebase: ', savedFirebase);
     const cartDTO = transformToDTO(savedFirebase);
-    console.log('Carritos DTO: ', JSON.stringify(cartDTO));
-    return cartDTO 
+    console.log('Carritos DTO: ', JSON.stringify(cartDTO, null, '\t'));
+    return savedFirebase 
 } 
 
 export async function saveAllCarts(carts) {
@@ -45,7 +45,7 @@ export async function saveProductInCartFB(newProd, id_cart){
         let updatedProd = await carritoFirebase.updateById(cartFirebase, id_cart);
         console.log('Carrito actualizado Firebase: ', updatedProd);
         const cartDTO = transformToDTO(updatedProd);
-        console.log('Carrito actualizado DTO: ', JSON.stringify(cartDTO));
+        console.log('Carrito actualizado DTO: ', JSON.stringify(cartDTO, null, '\t'));
         // console.log("Se ha agregado en Firebase el producto: \n", newProdWithId);
         return({actualizadoFirebase: cartDTO})
     }else{
@@ -59,7 +59,7 @@ export async function saveProductInCartMongo(newProd, id_cart){
     const cartMongoAtlas = await carritoMongoAtlas.getById(id_cart);
     console.log('Carrito actualizado Mongo: ', cartMongoAtlas);
     const cartDTO = transformToDTO(cartMongoAtlas);
-    console.log('Carrito actualizado DTO: ', JSON.stringify(cartDTO));
+    console.log('Carrito actualizado DTO: ', JSON.stringify(cartDTO,null, '\t'));
     let actualizadoMongo = {actualizadoMongo: cartDTO};
     if (cartMongoAtlas){
         cartMongoAtlas.productos.push(newProd);
@@ -78,7 +78,7 @@ export async function saveProductInCartByIdFile(res, newProd, id_cart){
     const cart = allCarts.find( (cart) => cart.id === id_cart);
     console.log('Carrito actualizado File: ', cart);
     const cartDTO = transformToDTO(cart);
-    console.log('Carrito actualizado DTO: ', JSON.stringify(cartDTO));
+    console.log('Carrito actualizado DTO: ', JSON.stringify(cartDTO, null, '\t'));
     let actualizadoArchivo = {actualizadoArchivo: cartDTO};
     if(!cart){
         // res.send({Error: `No se encuentra el carrito ${id_cart}`})
@@ -103,7 +103,7 @@ export async function getCarts() {
     const cartFirebase = await carritoFirebase.getAll();
     console.log('Carritos Firebase: ', cartFirebase);
     const cartDTO = transformToDTO(cartFirebase);
-    console.log('Carritos DTO: ', JSON.stringify(cartDTO));
+    console.log('Carritos DTO: ', JSON.stringify(cartDTO, null, '\t'));
     return cartDTO
 } 
 
@@ -114,7 +114,7 @@ export async function getCartById(id) {
     const cartMongoAtlas = await carritoMongoAtlas.getById(id);
     console.log('Carrito Firebase: ', cartFirebase);
     const cartDTO = transformToDTO(cartFirebase);
-    console.log('Carritos DTO: ', JSON.stringify(cartDTO));
+    console.log('Carritos DTO: ', JSON.stringify(cartDTO, null, '\t'));
     return cartDTO
 }
 
@@ -125,7 +125,7 @@ export async function deleteCartById(id_cart) {
     const cartMongoAtlas = await carritoMongoAtlas.deleteById(id_cart);
     console.log('Carrito Firebase: ', cartFirebase);
     const cartDTO = transformToDTO(cartFirebase);
-    console.log('Carritos DTO: ', JSON.stringify(cartDTO));
+    console.log('Carritos DTO: ', JSON.stringify(cartDTO, null, '\t'));
     return cartDTO
 }
 
@@ -136,6 +136,6 @@ export async function deleteProductInCartById(id_prod, id_cart) {
     const cartMongoAtlas = await carritoMongoAtlas.deleteProductInCartById(id_prod, id_cart);
     console.log('Carrito Firebase: ', cartFirebase);
     const cartDTO = transformToDTO(cartFirebase);
-    console.log('Carritos DTO: ', JSON.stringify(cartDTO));
+    console.log('Carritos DTO: ', JSON.stringify(cartDTO, null, '\t'));
     return cartDTO
 }

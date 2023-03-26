@@ -11,7 +11,7 @@ export async function saveCart(cart){
     if (Object.keys(cart).length === 0){
         return({Error: "Carrito no recibido"})
     }else{
-        let newCart = container.saveCart(cart);
+        let newCart = await container.saveCart(cart);
         // console.log('Carrito: ', JSON.stringify(cart));
         return ({Guardado: newCart});
     }
