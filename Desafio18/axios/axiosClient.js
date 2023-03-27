@@ -36,32 +36,39 @@ const options = {
     }
 };
 
+let dataNew = {
+    code: 'Prueba',
+    description: 'Prueba',
+    price: 999,
+    stock: 999,
+    thumbnail: 'Prueba',
+    title: 'Prueba'
+}
+// Ejemplos en línea de comando:
+// node axiosClient.js --admin true --api productos --endpoint save --data {\"code\":\"Prueba5\"} --> Prueba de guardado
+// node axiosClient.js --admin true --api productos --endpoint deleteById --id wTKCUsns93hdxJUPuVWQ --> Prueba de consulta por Id.
+// node axiosClient.js --admin true --api productos --endpoint updateById --id wTKCUsns93hdxJUPuVWQ --data {\"code\":\"Prueba5\"} -->Prueba de actualizar producto.
+// node axiosClient.js --> Prueba de consulta de todos los productos (por defecto).
+// node axiosClient.js --admin true --api productos --endpoint deleteById --id wTKCUsns93hdxJUPuVWQ --> Prueba de eliminar producto.
+
 const args = parseArgs(process.argv.slice(2), options);
-if(!(['productos','carrito','mensajes'].findIndex((api) => api = args['api'])>=0)){
+if(!(['productos','carrito','mensajes'].findIndex((api) => api === args['api'])>=0)){
     args['api'] = 'productos';
     // console.warn('Modo inválido, se ejecutará en el modo fork por defecto.');
     logger.warn('Api inválida, se ejecutará a la api "productos" por defecto.');
 }
-
-if(!(['getAll', 'getAllFaker', 'getById', 'deleteById', 'updateById'].findIndex((endpoint) => endpoint = args['endpoint'])>=0)){
+// console.log(args);
+if(!(['save', 'getAll', 'getAllFaker', 'getById', 'deleteById', 'updateById'].findIndex((endpoint) => endpoint === args['endpoint'])>=0)){
     args['endpoint'] = 'getAll';
     // console.warn(`Se ingresa puerto inválido. Se toma puerto ${args['port']} por defecto.`);
     logger.warn(`Se ingresa endpoint inválido. Se toma endpoint ${args['endpoint']} por defecto.`);
-}else if((['getById', 'deleteById', 'updateById'].findIndex((endpoint)  => endpoint = args['endpoint']) >=0) && args['id'] === null){
+}else if((['getById', 'deleteById', 'updateById'].findIndex((endpoint)  => endpoint === args['endpoint']) >=0) && (args['id'] === null)){
     logger.warn(`Para el endpoint ${args['endpoint']} se debe ingresar un id.`);
-}else if(args['endpoint'] === 'updateById'){
+}else if(args['endpoint'] === 'updateById' || args['endpoint'] === 'save'){
     logger.info(`Data ingresada: ${JSON.stringify(args['data'])}`);
-    let dataNew = {
-        code: 'Prueba',
-        description: 'Prueba',
-        price: 999,
-        stock: 999,
-        thumbnail: 'Prueba',
-        title: 'Prueba'
-    }
     args['data'] = {...dataNew,...JSON.parse(args['data'])};
-    console.log(args['data']);
-    logger.warn(`Para el endpoint ${args['endpoint']} se debe ingresar la nueva data a actualizar. Se actualizarán campos vacíos con "Prueba" o 999.`);
+    console.log('Producto a guardar: ', args['data']);
+    logger.warn(`Para el endpoint ${args['endpoint']} se debe ingresar la nueva data a actualizar/guardar. Se actualizarán campos vacíos con "Prueba" o 999.`);
 }
 
 if(isNaN(args['serverPort']) || (typeof(args['serverPort']) !== 'number')){
@@ -100,6 +107,15 @@ async function authenticate(user, pwd){
 //     console.log('Request: ', req);
 //     return req
 //     })
+async function save(admin){
+    let url =`/${api}/` 
+    let savedProduct = await axios.post(url, data, {
+        headers: {
+            'auth': admin
+        }
+    });
+    return savedProduct;
+}
 
 async function getAll(){
     let url = `/${api}/?`
@@ -121,6 +137,29 @@ async function updateById(id, data, admin){
         }
     });
     return product;
+}
+
+async function deleteById(id, admin){
+    let url =`/${api}/${id}` 
+    let product = await axios.delete(url,{
+        headers: {
+            'auth': admin
+        }
+    });
+    return product;
+}
+
+if (endpoint === 'save' && data){
+    logger.info(`Se inicia prueba de endpoint ${endpoint}`);
+    try{
+        let product = await save(admin);
+        logger.info(`Producto guardado: ${JSON.stringify(product.data, null, '\t')}`); 
+        logger.info(`Finaliza prueba de endpoint ${endpoint}`);
+    }catch(error){
+        logger.error(`Se presenta error en prueba de endpoint ${endpoint} : ${error}`);
+    }finally{
+        logger.info(`Finaliza prueba de endpoint ${endpoint}`);
+    }
 }
 
 if (endpoint === 'getAll'){
@@ -154,6 +193,19 @@ if (endpoint === 'updateById' && id){
     try{
         let product = await updateById(id, data, admin);
         logger.info(`Producto recibido: ${JSON.stringify(product.data, null, '\t')}`); 
+        logger.info(`Finaliza prueba de endpoint ${endpoint}`);
+    }catch(error){
+        logger.error(`Se presenta error en prueba de endpoint ${endpoint} : ${error}`);
+    }finally{
+        logger.info(`Finaliza prueba de endpoint ${endpoint}`);
+    }
+}
+
+if (endpoint === 'deleteById' && id){
+    logger.info(`Se inicia prueba de endpoint ${endpoint}`);
+    try{
+        let product = await deleteById(id, admin);
+        logger.info(`Producto eliminado: ${JSON.stringify(product.data, null, '\t')}`); 
         logger.info(`Finaliza prueba de endpoint ${endpoint}`);
     }catch(error){
         logger.error(`Se presenta error en prueba de endpoint ${endpoint} : ${error}`);

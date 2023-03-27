@@ -122,7 +122,7 @@ export default class ContenedorArchivo extends dbClient {
         console.log(`\nSe elimina el producto con id=${id} (deleteById(${id})): \n`, prod);
         // console.log("Quedan los productos: ", data);
       } else {
-        console.log("No existe el producto con id: ", Id);
+        console.log("En File no existe el producto con id: ", Id);
       }
       return prod;
     } catch (error) {

@@ -38,15 +38,5 @@
     "thumbnail": "https://firebasestorage.googleapis.com/v0/b/ecommerce-28be7.appspot.com/o/cojin.png?alt=media&token=83b0b601-2013-40e2-bbbc-b45a76c5d96f",
     "id": 4,
     "timestamp": "04/12/2022, 20:20:21"
-  },
-  {
-    "code": "Prb9999",
-    "title": "ProductoDePrueba",
-    "description": "ProductoDePrueba",
-    "price": "1111",
-    "stock": "111",
-    "thumbnail": "ProductoDePrueba",
-    "id": 5,
-    "timestamp": "26/03/2023, 23:59:04"
   }
 ]
