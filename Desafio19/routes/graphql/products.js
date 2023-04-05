@@ -15,7 +15,7 @@ const updateProduct = prdController.updateProductById;
 const deleteProduct = prdController.doDeleteProductById;
 
 // productosGraphql.use('/', isLogged);
-let productsLocal = {id: 1, title: 'producto de prueba'}
+// let productsLocal = {id: 1, title: 'producto de prueba'}
 productosGraphql.use('/', debug, graphqlHTTP((req, res) => ({
     schema: schema,
     rootValue: {
@@ -25,13 +25,17 @@ productosGraphql.use('/', debug, graphqlHTTP((req, res) => ({
         },
         getProduct: async ({id}) => {
             req.query.id = id;
-            console.log('id: ', req.query.id);
-            let prd = await prdController.getProducts(req, res);
-            console.log('Producto: ', prd);
-            return prd.producto;
-            // return productsLocal;
+            // console.log('id: ', req.query.id);
+            let product = await prdController.getProducts(req, res);
+            // console.log('Producto: ', prd);
+            return product.producto || product.error;
         },
-        // saveProduct,
+        saveProduct: async({data}) => {
+            req.body = data;
+            let savedProduct = await prdController.doSaveProduct(req, res);
+            console.log(savedProduct);
+            return savedProduct.Guardado || savedProduct.Error;
+        },
         // updateProduct,
         // deleteProduct
     },
