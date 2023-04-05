@@ -21,7 +21,13 @@ function createRandomProducts(n){
 }
 
 export async function getProducts(req, res) {
-    await service.getProducts(req, res);
+    let products = await service.getProducts(req);
+    let graphqlQuery = req.query?.query?.search('getProduct') > 0 || false;
+    if(graphqlQuery){ //GraphQl resuelve promesas.
+        return products;
+    }else{
+        res.send(products);
+    }
 } 
 
 export function getRandomProducts(res, n) {
