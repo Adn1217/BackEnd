@@ -15,13 +15,22 @@ const updateProduct = prdController.updateProductById;
 const deleteProduct = prdController.doDeleteProductById;
 
 // productosGraphql.use('/', isLogged);
+let productsLocal = {id: 1, title: 'producto de prueba'}
 productosGraphql.use('/', debug, graphqlHTTP((req, res) => ({
     schema: schema,
     rootValue: {
         getProducts: async () => {
-           return await prdController.getProducts(req, res);
+            let products = await prdController.getProducts(req, res)
+            return products;
         },
-        // getProduct,
+        getProduct: async ({id}) => {
+            req.query.id = id;
+            console.log('id: ', req.query.id);
+            let prd = await prdController.getProducts(req, res);
+            console.log('Producto: ', prd);
+            return prd.producto;
+            // return productsLocal;
+        },
         // saveProduct,
         // updateProduct,
         // deleteProduct
