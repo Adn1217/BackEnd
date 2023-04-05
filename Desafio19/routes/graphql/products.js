@@ -19,11 +19,9 @@ productosGraphql.use('/', debug, graphqlHTTP((req, res) => ({
     schema: schema,
     rootValue: {
         getProducts: async () => {
-            await prdController.getProducts(req, res);
+           return await prdController.getProducts(req, res);
         },
-        getProduct: async() => {
-            // await prdController.getProducts(req, res);
-        },
+        // getProduct,
         // saveProduct,
         // updateProduct,
         // deleteProduct
@@ -32,8 +30,9 @@ productosGraphql.use('/', debug, graphqlHTTP((req, res) => ({
 })));
 // productosTest.use('/', isLogged);
 
-function debug(req, res){
+function debug(req, res, next){
     console.log('Query: ', req.query);
+    next();
 }
 
 // async function getProducts(){

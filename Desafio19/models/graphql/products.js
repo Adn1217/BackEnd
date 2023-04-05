@@ -8,7 +8,7 @@ export const schema = buildSchema(`
         price: Float,
         stock: Int,
         thumbnail: String,
-        timestamp: Float,
+        timestamp: String,
         title: String
     }    
     input ProductInput {
