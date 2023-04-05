@@ -8,7 +8,7 @@ export const schema = buildSchema(`
         price: Float,
         stock: Int,
         thumbnail: String,
-        timestamp: Float,
+        timestamp: String,
         title: String
     }    
     input ProductInput {
@@ -17,7 +17,6 @@ export const schema = buildSchema(`
         price: Float,
         stock: Int,
         thumbnail: String,
-        timestamp: Float,
         title: String
     }    
     type Query {
@@ -31,8 +30,7 @@ export const schema = buildSchema(`
     }
 `)
 
-export function getProducts(){
-
+export async function getProducts(){
 }
 
 export function getProduct(id){
@@ -48,5 +46,5 @@ export function updateProduct(data){
 }
 
 export function deleteProduct(data){
-    
+
 }

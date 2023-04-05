@@ -21,7 +21,13 @@ function createRandomProducts(n){
 }
 
 export async function getProducts(req, res) {
-    await service.getProducts(req, res);
+    let products = await service.getProducts(req);
+    let graphqlQuery = req.query?.query?.search('getProduct') > 0 || req.originalUrl.search('graphql') > 0 || false;
+    if(graphqlQuery){ //GraphQl resuelve promesas.
+        return products;
+    }else{
+        res.send(products);
+    }
 } 
 
 export function getRandomProducts(res, n) {
@@ -48,22 +54,40 @@ export async function showProductsRandom(res) {
 export async function doSaveProduct(req, res) {
     let product = req.body;
     let savedProd = await service.saveProduct(product);
-    res.send(savedProd);
+    let graphqlQuery = req.originalUrl.search('graphql') > 0 || false;
+    if(graphqlQuery){ //GraphQl resuelve promesas.
+        return savedProd;
+    }else{
+        res.send(savedProd);
+    }
 }
 
 
 export async function updateProductById(req, res) {
     const updatedProd = req.body;
-    console.log(updatedProd);
+    // console.log(updatedProd);
     const id = req.params.id;
     let updatedFB = await service.updateProductByIdFB(updatedProd, id);
     let updatedMongo = await service.updateProductByIdMongo(updatedProd, id);
     let updatedFile = await service.saveProductByIdFile(updatedProd, id);
-    res.send(updatedFB);
+    let graphqlQuery = req.originalUrl.search('graphql') > 0 || false;
+    if(graphqlQuery){ //GraphQl resuelve promesas.
+        // updatedFB.id = id;
+        console.log(updatedFB);
+        return updatedFB;
+    }else{
+        res.send(updatedFB);
+    }
 }
 
 export async function doDeleteProductById(req, res) {
     const {id} = req.params;
-    let deletedProduct = await service.deleteProductById(id);
-    res.send(deletedProduct);
+    let graphqlQuery = req.originalUrl.search('graphql') > 0 || false;
+    if(graphqlQuery){ //GraphQl resuelve promesas.
+        let deletedProduct = await service.deleteProductById(id);
+        console.log(deletedProduct);
+        return deletedProduct;
+    }else{
+        res.send(deletedProduct);
+    }
 }

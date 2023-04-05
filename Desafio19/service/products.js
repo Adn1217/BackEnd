@@ -13,13 +13,17 @@ export async function saveProduct(product){
     }
 }
 
-export async function getProducts(req, res){
-    if(Object.keys(req.query).length > 0 || req.params.id){
+export async function getProducts(req){
+    let graphqlQuery = req.query?.query?.search('getProducts') > 0 || false;
+    // console.log('¿Consulta graphql de todos los productos? ', graphqlQuery);
+    if((Object.keys(req.query).length > 0 || req.params.id) && !(graphqlQuery)){
         const id = req.query.id || req.params.id;
-        await showProductById(res, id);
+        let product = await getProductById(id);
+        // console.log('Producto encontrados service: ', product);
+        return product;
     }else{
         const allProducts = await container.getProducts();
-        res.send(allProducts);
+        return allProducts;
     }
 }
 
@@ -32,15 +36,15 @@ export async function showProducts(req) {
     return renderData;
 }
 
-async function showProductById(res, id) {
+async function getProductById(id) {
     let productById = await container.getProductById(id);
     if (!productById || Object.keys(productById).length === 0){
         logger.error(`Producto ${id} no encontrado`);
-        res.send({error:"Producto no encontrado"});
+        return({error:"Producto no encontrado"});
     }else{
-        // console.log(productById);
+        console.log(productById);
         logger.debug(`productById: ${JSON.stringify(productById)}`);
-        res.send({producto: productById});
+        return({producto: productById});
     }
 }
 
@@ -86,8 +90,8 @@ export async function deleteProductById(id){
             error: "Producto no encontrado"
         }
         logger.error(`Producto ${id} no encontrado.`)
-        return(deletedProduct)
+        return({id,...deletedProduct})
     }else{
-        return({eliminado: deletedProduct})
+        return({eliminado: {id, ...deletedProduct}})
     }
 }

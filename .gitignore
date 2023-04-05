@@ -9,3 +9,4 @@ db/
 *.doc
 *.log
 *.tmp
+*.vscode

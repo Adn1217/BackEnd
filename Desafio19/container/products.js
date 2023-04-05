@@ -48,7 +48,7 @@ export async function saveProduct(prod) {
 export async function updateProductByIdFB(updatedProd, id){
     const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
     const productFirebase = await productosFirebase.updateById(updatedProd, id);
-    const productDTO = transformToDTO(productFirebase);
+    const productDTO = transformToDTO({id,...productFirebase});
     if (productFirebase){
         return({actualizadoFirebase: productDTO})
     }else{
@@ -59,7 +59,7 @@ export async function updateProductByIdFB(updatedProd, id){
 export async function updateProductByIdMongo(updatedProd, id){
     const [productosFirebase, productosMongoAtlas, productosFile] = createContainers();
     const productMongoAtlas = await productosMongoAtlas.updateById(updatedProd,id);
-    const productDTO = transformToDTO(productMongoAtlas);
+    const productDTO = transformToDTO({id, ...productMongoAtlas});
     if (productMongoAtlas){
         return({actualizadoMongo: productDTO})
     }else{
