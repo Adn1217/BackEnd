@@ -65,12 +65,19 @@ export async function doSaveProduct(req, res) {
 
 export async function updateProductById(req, res) {
     const updatedProd = req.body;
-    console.log(updatedProd);
+    // console.log(updatedProd);
     const id = req.params.id;
     let updatedFB = await service.updateProductByIdFB(updatedProd, id);
     let updatedMongo = await service.updateProductByIdMongo(updatedProd, id);
     let updatedFile = await service.saveProductByIdFile(updatedProd, id);
-    res.send(updatedFB);
+    let graphqlQuery = req.originalUrl.search('graphql') > 0 || false;
+    if(graphqlQuery){ //GraphQl resuelve promesas.
+        // updatedFB.id = id;
+        console.log(updatedFB);
+        return updatedFB;
+    }else{
+        res.send(updatedFB);
+    }
 }
 
 export async function doDeleteProductById(req, res) {

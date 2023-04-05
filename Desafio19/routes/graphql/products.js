@@ -36,7 +36,13 @@ productosGraphql.use('/', debug, graphqlHTTP((req, res) => ({
             console.log(savedProduct);
             return savedProduct.Guardado || savedProduct.Error;
         },
-        // updateProduct,
+        updateProduct: async({id, data}) => {
+            req.body = data;
+            req.params.id = id;
+            let savedProduct = await prdController.updateProductById(req, res);
+            console.log(savedProduct);
+            return  savedProduct.actualizadoFirebase || savedProduct.error;
+        },
         // deleteProduct
     },
     graphiql: false
