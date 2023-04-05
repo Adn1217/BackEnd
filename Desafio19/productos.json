@@ -28,45 +28,5 @@
     "thumbnail": "https://firebasestorage.googleapis.com/v0/b/ecommerce-28be7.appspot.com/o/cojin.png?alt=media&token=83b0b601-2013-40e2-bbbc-b45a76c5d96f",
     "id": 4,
     "timestamp": "04/12/2022, 20:20:21"
-  },
-  {
-    "code": "Prd9875",
-    "description": "Producto de prueba con graphql",
-    "price": 5698,
-    "stock": 99,
-    "thumbnail": "http://urlProductoPrueba.com",
-    "title": "Producto de prueba",
-    "id": 5,
-    "timestamp": "05/04/2023, 10:49:56"
-  },
-  {
-    "code": "Prd9875",
-    "description": "Producto de prueba con graphql",
-    "price": 5698,
-    "stock": 99,
-    "thumbnail": "http://urlProductoPrueba.com",
-    "title": "Producto de prueba",
-    "id": 6,
-    "timestamp": "05/04/2023, 10:54:09"
-  },
-  {
-    "code": "Prd9875",
-    "description": "Producto de prueba con graphql",
-    "price": 5698,
-    "stock": 99,
-    "thumbnail": "http://urlProductoPrueba.com",
-    "title": "Producto de prueba",
-    "id": 7,
-    "timestamp": "05/04/2023, 10:54:54"
-  },
-  {
-    "code": "Prd9875",
-    "description": "Producto de prueba con graphql",
-    "price": 5698,
-    "stock": 99,
-    "thumbnail": "http://urlProductoPrueba.com",
-    "title": "Producto de prueba",
-    "id": 8,
-    "timestamp": "05/04/2023, 10:55:17"
   }
 ]

@@ -43,7 +43,13 @@ productosGraphql.use('/', debug, graphqlHTTP((req, res) => ({
             console.log(savedProduct);
             return  savedProduct.actualizadoFirebase || savedProduct.error;
         },
-        // deleteProduct
+        deleteProduct: async ({id}) => {
+            req.params.id = id;
+            // console.log('id: ', req.query.id);
+            let deletedProduct = await prdController.doDeleteProductById(req, res);
+            console.log('Deleted Product: ', deletedProduct);
+            return deletedProduct.eliminado;
+        }
     },
     graphiql: false
 })));
