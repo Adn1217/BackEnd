@@ -26,5 +26,12 @@
     "mensaje": "Prueba con DTO",
     "id": 4,
     "timestamp": "23/03/2023, 19:01:34"
+  },
+  {
+    "fecha": "21/04/2023 11:23",
+    "mensaje": "Mensaje guardado por graphql",
+    "usuario": "Nazz",
+    "id": 10,
+    "timestamp": "06/04/2023, 12:03:02"
   }
 ]

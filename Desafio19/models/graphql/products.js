@@ -29,22 +29,3 @@ export const schema = buildSchema(`
         deleteProduct(id: ID!): Product
     }
 `)
-
-export async function getProducts(){
-}
-
-export function getProduct(id){
-
-}
-
-export function saveProduct(data){
-
-}
-
-export function updateProduct(data){
-
-}
-
-export function deleteProduct(data){
-
-}

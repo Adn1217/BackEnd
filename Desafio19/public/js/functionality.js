@@ -186,7 +186,7 @@ async function deleteOneProduct(id){
         if (("error" in prod)){
             console.log("Error", prod);
             results.classList.add('errorLabel');
-            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod.descripcion || prod.error)}</p>`;
             if (prod.error === 'Usuario no autenticado'){
                 setTimeout(() => {
                     location.href=`${uri}/login`

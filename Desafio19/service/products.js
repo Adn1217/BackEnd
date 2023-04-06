@@ -49,6 +49,7 @@ async function getProductById(id) {
 }
 
 export async function updateProductByIdFB(updatedProd, id){
+    console.log('Id en service: ', id);
     const updatedProductFB = await container.updateProductByIdFB(updatedProd, id);
     if(!('error' in updatedProductFB)){
         // console.log("Se ha actualizado el producto: \n", updatedProductFB);
@@ -90,8 +91,8 @@ export async function deleteProductById(id){
             error: "Producto no encontrado"
         }
         logger.error(`Producto ${id} no encontrado.`)
-        return({id,...deletedProduct})
+        return({id: deletedProduct.error,...deletedProduct})
     }else{
-        return({eliminado: {id, ...deletedProduct}})
+        return({eliminado: {id: id, ...deletedProduct}})
     }
 }

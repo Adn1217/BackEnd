@@ -350,10 +350,10 @@ app.use('/static', express.static(path.join(__dirname, 'public')))
 // console.log(__dirname + '/public');
 
 app.use('/', logRequest);
-app.use('/graphql', productosGraphql, (req, res) =>{
-    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400);
-})
+// app.use('/graphql', graphqlRouter, (req, res) =>{
+//     logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
+//     res.sendStatus(400);
+// })
 app.post('/login',
     passport.authenticate('login', {
     failureRedirect: '/faillogin', 
