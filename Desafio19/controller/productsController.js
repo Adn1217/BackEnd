@@ -82,9 +82,9 @@ export async function updateProductById(req, res) {
 
 export async function doDeleteProductById(req, res) {
     const {id} = req.params;
+    let deletedProduct = await service.deleteProductById(id);
     let graphqlQuery = req.originalUrl.search('graphql') > 0 || false;
     if(graphqlQuery){ //GraphQl resuelve promesas.
-        let deletedProduct = await service.deleteProductById(id);
         console.log(deletedProduct);
         return deletedProduct;
     }else{
