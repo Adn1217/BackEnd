@@ -39,8 +39,9 @@ export async function saveMessage(msg) {
     const newMessageMongoAtlas = await messagesMongoAtlas.save(msg);
     const newMessage = await messagesFile.save(msg);
     // console.log('Saved message FB: ', newMessageFirebase);
-    const newMessageDTO = transformToDTO(newMessageFirebase, 'message');
-    console.log('Saved message DTO: ', newMessageDTO);
+    const newMessageDTO = transformToDTO(msg, 'message');
+    console.log('Saved message DTO: ', msg);
+    newMessageDTO.id = newMessageFirebase;
     return newMessageDTO;
 } 
 

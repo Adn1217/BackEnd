@@ -22,7 +22,7 @@ function createRandomProducts(n){
 
 export async function getProducts(req, res) {
     let products = await service.getProducts(req);
-    let graphqlQuery = req.query?.query?.search('getProduct') > 0 || req.originalUrl.search('graphql') > 0 || false;
+    let graphqlQuery = req.query?.query?.search('getProduct') >= 0 || req.originalUrl.search('graphql') > 0 || false;
     if(graphqlQuery){ //GraphQl resuelve promesas.
         return products;
     }else{
@@ -54,7 +54,7 @@ export async function showProductsRandom(res) {
 export async function doSaveProduct(req, res) {
     let product = req.body;
     let savedProd = await service.saveProduct(product);
-    let graphqlQuery = req.originalUrl.search('graphql') > 0 || false;
+    let graphqlQuery = req.originalUrl.search('graphql') >= 0 || false;
     if(graphqlQuery){ //GraphQl resuelve promesas.
         return savedProd;
     }else{
@@ -70,7 +70,7 @@ export async function updateProductById(req, res) {
     let updatedFB = await service.updateProductByIdFB(updatedProd, id);
     let updatedMongo = await service.updateProductByIdMongo(updatedProd, id);
     let updatedFile = await service.saveProductByIdFile(updatedProd, id);
-    let graphqlQuery = req.originalUrl.search('graphql') > 0 || false;
+    let graphqlQuery = req.originalUrl.search('graphql') >= 0 || false;
     if(graphqlQuery){ //GraphQl resuelve promesas.
         // updatedFB.id = id;
         console.log(updatedFB);
@@ -83,7 +83,7 @@ export async function updateProductById(req, res) {
 export async function doDeleteProductById(req, res) {
     const {id} = req.params;
     let deletedProduct = await service.deleteProductById(id);
-    let graphqlQuery = req.originalUrl.search('graphql') > 0 || false;
+    let graphqlQuery = req.originalUrl.search('graphql') >= 0 || false;
     if(graphqlQuery){ //GraphQl resuelve promesas.
         console.log(deletedProduct);
         return deletedProduct;

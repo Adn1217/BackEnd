@@ -15,7 +15,12 @@ export async function showMsgs(res) {
 export async function doSaveMessage(req, res) {
     const msg = req.body;
     const newMsg = await service.saveMessage(msg); 
-    res.send({Guardado: newMsg})
+    let graphqlQuery = req.originalUrl.search('graphql') >= 0;
+    if(graphqlQuery){ // Graphql resuelve promesas;
+        return ({Guardado: newMsg})
+    }else{
+        res.send({Guardado: newMsg})
+    }
 }
 
 export async function doSaveNormMessage(req, res) {

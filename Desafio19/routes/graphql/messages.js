@@ -15,11 +15,11 @@ messagesGraphql.use('/', debug, graphqlHTTP((req, res) => ({
             let messages = await msgController.getMsgs()
             return messages;
         },
-        saveMessages: async({data}) => {
+        saveMessage: async({data}) => {
             req.body = data;
             let savedMessage = await msgController.doSaveMessage(req, res);
             console.log(savedMessage);
-            return savedMessage;
+            return savedMessage.Guardado;
         }
     },
     graphiql: false

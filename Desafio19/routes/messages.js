@@ -13,9 +13,9 @@ mensajes.get('/', async (req, res) => {
     // res.send({msgs: allMessages})
 })
 
-mensajes.post('/', (req, res) => {
-    msgController.doSaveMessage(req, res);
-})
+// mensajes.post('/', (req, res) => {
+//     msgController.doSaveMessage(req, res);
+// })
 
 mensajes.post('/normalized', (req, res) => {
     msgController.doSaveNormMessage(req, res);
