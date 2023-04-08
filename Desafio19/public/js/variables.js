@@ -47,6 +47,7 @@ let priceInput = document.getElementById('priceInput');
 let stockInput = document.getElementById('stockInput');
 let thumbnailInput = document.getElementById('thumbnailInput');
 let productRolRadioButton = document.getElementById('productRolRadioButton');
+let productServiceRadioButton = document.getElementById('productServiceRadioButton');
 let cartRolRadioButton = document.getElementById('cartRolRadioButton');
 let cartUserInput = document.getElementById('cartUserInput')
 let idInput = document.getElementById('idInput');

@@ -91,17 +91,20 @@ async function updateProduct(id){
     await submitForm(id);
 }
 
-async function getAllProducts(){
+async function getAllProducts(graphService = false){
     // console.log('Cookies: ', document.cookie);
     results.classList.remove('errorLabel');
-    let response = await fetch(`${uri}/productos/`, { method: 'GET',
+    let endpoint = graphService ? 'graphql?query={getProducts{id, code, title, description, price, stock, thumbnail}}': '';
+    let response = await fetch(`${uri}/productos/${endpoint}`, { method: 'GET',
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json"
         }
     })
     let prods = await response.json();
-    // console.log("productos: ",prods)
+    // console.log("Productos: ", prods);
+    graphService && (prods = prods.data.getProducts);
+    console.log("Lista productos: ", prods);
     if(prods.error === 'Usuario no autenticado'){
         results.classList.add('errorLabel');
         results.innerHTML=`<h1>Error</h1>${JSON.stringify(prods)}</p>`;
@@ -134,7 +137,7 @@ async function getAllRandomProducts(){
     }
 }
 
-async function getOneProduct(id){
+async function getOneProduct(graphService = false, id){
     if (id === ''){
         idInput.classList.add('errorInput');
         results.classList.add('errorLabel');
@@ -142,13 +145,18 @@ async function getOneProduct(id){
     }else{
         idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
-        let response = await fetch(`${uri}/productos/${id}`, { method: 'GET',
+        console.log(id);
+        let endpoint = graphService ? `graphql?query={getProduct(id: "${id}"){id, code, title, description, price, stock, thumbnail}}`: `${id}`;
+        let response = await fetch(`${uri}/productos/${endpoint}`, { method: 'GET',
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             }
         })
         let prod = await response.json();
+        console.log('Producto: ', prod);
+        graphService && (prod = {producto:prod.data.getProduct});
+        console.log('Producto: ', prod);
         if (("error" in prod)){
             results.classList.add('errorLabel');
             results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
@@ -594,10 +602,10 @@ async function logout(){
 logoutButton.addEventListener('click', () => logout())
 //------PRODUCTS FORM---------------------------
 submitButton.addEventListener('click', () => submitForm())
-getOneButton.addEventListener('click', () => getOneProduct(idInput.value))
+getOneButton.addEventListener('click', () => getOneProduct(productServiceRadioButton.checked, idInput.value))
 updateButton.addEventListener('click', () => updateProduct(idInput.value))
 deleteOneButton.addEventListener('click', () => deleteOneProduct(idInput.value))
-getAllButton.addEventListener('click', getAllProducts)
+getAllButton.addEventListener('click', () => getAllProducts(productServiceRadioButton.checked))
 getAllRandomButton.addEventListener('click', getAllRandomProducts)
 //------CARTS FORM-----------------------------------
 

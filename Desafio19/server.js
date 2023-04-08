@@ -379,8 +379,13 @@ app.use('/logout', logout, (req, res) =>{
     res.sendStatus(400);
 });
 app.use('/productos', productos, (req, res) =>{
-    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400);
+    console.log('Respuesta: ', res.json())
+    if(res.locals){
+        res.send(res.locals);
+    }else{
+        logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
+        res.sendStatus(400);
+    }
 });
 app.use('/productos-test', productosTest, (req, res) =>{
     logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)

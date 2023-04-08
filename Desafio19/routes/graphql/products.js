@@ -8,11 +8,13 @@ const { Router } = express;
 export const productosGraphql = new Router();
 
 // productosGraphql.use('/', isLogged);
-productosGraphql.use('/graphql', debug, graphqlHTTP((req, res) => ({
+productosGraphql.use('/graphql', debug, graphqlHTTP((req, res, next) => ({
     schema: schema,
     rootValue: {
         getProducts: async () => {
-            let products = await prdController.getProducts(req, res)
+            console.log('########-------ENTRÓ---------#######')
+            let products = await prdController.getProducts(req, res);
+            // next()
             return products;
         },
         getProduct: async ({id}) => {
@@ -47,4 +49,8 @@ productosGraphql.use('/graphql', debug, graphqlHTTP((req, res) => ({
 function debug(req, res, next){
     console.log('Query: ', req.query);
     next();
+}
+
+function showResponse(req, res){
+    res.send(response);
 }
