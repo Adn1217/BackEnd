@@ -60,13 +60,12 @@ async function submitForm(graphService = false, id, update = false) {
         (!graphService && id) && (url = url + `/${id}`);
         (!graphService && id) && (verb = 'PUT');
         let data = newProd;
-        // console.log('Body: ', reqBody);
         if(graphService && !update){
             data = { query: `mutation {saveProduct(data:${newProdGql}){id}}`};
         }else if(graphService && update) {
             data = { query: `mutation {updateProduct(id:"${id}", data:${newProdGql}){id}}`};
         }
-        console.log('Body: ', data);
+        // console.log('Body: ', data);
         let response = await fetch(url, { method: verb,
             headers: {
                 Accept: "application/json",
@@ -168,7 +167,7 @@ async function getOneProduct(graphService = false, id){
             }
         })
         let prod = await response.json();
-        console.log('Producto: ', prod);
+        // console.log('Producto: ', prod);
         graphService && (prod = {producto:prod.data.getProduct});
         console.log('Producto: ', prod);
         if (("error" in prod)){
@@ -183,13 +182,13 @@ async function getOneProduct(graphService = false, id){
             results.classList.remove('errorLabel');
             results.innerHTML= tableRender(prod.producto);
         }
-        console.log(prod);
+        // console.log(prod);
     // socket.emit('oneProductRequest', parseInt(id));
     }
 
 }
 
-async function deleteOneProduct(id){
+async function deleteOneProduct(graphService = false, id){
     if (id === ''){
         idInput.classList.add('errorInput');
         results.classList.add('errorLabel');
@@ -197,14 +196,20 @@ async function deleteOneProduct(id){
     }else{
         idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
-        let response = await fetch(`${uri}/productos/${id}`, { method: 'DELETE',
+        let endpoint = graphService ? `graphql` : `${id}`;
+        let verb = graphService ? 'POST' : 'DELETE';
+        let data = graphService ? {query : `mutation {deleteProduct(id:"${id}"){id}}`} : {};
+        // console.log('Body: ', data);
+        let response = await fetch(`${uri}/productos/${endpoint}`, { method: verb,
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
                 Auth: productRolRadioButton.checked
-            }
+            },
+            body: JSON.stringify(data)
         })
         let prod = await response.json();
+        console.log('Producto eliminado: ', prod);
         if (("error" in prod)){
             console.log("Error", prod);
             results.classList.add('errorLabel');
@@ -618,7 +623,7 @@ logoutButton.addEventListener('click', () => logout())
 submitButton.addEventListener('click', () => submitForm(productServiceRadioButton.checked))
 getOneButton.addEventListener('click', () => getOneProduct(productServiceRadioButton.checked, idInput.value))
 updateButton.addEventListener('click', () => updateProduct(productServiceRadioButton.checked, idInput.value))
-deleteOneButton.addEventListener('click', () => deleteOneProduct(idInput.value))
+deleteOneButton.addEventListener('click', () => deleteOneProduct(productServiceRadioButton.checked, idInput.value))
 getAllButton.addEventListener('click', () => getAllProducts(productServiceRadioButton.checked))
 getAllRandomButton.addEventListener('click', getAllRandomProducts)
 //------CARTS FORM-----------------------------------
