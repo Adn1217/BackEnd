@@ -91,8 +91,8 @@ export async function deleteProductById(id){
             error: "Producto no encontrado"
         }
         logger.error(`Producto ${id} no encontrado.`)
-        return({id: deletedProduct.error,...deletedProduct})
+        return({...deletedProduct, id: deletedProduct.error})
     }else{
-        return({eliminado: {id: id, ...deletedProduct}})
+        return({eliminado: deletedProduct})
     }
 }

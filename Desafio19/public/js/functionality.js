@@ -41,7 +41,7 @@ function checkInputs(fields, type='products'){
 }
 
 //-----------PRODUCTS FORM -------------------------
-async function submitForm(graphService = false, id) {
+async function submitForm(graphService = false, id, update = false) {
     let inputFields = [titleInput, codeInput, priceInput, stockInput, thumbnailInput];
     let valideInputs = checkInputs(inputFields, 'products');
     if(valideInputs){
@@ -60,19 +60,12 @@ async function submitForm(graphService = false, id) {
         (!graphService && id) && (url = url + `/${id}`);
         (!graphService && id) && (verb = 'PUT');
         let data = newProd;
-        // console.log('Body: ', reqBody);
-        if(graphService){
+        if(graphService && !update){
             data = { query: `mutation {saveProduct(data:${newProdGql}){id}}`};
-            // reqBody = `{mutation {
-            //     updateProduct(
-            //         id: ${id},
-            //         ${JSON.stringify(data)}
-            //     ){
-            //         id
-            //     }    
-            // }}`
+        }else if(graphService && update) {
+            data = { query: `mutation {updateProduct(id:"${id}", data:${newProdGql}){id}}`};
         }
-        console.log('Body: ', data);
+        // console.log('Body: ', data);
         let response = await fetch(url, { method: verb,
             headers: {
                 Accept: "application/json",
@@ -97,16 +90,17 @@ async function submitForm(graphService = false, id) {
             idInput.value = '';
             [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
         }
-        console.log(prod);
+        // console.log(prod);
     }
 }
 
 async function updateProduct(graphService = false, id){
     let inputFields = [titleInput, codeInput, priceInput, stockInput, thumbnailInput, idInput];
     let valideInputs = checkInputs(inputFields, 'products');
+    let update = true;
     if (valideInputs){
         // idInput.classList.add('errorInput');
-        await submitForm(graphService, id);
+        await submitForm(graphService, id, update);
     }
 }
 
@@ -173,7 +167,7 @@ async function getOneProduct(graphService = false, id){
             }
         })
         let prod = await response.json();
-        console.log('Producto: ', prod);
+        // console.log('Producto: ', prod);
         graphService && (prod = {producto:prod.data.getProduct});
         console.log('Producto: ', prod);
         if (("error" in prod)){
@@ -188,13 +182,13 @@ async function getOneProduct(graphService = false, id){
             results.classList.remove('errorLabel');
             results.innerHTML= tableRender(prod.producto);
         }
-        console.log(prod);
+        // console.log(prod);
     // socket.emit('oneProductRequest', parseInt(id));
     }
 
 }
 
-async function deleteOneProduct(id){
+async function deleteOneProduct(graphService = false, id){
     if (id === ''){
         idInput.classList.add('errorInput');
         results.classList.add('errorLabel');
@@ -202,14 +196,20 @@ async function deleteOneProduct(id){
     }else{
         idInput.classList.remove('errorInput');
         results.classList.remove('errorLabel');
-        let response = await fetch(`${uri}/productos/${id}`, { method: 'DELETE',
+        let endpoint = graphService ? `graphql` : `${id}`;
+        let verb = graphService ? 'POST' : 'DELETE';
+        let data = graphService ? {query : `mutation {deleteProduct(id:"${id}"){id}}`} : {};
+        // console.log('Body: ', data);
+        let response = await fetch(`${uri}/productos/${endpoint}`, { method: verb,
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
                 Auth: productRolRadioButton.checked
-            }
+            },
+            body: JSON.stringify(data)
         })
         let prod = await response.json();
+        console.log('Producto eliminado: ', prod);
         if (("error" in prod)){
             console.log("Error", prod);
             results.classList.add('errorLabel');
@@ -486,7 +486,7 @@ async function buyCart(id){
 }
 
 //-----------MESSAGES----------------------------------------
-async function sendMessage() {
+async function sendMessage(graphService = false) {
     const fields = [userInput, msgInput];
     let valideInputs = checkInputs(fields, 'messages');
     if(valideInputs){
@@ -496,15 +496,19 @@ async function sendMessage() {
             usuario: userInput.value,
             mensaje: msgInput.value
         }
-        let url = `${uri}/mensajes`;
+        let newMessageGql = `{fecha: ${JSON.stringify(new Date())},usuario: "${userInput.value}",mensaje: "${msgInput.value}"}`;
+        let endpoint = graphService ? '/graphql' : '';
+        let url = `${uri}/mensajes${endpoint}`;
         let verb = 'POST';
+        let newMsg = graphService ? { query: `mutation {saveMessage(data:${newMessageGql}){id}}`} : newMessage;
         let response = await fetch(url, { method: verb,
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(newMessage)
+            body: JSON.stringify(newMsg)
         })
+        // console.log('Body: ', newMsg);
         let data = await response.json();
         !("error" in data) && ([msgInput.value] = ['']);
         // console.log(data);
@@ -623,7 +627,7 @@ logoutButton.addEventListener('click', () => logout())
 submitButton.addEventListener('click', () => submitForm(productServiceRadioButton.checked))
 getOneButton.addEventListener('click', () => getOneProduct(productServiceRadioButton.checked, idInput.value))
 updateButton.addEventListener('click', () => updateProduct(productServiceRadioButton.checked, idInput.value))
-deleteOneButton.addEventListener('click', () => deleteOneProduct(idInput.value))
+deleteOneButton.addEventListener('click', () => deleteOneProduct(productServiceRadioButton.checked, idInput.value))
 getAllButton.addEventListener('click', () => getAllProducts(productServiceRadioButton.checked))
 getAllRandomButton.addEventListener('click', getAllRandomProducts)
 //------CARTS FORM-----------------------------------
@@ -638,4 +642,4 @@ buyCartButton.addEventListener('click', () => buyCart(idCartInput.value))
 
 //-------MESSAGES------------------------------------
 sendNormMsgButton.addEventListener('click', () => sendNormalizedMessage())
-sendMsgButton.addEventListener('click', () => sendMessage())
+sendMsgButton.addEventListener('click', () => sendMessage(productServiceRadioButton.checked))

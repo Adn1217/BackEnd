@@ -101,6 +101,6 @@ export async function deleteProductById(id){
     const productFirebase = await productosFirebase.deleteById(id);
     // const productMongoAtlas = await productosMongoAtlas.deleteById(id);
     const product = await productosFile.deleteById(id);
-    const productDTO = transformToDTO(productFirebase);
+    const productDTO = transformToDTO({id, ...productFirebase});
     return productDTO;
 }
