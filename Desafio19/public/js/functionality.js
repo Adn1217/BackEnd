@@ -41,7 +41,7 @@ function checkInputs(fields, type='products'){
 }
 
 //-----------PRODUCTS FORM -------------------------
-async function submitForm(graphService = false, id) {
+async function submitForm(graphService = false, id, update = false) {
     let inputFields = [titleInput, codeInput, priceInput, stockInput, thumbnailInput];
     let valideInputs = checkInputs(inputFields, 'products');
     if(valideInputs){
@@ -61,16 +61,10 @@ async function submitForm(graphService = false, id) {
         (!graphService && id) && (verb = 'PUT');
         let data = newProd;
         // console.log('Body: ', reqBody);
-        if(graphService){
+        if(graphService && !update){
             data = { query: `mutation {saveProduct(data:${newProdGql}){id}}`};
-            // reqBody = `{mutation {
-            //     updateProduct(
-            //         id: ${id},
-            //         ${JSON.stringify(data)}
-            //     ){
-            //         id
-            //     }    
-            // }}`
+        }else if(graphService && update) {
+            data = { query: `mutation {updateProduct(id:"${id}", data:${newProdGql}){id}}`};
         }
         console.log('Body: ', data);
         let response = await fetch(url, { method: verb,
@@ -97,16 +91,17 @@ async function submitForm(graphService = false, id) {
             idInput.value = '';
             [titleInput.value, descriptionInput.value, codeInput.value, priceInput.value, stockInput.value, thumbnailInput.value] = ['','','','','',''];
         }
-        console.log(prod);
+        // console.log(prod);
     }
 }
 
 async function updateProduct(graphService = false, id){
     let inputFields = [titleInput, codeInput, priceInput, stockInput, thumbnailInput, idInput];
     let valideInputs = checkInputs(inputFields, 'products');
+    let update = true;
     if (valideInputs){
         // idInput.classList.add('errorInput');
-        await submitForm(graphService, id);
+        await submitForm(graphService, id, update);
     }
 }
 
