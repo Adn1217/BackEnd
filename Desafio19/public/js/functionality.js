@@ -486,7 +486,7 @@ async function buyCart(id){
 }
 
 //-----------MESSAGES----------------------------------------
-async function sendMessage() {
+async function sendMessage(graphService = false) {
     const fields = [userInput, msgInput];
     let valideInputs = checkInputs(fields, 'messages');
     if(valideInputs){
@@ -496,15 +496,19 @@ async function sendMessage() {
             usuario: userInput.value,
             mensaje: msgInput.value
         }
-        let url = `${uri}/mensajes`;
+        let newMessageGql = `{fecha: ${JSON.stringify(new Date())},usuario: "${userInput.value}",mensaje: "${msgInput.value}"}`;
+        let endpoint = graphService ? '/graphql' : '';
+        let url = `${uri}/mensajes${endpoint}`;
         let verb = 'POST';
+        let newMsg = graphService ? { query: `mutation {saveMessage(data:${newMessageGql}){id}}`} : newMessage;
         let response = await fetch(url, { method: verb,
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(newMessage)
+            body: JSON.stringify(newMsg)
         })
+        // console.log('Body: ', newMsg);
         let data = await response.json();
         !("error" in data) && ([msgInput.value] = ['']);
         // console.log(data);
@@ -638,4 +642,4 @@ buyCartButton.addEventListener('click', () => buyCart(idCartInput.value))
 
 //-------MESSAGES------------------------------------
 sendNormMsgButton.addEventListener('click', () => sendNormalizedMessage())
-sendMsgButton.addEventListener('click', () => sendMessage())
+sendMsgButton.addEventListener('click', () => sendMessage(productServiceRadioButton.checked))

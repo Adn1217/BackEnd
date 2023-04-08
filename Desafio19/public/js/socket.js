@@ -75,6 +75,7 @@ function chatRender(msgs, compression = null){
     })
     
     msgs.forEach((msg) => {
+        console.log('Mensaje Recibido: ', msg);
         let date = Date.parse(msg?.fecha) ||  Date.parse(msg?.msj[0].fecha)
         let formattedDate = (new Date(date)).toLocaleDateString('en-GB') + ', ' + (new Date(date)).toLocaleTimeString('en-GB') || msg.fecha;
         let fecha = formattedDate || date;

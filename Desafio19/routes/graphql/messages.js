@@ -27,5 +27,6 @@ messagesGraphql.use('/', debug, graphqlHTTP((req, res) => ({
 
 function debug(req, res, next){
     console.log('Query: ', req.query);
+    console.log('Body: ', req.body);
     next();
 }

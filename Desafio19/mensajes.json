@@ -28,10 +28,17 @@
     "timestamp": "23/03/2023, 19:01:34"
   },
   {
-    "fecha": "21/04/2023 11:23",
+    "fecha": "2023-04-08T23:54:20.673Z",
     "mensaje": "Mensaje guardado por graphql",
-    "usuario": "Nazz",
-    "id": 10,
-    "timestamp": "06/04/2023, 12:03:02"
+    "usuario": "Adrian",
+    "id": 21,
+    "timestamp": "08/04/2023, 18:54:21"
+  },
+  {
+    "fecha": "2023-04-08T23:54:34.921Z",
+    "mensaje": "Otro mensaje guardado por graphql",
+    "usuario": "Adrian",
+    "id": 22,
+    "timestamp": "08/04/2023, 18:54:35"
   }
 ]
