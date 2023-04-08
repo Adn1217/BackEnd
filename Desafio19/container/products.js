@@ -23,7 +23,7 @@ export async function getProducts() {
     const allProductsFirebase = await productosFirebase.getAll();
     // console.log('Productos recibidos: ', allProductsFirebase)
     const allProductsDTO = transformToDTO(allProductsFirebase);
-    console.log(allProductsDTO);
+    // console.log(allProductsDTO);
     return allProductsDTO
 }
 

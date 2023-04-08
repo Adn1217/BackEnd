@@ -20,6 +20,8 @@ function checkInputs(fields, type='products'){
             if (field.value === ''){
                 field.classList.add('errorInput');
                 invalide = true;
+            }else{
+                field.classList.remove('errorInput');
             }
         })
     if(invalide){
@@ -39,7 +41,7 @@ function checkInputs(fields, type='products'){
 }
 
 //-----------PRODUCTS FORM -------------------------
-async function submitForm(id) {
+async function submitForm(graphService = false, id) {
     let inputFields = [titleInput, codeInput, priceInput, stockInput, thumbnailInput];
     let valideInputs = checkInputs(inputFields, 'products');
     if(valideInputs){
@@ -51,22 +53,39 @@ async function submitForm(id) {
             stock: stockInput.value,
             thumbnail: thumbnailInput.value,
         }
-        let url = `${uri}/productos`;
+        let newProdGql = `{code: "${codeInput.value}",title: "${titleInput.value}",description: "${descriptionInput.value}",price: ${priceInput.value},stock: ${stockInput.value},thumbnail: "${thumbnailInput.value}"}` 
+        let endpoint = graphService ? '/graphql' : '';
+        let url = `${uri}/productos${endpoint}`;
         let verb = 'POST';
-        id && (url = url + `/${id}`);
-        id && (verb = 'PUT');
+        (!graphService && id) && (url = url + `/${id}`);
+        (!graphService && id) && (verb = 'PUT');
+        let data = newProd;
+        // console.log('Body: ', reqBody);
+        if(graphService){
+            data = { query: `mutation {saveProduct(data:${newProdGql}){id}}`};
+            // reqBody = `{mutation {
+            //     updateProduct(
+            //         id: ${id},
+            //         ${JSON.stringify(data)}
+            //     ){
+            //         id
+            //     }    
+            // }}`
+        }
+        console.log('Body: ', data);
         let response = await fetch(url, { method: verb,
             headers: {
                 Accept: "application/json",
                 "Content-Type": "application/json",
                 Auth: productRolRadioButton.checked
             },
-            body: JSON.stringify(newProd)
+            body: JSON.stringify(data)
         })
-        let prod = await response.json();
+        let prod = graphService ? await response : await response.json();
+        console.log('Save response: ', prod);
         if (("error" in prod)){
             results.classList.add('errorLabel');
-            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod)}</p>`;
+            results.innerHTML=`<h1>Error</h1>${JSON.stringify(prod.descripcion || prod.error)}</p>`;
             if (prod.error === 'Usuario no autenticado'){
                 setTimeout(() => {
                     location.href=`${uri}/login`
@@ -82,13 +101,13 @@ async function submitForm(id) {
     }
 }
 
-async function updateProduct(id){
-    if (id === ''){
-        idInput.classList.add('errorInput');
-    }else{
-        idInput.classList.remove('errorInput');
+async function updateProduct(graphService = false, id){
+    let inputFields = [titleInput, codeInput, priceInput, stockInput, thumbnailInput, idInput];
+    let valideInputs = checkInputs(inputFields, 'products');
+    if (valideInputs){
+        // idInput.classList.add('errorInput');
+        await submitForm(graphService, id);
     }
-    await submitForm(id);
 }
 
 async function getAllProducts(graphService = false){
@@ -601,9 +620,9 @@ async function logout(){
 //------USER------------------------
 logoutButton.addEventListener('click', () => logout())
 //------PRODUCTS FORM---------------------------
-submitButton.addEventListener('click', () => submitForm())
+submitButton.addEventListener('click', () => submitForm(productServiceRadioButton.checked))
 getOneButton.addEventListener('click', () => getOneProduct(productServiceRadioButton.checked, idInput.value))
-updateButton.addEventListener('click', () => updateProduct(idInput.value))
+updateButton.addEventListener('click', () => updateProduct(productServiceRadioButton.checked, idInput.value))
 deleteOneButton.addEventListener('click', () => deleteOneProduct(idInput.value))
 getAllButton.addEventListener('click', () => getAllProducts(productServiceRadioButton.checked))
 getAllRandomButton.addEventListener('click', getAllRandomProducts)

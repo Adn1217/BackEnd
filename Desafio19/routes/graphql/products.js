@@ -48,6 +48,7 @@ productosGraphql.use('/graphql', debug, graphqlHTTP((req, res, next) => ({
 
 function debug(req, res, next){
     console.log('Query: ', req.query);
+    console.log('Body: ', req.body);
     next();
 }
 

@@ -38,55 +38,5 @@
     "title": "Producto de prueba",
     "id": 5,
     "timestamp": "06/04/2023, 10:38:06"
-  },
-  {
-    "code": "Prd9875",
-    "description": "Producto de prueba con graphql",
-    "price": 5698,
-    "stock": 99,
-    "thumbnail": "http://urlProductoPrueba.com",
-    "title": "Producto de prueba2",
-    "id": 6,
-    "timestamp": "06/04/2023, 10:38:35"
-  },
-  {
-    "code": "Prd9875",
-    "description": "Producto de prueba con graphql",
-    "price": 5698,
-    "stock": 99,
-    "thumbnail": "http://urlProductoPrueba.com",
-    "title": "Producto de prueba2",
-    "id": 7,
-    "timestamp": "06/04/2023, 10:41:24"
-  },
-  {
-    "code": "Prd9875",
-    "description": "Producto de prueba con graphql",
-    "price": 5698,
-    "stock": 99,
-    "thumbnail": "http://urlProductoPrueba.com",
-    "title": "Producto de prueba3",
-    "id": 8,
-    "timestamp": "06/04/2023, 10:58:09"
-  },
-  {
-    "code": "Prd9875",
-    "description": "Producto de prueba con graphql",
-    "price": 5698,
-    "stock": 99,
-    "thumbnail": "http://urlProductoPrueba.com",
-    "title": "Producto de prueba",
-    "id": 9,
-    "timestamp": "06/04/2023, 11:16:06"
-  },
-  {
-    "code": "2",
-    "title": "2",
-    "description": "2",
-    "price": "2",
-    "stock": "2",
-    "thumbnail": "2",
-    "id": 10,
-    "timestamp": "06/04/2023, 11:34:28"
   }
 ]
