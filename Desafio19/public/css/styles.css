@@ -60,15 +60,23 @@ fieldset > div {
     word-break: break-all;
 }
 
-#productRolSelection div, #cartRolSelection div{
+/* #serviceTypeSelection div, #productRolSelection div, #cartRolSelection div{
     display: inline-block;
+} */
+
+div:has(>input[type="checkbox"]:not(:checked)) label:first-child {
+    font-weight: bold;
 }
 
-#productRolSelection label, #cartRolSelection label{
+#serviceTypeSelection input:checked + label , #productRolSelection input:checked + label, #cartRolSelection input:checked + label {
+    font-weight: bold;
+}
+
+#serviceTypeSelection label, #productRolSelection label, #cartRolSelection label{
     margin: 0;
 }
 
-#productRolSelection input, #cartRolSelection input{
+#serviceTypeSelection input, #productRolSelection input, #cartRolSelection input{
     margin: 0 1rem 0 1rem;
 }
 

@@ -23,6 +23,7 @@ function createRandomProducts(n){
 export async function getProducts(req, res) {
     let products = await service.getProducts(req);
     let graphqlQuery = req.query?.query?.search('getProduct') >= 0 || req.originalUrl.search('graphql') > 0 || false;
+    console.log('Consulta Graphql?', graphqlQuery);
     if(graphqlQuery){ //GraphQl resuelve promesas.
         return products;
     }else{
