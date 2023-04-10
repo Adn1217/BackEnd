@@ -33,28 +33,11 @@ function checkInputs(fields){
     }
 }
 
-function randomId(){
-    const caracters = "abcdefghijklmnopqrstuvwxyz0123456789";
-    let code = "";
-    for (let i = 0; i<12; i++){
-        const randNum = Math.random();
-        const randInt = Math.floor(randNum*caracters.length);
-        const randBool = Math.round(Math.random());
-        code += (randBool && caracters[randInt].toUpperCase()) ? caracters[randInt].toUpperCase() : caracters[randInt];
-    }
-    console.log('Codigo generado: ', code);
-    return code
-}
-
 async function sendColor(color) {
     const fields = [colorInput];
     const valideInputs = checkInputs(fields);
     if(valideInputs){
         const newColor = {
-            // fecha: new Date().toLocaleString("en-GB"),
-            id: randomId(),
-            fecha: new Date(),
-            // usuario: userInput.value,
             color: color
         }
         const endpoint = '';
@@ -68,10 +51,42 @@ async function sendColor(color) {
             },
             body: JSON.stringify(newColor)
         })
-        console.log('Body: ', newColor);
-        const data = await response.json();
-        console.log(data);
+        // console.log('Body: ', newColor);
+        const data = await response?.json();
+        console.log('Color guardado: ', data);
+        const colors = await getColors();
+        // console.log(colors);
+        let table = '';
+        for (let i=0; i <colors.length; i++){
+            const row = `<tr style="color:${colors[i]?.color}">
+                            <td>${colors[i]?.id}</td>
+                            <td>${colors[i]?.fecha}</td>
+                            <td>${colors[i]?.color}</td>
+                        </tr>`
+            table += row;
+        }
+        // console.log(table);
+        tableBody.innerHTML = table;
+        colorInput.value = '';
         // socket.emit('messageRequest','msj')
     }
 }
+
+async function getColors(){
+    const endpoint = 'colors';
+    const url = `${uri}/${endpoint}`;
+    console.log(url)
+    const verb = 'GET';
+    const response = await fetch(url, { method: verb,
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json"
+        }
+    })
+    // console.log('Body: ', newColor);
+    const data = await response?.json();
+    console.log('Colores guardados: ', data);
+    return data;
+}
+
 submitButton.addEventListener('click', () => sendColor(colorInput.value))

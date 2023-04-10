@@ -8,3 +8,6 @@ const results = document.getElementById('results');
 // INPUTs
 const colorInput = document.getElementById('colorInput');
 
+// TABLE
+const tableBody = document.getElementById('tableBody');
+
