@@ -1,0 +1,57 @@
+body {
+    background-color: lightgray !important;
+}
+
+.btn {
+    margin: 10px;
+    min-width: 100px;
+}
+
+#Saludo{
+    text-align: center;
+}
+
+#Saludo div{
+    display: inline-block;
+}
+
+#results{
+    margin-left: auto;
+    /* width: 100%; */
+}
+
+fieldset label {
+    margin: 1rem 0 1rem 0.75rem;
+}
+
+fieldset div {
+    min-width: 14rem
+}
+
+fieldset > div {
+    display: inline-block;
+    max-width: 45%;
+    vertical-align: top;
+}
+
+#colorForm {
+    /* border-right: 1px dashed; */
+    border-color: gray;
+    padding-right: 15px;
+}
+
+
+.errorLabel{
+    color: red;
+}
+
+.errorInput{
+    border-color: red !important;
+}
+
+td {
+    /* text-align: center; */
+    vertical-align: middle;
+    max-width: 10rem;
+}
+
