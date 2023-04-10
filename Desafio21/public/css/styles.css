@@ -31,7 +31,7 @@ fieldset > div {
 }
 
 #colorForm {
-    border-right: 1px dashed;
+    /* border-right: 1px dashed; */
     border-color: gray;
     padding-right: 15px;
 }

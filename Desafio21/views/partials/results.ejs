@@ -6,7 +6,7 @@
         </thead>
         <tbody>
         <% for(let i=0; i<colors.length; i++){ %>
-            <tr>
+            <tr style="color:<%=colors[i]?.color%>">
                 <td><%=colors[i]?.id%></td>
                 <td><%=colors[i]?.color%></td>
             </tr>

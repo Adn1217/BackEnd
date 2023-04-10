@@ -1,10 +1,10 @@
 // BUTTONs
-let submitButton = document.getElementById('submitButton');
+const submitButton = document.getElementById('submitButton');
 
 // DIVs
 // let errors = document.getElementById('errors');
-let results = document.getElementById('results');
+const results = document.getElementById('results');
 
 // INPUTs
-let colorInput = document.getElementById('colorInput');
+const colorInput = document.getElementById('colorInput');
 
