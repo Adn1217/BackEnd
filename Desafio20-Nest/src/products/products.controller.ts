@@ -2,7 +2,7 @@ import { Controller, Req, Res, Param, Post, Get,Put, Delete, Query, Body } from 
 import { CreateProductDto } from './dto/create-product.dto';
 import { updateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
-
+import { Request } from 'express';
 
 @Controller('productos')
 export class ProductsController {
@@ -27,43 +27,33 @@ export class ProductsController {
 
     // }
     @Get(':id')
-    getProduct(@Param('id') id: string){
+    getProduct(@Param('id') id: string, @Req() req: Request){
+        console.log('Id recibido', id)
+        let product = this.productsService.getProducts(req);
         return {
             id: id
         }
     }
 
     @Post()
-    saveProduct(@Body() createProductDto: CreateProductDto){
+    saveProduct(@Body() createProductDto: CreateProductDto, @Req() req: Request ){
         console.log('Producto recibido: ', createProductDto)
-        return {
-            code: createProductDto.code,
-            title: createProductDto.title,
-            description: createProductDto.description,
-            price: createProductDto.price,
-            stock: createProductDto.stock,
-            thumbnail: createProductDto.thumbnail
-        }
+        let newProd = this.productsService.saveProduct(createProductDto);
+        return newProd
     }
 
     @Put(':id')
     updateProduct(@Param('id') id: string, @Body() updateProductDto: updateProductDto ){
-        return {
-            id,
-            code: updateProductDto.code,
-            title: updateProductDto.title,
-            description: updateProductDto.description,
-            price: updateProductDto.price,
-            stock: updateProductDto.stock,
-            thumbnail: updateProductDto.thumbnail
-        }
+        console.log('Producto e id recibidos: ', {id, updateProductDto})
+        let updatedProd = this.productsService.updateProductByIdFB(updateProductDto, id);
+        return updatedProd;
     }
 
     @Delete(':id')
     deleteProduct(@Param('id') id: string){
-        return {
-            id: id
-        }
+        console.log('Id recibida: ', id);
+        let deletedProd = this.productsService.deleteProductById(id);
+        return deletedProd
     }
 
 }
