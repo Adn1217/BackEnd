@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import {MessagesContainer as container} from './container/messages.container'
 import { CreateMessageDto } from './dto/create-message.dto';
-
 @Injectable()
 export class MessagesService {
 
     constructor(private readonly messagesContainer: container){}
 
     async getMessages(){
-        let allMessages = this.messagesContainer.getMessages();
+        let allMessages = await this.messagesContainer.getMessages();
         return {mensajes: allMessages};
     }
 
@@ -17,7 +16,7 @@ export class MessagesService {
             return({Error: "Mensage no recibido"})
         }else{
             // console.log('Mensaje: ', msg);
-            let newMsg = this.messagesContainer.saveMessage(msg);
+            let newMsg = await this.messagesContainer.saveMessage(msg);
             return {Guardado: newMsg};
         }
     }
