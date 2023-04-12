@@ -66,15 +66,21 @@ export class ProductsService {
     async updateProductByIdFB(updatedProd: updateProductDto, id: string){
         // console.log('Id en service: ', id);
         const updatedProductFB = await this.productsContainer.updateProductById(id, updatedProd);
-        if(!('error' in updatedProductFB)){
+        if(!(updatedProductFB?.error) && updatedProductFB){
             console.log("Se ha actualizado el producto: \n", updatedProductFB);
             // logger.info(`Se ha actualizado en FB el producto: ${JSON.stringify(updatedProductFB.actualizadoFirebase)}`);
+            return {Actualizado: updatedProductFB};
         }else{
             console.log("Producto no actualizado");
             // logger.warn('Producto no actualizado');
             // logger.error(`Producto ${id} no encontrado`);
+            if (!updatedProductFB){
+                return {Actualizado: {
+                    id: id,
+                    error: "Producto no encontrado."
+                }}
+            }
         }
-        return {Actualizado: updatedProductFB};
     }
 
     // async updateProductByIdMongo(updatedProd, id){

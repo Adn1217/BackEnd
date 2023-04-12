@@ -1,28 +1,163 @@
 import { Injectable } from '@nestjs/common';
 import { updateProductDto } from '../dto/update-product.dto';
 import { CreateProductDto } from '../dto/create-product.dto';
+import admin from 'firebase-admin';
+import dotenv from 'dotenv';
+import {fireBaseConnect, dbFS} from '../../messages/container/messages.container';
+
+dotenv.config({
+    path: './.env'
+})
+
+const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT);
+// let dbFS;
+
+if (!dbFS){
+    try{
+        fireBaseConnect(serviceAccount);
+        console.log(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`);
+    }catch(error){
+        console.log('Se ha presentado error al intentar conectarse con Firebase: ', error);
+    }
+}
 
 @Injectable()
 export class ProductsContainer {
-    products = [];
+    products = []; // Persistencia Local.
+    collection: string = process.env.DB_PRODUCTS_COLLECTION;
+    query = dbFS.collection(this.collection);
 
-    saveProduct(newProd: CreateProductDto){
+    async connect(){
+        try{
+            if(dbFS){
+            // logger.info(`Servidor ${process.pid} ya se encuentra conectado a FireBase`)
+            }else{
+            fireBaseConnect(serviceAccount);
+            // logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+            console.log(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
+            }
+        }catch(error){
+            // logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
+            console.log(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
+        }
+    }
+
+    async disconnect(){
+        try{
+            // await admin.app().delete();
+            dbFS.delete;
+            console.log(`El servidor ${process.pid} se ha desconectado exitosamente de Firebase.`)
+            // logger.info(`El servidor ${process.pid} se ha desconectado exitosamente de Firebase.`)
+        }catch(error){
+            // logger.error(`Se ha presentado error al intentar desconectar el servidor ${process.pid} de Firebase: ${error}`)
+            console.log(`Se ha presentado error al intentar desconectar el servidor ${process.pid} de Firebase: ${error}`)
+        }
+    }
+
+    async saveProduct(newProd: CreateProductDto){
+        try {
+            let data = await this.query.add({fecha: JSON.stringify(new Date()), ...newProd});
+            console.log('GuardadoFirebase: ', data.id);
+            return data.id;
+          } catch (error) {
+            console.log("Se ha presentado error ", error);
+          } finally {
+            this.disconnect();
+          }
+    }
+
+    async getProducts(){
+        try{
+            let data = await this.query.get();
+            let docs = data.docs.map((doc) => {
+                let id = doc.id;
+                let element = doc.data();
+                element.id = id
+                return element;
+            })
+            console.log('Mensajes extraidos de Firebase ', docs);
+            return docs;
+        } catch (error) {
+            console.log("Se ha presentado error al consultar mensajes ", error);
+        } finally {
+            this.disconnect();
+        }
+    }
+
+    async getProductById(Id: string) {
+        try {
+          
+            let data = await this.query.doc(Id).get();
+            let doc = data.data();
+            if(doc){
+                doc.id = data.id;
+                // console.log('Documento extraidos de Firebase ', doc);
+                return doc;
+            }else {
+                return null;
+            }
+        } catch (error) {
+            console.log("Se ha presentado error ", error);
+        } finally{
+            this.disconnect();
+        }
+      }
+
+    async updateProductById( id: string, element: updateProductDto) {
+        try {
+            let data = await this.query.doc(id).get();
+            if (data?.data()){
+            await this.query.doc(id).update(element);
+            console.log("Elemento editado" ,data?.data())
+            }else{
+            console.log(`El elemento ${id} no existe`);
+            }
+            data = await this.query.doc(id).get();
+            return data?.data();
+        } catch (error) {
+            console.log("Se ha presentado error ", error);
+        } finally{
+            this.disconnect();
+        }
+    }
+
+    async deleteProductById(Id: string) {
+        try {
+          let data = await this.query.doc(Id).get();
+          if (data?.data()) {
+            await this.query.doc(Id).delete();
+            console.log(`\nSe elimina el elemento con _id=${Id} (deleteById(${Id})): \n`, data?.data());
+            // console.log("Quedan los productos: ", data);
+          } else {
+            console.log(`El elemento ${Id} no existe`, Id);
+          }
+          return data?.data();
+        } catch (error) {
+          console.log("Se ha presentado error ", error);
+        } finally{
+          this.disconnect();
+        }
+    }
+    
+    // --------------Persistencia Local-------------------
+    saveProductLocal(newProd: CreateProductDto){
         let newId = this.randomId();
         let savedProd ={id: newId,...newProd}
         this.products.push(savedProd);
         return savedProd;
     }
 
-    getProducts(){
+    getProductsLocal(){
+        console.log('Coleccion de productos: ', this.collection);
         return this.products;
     }
 
-    getProductById(id: string){
+    getProductByIdLocal(id: string){
         let product = this.products.find((product) => product.id === id);
         return product;
     }
     
-    updateProductById(id: string, newProd: updateProductDto){
+    updateProductByIdLocal(id: string, newProd: updateProductDto){
         let productIndex = this.products.findIndex((product) => product.id === id);
         if (productIndex >=0){
             let updatedProd = {id: id, ...newProd};
@@ -34,7 +169,7 @@ export class ProductsContainer {
         }
     }
 
-    deleteProductById(id: string){
+    deleteProductByIdLocal(id: string){
         let productIndex = this.products.findIndex((product) => product.id === id);
         if (productIndex >= 0){
             let deletedProduct = this.products.splice(productIndex, 1)
