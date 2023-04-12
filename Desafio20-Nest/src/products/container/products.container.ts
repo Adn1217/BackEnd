@@ -23,15 +23,26 @@ export class ProductsContainer {
     }
     
     updateProductById(id: string, newProd: updateProductDto){
-        let productIndex = this.products.find((product) => product.id === id);
-        let product = this.products.splice(productIndex, 1, {id: id, ...newProd})
-        return product;
+        let productIndex = this.products.findIndex((product) => product.id === id);
+        if (productIndex >=0){
+            let updatedProd = {id: id, ...newProd};
+            let product = this.products.splice(productIndex, 1, {id: id, ...newProd})
+            return updatedProd;
+        }else{
+            let updatedProd = {id: id, error: "Producto no encontrado"}
+            return updatedProd;
+        }
     }
 
     deleteProductById(id: string){
-        let productIndex = this.products.find((product) => product.id === id);
-        let product = this.products.splice(productIndex, 1)
-        return product;
+        let productIndex = this.products.findIndex((product) => product.id === id);
+        if (productIndex >= 0){
+            let deletedProduct = this.products.splice(productIndex, 1)
+            return deletedProduct
+        }else{
+            // let deletedProduct = {id: id, error: "Producto no encontrado"}
+            return undefined
+        }
     }
 
     private randomId(){
