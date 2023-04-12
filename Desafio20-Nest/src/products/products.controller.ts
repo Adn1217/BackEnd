@@ -9,7 +9,7 @@ export class ProductsController {
     constructor(private readonly productsService: ProductsService){}
 
 
-    @Get()
+    @Get(':id?')
     getProducts(@Req() req: Request){
         return this.productsService.getProducts(req);
     }
@@ -26,14 +26,14 @@ export class ProductsController {
     // getProducts(@Param('id') id: string){
 
     // }
-    @Get(':id')
-    getProduct(@Param('id') id: string, @Req() req: Request){
-        console.log('Id recibido', id)
-        let product = this.productsService.getProducts(req);
-        return {
-            id: id
-        }
-    }
+    // @Get(':id')
+    // getProduct(@Param('id') id: string, @Req() req: Request){
+    //     console.log('Id recibido', id)
+    //     let product = this.productsService.getProducts(req);
+    //     return {
+    //         id: id
+    //     }
+    // }
 
     @Post()
     saveProduct(@Body() createProductDto: CreateProductDto, @Req() req: Request ){
