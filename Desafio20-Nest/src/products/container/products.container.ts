@@ -1,25 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { updateProductDto } from '../dto/update-product.dto';
 import { CreateProductDto } from '../dto/create-product.dto';
-import admin from 'firebase-admin';
 import dotenv from 'dotenv';
-import {fireBaseConnect, dbFS} from '../../messages/container/messages.container';
+// import {fireBaseConnect, dbFS} from '../../messages/container/messages.container';
+import { dbFS } from '../../main';
 
 dotenv.config({
     path: './.env'
 })
-
-const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT);
-// let dbFS;
-
-if (!dbFS){
-    try{
-        fireBaseConnect(serviceAccount);
-        console.log(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`);
-    }catch(error){
-        console.log('Se ha presentado error al intentar conectarse con Firebase: ', error);
-    }
-}
 
 @Injectable()
 export class ProductsContainer {
@@ -27,25 +15,10 @@ export class ProductsContainer {
     collection: string = process.env.DB_PRODUCTS_COLLECTION;
     query = dbFS.collection(this.collection);
 
-    async connect(){
-        try{
-            if(dbFS){
-            // logger.info(`Servidor ${process.pid} ya se encuentra conectado a FireBase`)
-            }else{
-            fireBaseConnect(serviceAccount);
-            // logger.info(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
-            console.log(`Servidor ${process.pid} se ha conectado exitosamente a FireBase`)
-            }
-        }catch(error){
-            // logger.error(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
-            console.log(`Se ha presentado error al intentar conectar el servidor ${process.pid} con Firebase: ${error}`)
-        }
-    }
-
     async disconnect(){
         try{
             // await admin.app().delete();
-            dbFS.delete;
+            process.exit[0];
             console.log(`El servidor ${process.pid} se ha desconectado exitosamente de Firebase.`)
             // logger.info(`El servidor ${process.pid} se ha desconectado exitosamente de Firebase.`)
         }catch(error){
