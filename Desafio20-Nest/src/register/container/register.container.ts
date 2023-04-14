@@ -1,4 +1,5 @@
 
+import { Request } from 'express';
 import { CreateUserDto } from 'src/register/dto/create-user.dto';
 import { dbFS } from '../../main';
 import dotenv from 'dotenv';
@@ -25,18 +26,25 @@ export class UserContainer {
         }
     }
 
-    // async saveUser(newUser: CreateUserDto){
-    //     try {
-    //         newUser.password = bCrypt.hashSync(newUser.password, bCrypt.genSaltSync(10), null)
-    //         let data = await this.query.add({...newUser});
-    //         console.log('GuardadoFirebase: ', data.id);
-    //         return data.id;
-    //       } catch (error) {
-    //         console.log("Se ha presentado error ", error);
-    //       } finally {
-    //         this.disconnect();
-    //       }
-    // }
+    async saveUser(newUser: CreateUserDto){
+        let registeredUser = await this.getUserByName(newUser.username);
+        if(registeredUser){
+            return {username: newUser.username, error: "Usuario ya registrado"}
+        }
+        else{
+            try {
+                newUser.password = bCrypt.hashSync(newUser.password, bCrypt.genSaltSync(10), null)
+                let data = await this.query.add({...newUser});
+                console.log('GuardadoFirebase: ', data.id);
+                return data.id;
+            } catch (error) {
+                console.log("Se ha presentado error ", error);
+            } finally {
+                this.disconnect();
+            }
+        }
+    }
+
     async loginUser(user){
 
         let username = user.username;
