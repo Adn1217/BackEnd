@@ -13,8 +13,7 @@ export class LocalStrategy extends PassportStrategy(Strategy){
     async validate(userName: string, pwd: string){
         console.log(`Passport validating user ${userName}.....`)
         const user = await this.authServe.findOneUserByName(userName);
-
-        if (user &&  !bCrypt.compareSync(pwd, user.password)){
+        if (!user || !bCrypt.compareSync(pwd, user.password)){
             throw new UnauthorizedException();
         }
         const {username, password, ...rest} = user;
