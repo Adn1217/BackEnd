@@ -1,13 +1,32 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as admin from 'firebase-admin';
-import { ServiceAccount } from "firebase-admin";
+import MongoStore from 'connect-mongo';
+import session from 'express-session';
+import passport from 'passport';
 import dotenv from 'dotenv';
 
 dotenv.config({
     path: './.env'
 })
-const serviceAccount: string = JSON.parse(process.env.SERVICE_ACCOUNT);
+const serviceAccount: string = JSON.parse(process.env.SERVICE_ACCOUNT); // Firebase
+
+const userName = process.env.DB_MONGO_USER;
+const pwd = process.env.DB_MONGO_PWD;
+const mongoAtlasDb = process.env.DB_MONGOATLAS;
+const sessionsCollection = process.env.DB_SESSIONS_COLLECTION;
+const sessionSecret = process.env.SESSION_SECRET;
+
+const advancedOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}
+
+function getURL(db: string, userName: string, pwd: string) {
+    const URL = `mongodb+srv://${userName}:${pwd}@backendcluster.mlmtmq6.mongodb.net/${db}?retryWrites=true&w=majority`;
+    return URL
+}
+
 export let dbFS;
 
 if (!dbFS){
@@ -35,6 +54,30 @@ export function fireBaseConnect(){
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(
+    session({
+        name: 'loggedUser',
+        store: MongoStore.create({
+            mongoUrl: getURL(mongoAtlasDb, userName, pwd),
+            // mongoOptions: advancedOptions, //Con actualización no son necesarios.
+            collectionName: sessionsCollection,
+            ttl: 600,
+        }),
+        secret: sessionSecret,
+        resave: false,
+        rolling: true,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 600000,
+            // httpOnly: false
+        }
+    })
+    )
+    
+    app.use(passport.initialize());
+    app.use(passport.session());
+
   // app.enableCors();
   await app.listen(process.env.PORT || 8080);
 }

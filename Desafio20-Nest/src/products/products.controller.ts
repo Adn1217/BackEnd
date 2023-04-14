@@ -1,39 +1,19 @@
-import { Controller, Req, Res, Param, Post, Get,Put, Delete, Query, Body } from '@nestjs/common';
+import { Controller, Req, Res, Param, Post, Get,Put, Delete, Query, Body, UseGuards } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { updateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { Request } from 'express';
+import { AuthenticatedGuard } from 'src/login/loggedin.guard';
 
+@UseGuards(AuthenticatedGuard)
 @Controller('productos')
 export class ProductsController {
     constructor(private readonly productsService: ProductsService){}
-
 
     @Get(':id?')
     getProducts(@Req() req: Request){
         return this.productsService.getProducts(req);
     }
-
-    // @Get()
-    // getProducts(@Query('type') type: string){
-    //     return [
-    //         {
-    //             query: type
-    //         }
-    //     ]
-    // }
-    // @Get(':id?')
-    // getProducts(@Param('id') id: string){
-
-    // }
-    // @Get(':id')
-    // getProduct(@Param('id') id: string, @Req() req: Request){
-    //     console.log('Id recibido', id)
-    //     let product = this.productsService.getProducts(req);
-    //     return {
-    //         id: id
-    //     }
-    // }
 
     @Post()
     saveProduct(@Body() createProductDto: CreateProductDto, @Req() req: Request ){

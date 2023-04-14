@@ -4,6 +4,7 @@ import { CreateUserDto } from 'src/register/dto/create-user.dto';
 import { dbFS } from '../../main';
 import dotenv from 'dotenv';
 import bCrypt from 'bCrypt';
+import { LoginUserDto } from 'src/login/dto/login-user.dto';
 
 dotenv.config({
     path: './.env'
@@ -45,7 +46,7 @@ export class UserContainer {
         }
     }
 
-    async loginUser(user){
+    async loginUser(user: LoginUserDto){
 
         let username = user.username;
         let pwd = user.password;
@@ -60,6 +61,7 @@ export class UserContainer {
         }
 
     }
+
     async getUsers(){
         try{
             let data = await this.query.get();
@@ -67,12 +69,13 @@ export class UserContainer {
                 let id = doc.id;
                 let element = doc.data();
                 element.id = id
+                console.log('Id: ', id);
                 return element;
             })
-            console.log('Mensajes extraidos de Firebase ', docs);
+            console.log('Usuarios extraidos de Firebase ', docs);
             return docs;
         } catch (error) {
-            console.log("Se ha presentado error al consultar mensajes ", error);
+            console.log("Se ha presentado error al consultar usuarios ", error);
         } finally {
             this.disconnect();
         }
@@ -89,6 +92,7 @@ export class UserContainer {
                 let usuario = null;
                 data.forEach((doc) => {
                     usuario = doc.data();
+                    usuario.id = doc.id;
                     // console.log(doc.id + ' => ' + JSON.stringify(doc.data()));
                 })
                 // console.log('Usuario :', usuario);

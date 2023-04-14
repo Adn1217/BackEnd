@@ -1,24 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { UserContainer } from 'src/register/container/register.container';
 import { CreateUserDto } from 'src/register/dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class LoginService {
 
     constructor(private readonly userContainer: UserContainer){}
-    // async saveUser(user: CreateUserDto){
-    //     if (Object.keys(user).length === 0){
-    //         console.log('Usuario no recibido');
-    //         // logger.error('Producto no recibido');
-    //         return({Error: "Usuario no recibido"})
-    //     }else{
-    //         let newUser = await this.userContainer.saveUser(user);
-    //         console.log('UserFront', user);
-    //         return({Registrado: newUser})
-    //     }
-    // }
     
-    async loginUser(user){
+    async loginUser(user: LoginUserDto){
         if (Object.keys(user).length < 2){
             console.log('Información incompleta');
             // logger.error('Producto no recibido');
@@ -28,6 +18,11 @@ export class LoginService {
             // console.log('UserFront', user);
             return({Access: newUser})
         }
+    }
+
+    async findOneUserByName(user: string){
+        let registeredUser = await this.userContainer.getUserByName(user);
+        return registeredUser;
     }
 
     async getUsers(){
@@ -43,9 +38,18 @@ export class LoginService {
                 error:`usuario ${name} no encontrado`}
             });
         }else{
-            console.log(userByName);
+            // console.log(userByName);
             // logger.debug(`userByName: ${JSON.stringify(userByName)}`);
-            return({user: userByName});
+            const {username, password, ...rest} = userByName;
+            return({usuario: rest});
+        }
+    }
+
+    getLoggedUser(user){
+        if(!user){
+            return ({error: "Usuario no autenticado"})
+        }else{
+            return ({user: user})
         }
     }
 }
