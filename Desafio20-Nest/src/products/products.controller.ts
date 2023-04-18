@@ -4,14 +4,20 @@ import { updateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
 import { Request } from 'express';
 import { AuthenticatedGuard } from 'src/login/loggedin.guard';
-
+import { ApiQuery } from '@nestjs/swagger/dist/decorators';
 @UseGuards(AuthenticatedGuard)
 @Controller('productos')
 export class ProductsController {
     constructor(private readonly productsService: ProductsService){}
 
-    @Get(':id?')
-    getProducts(@Req() req: Request){
+    @Get()
+    @ApiQuery({
+        name: 'id',
+        type: String,
+        description: "An optional parameter",
+        required: false
+    })
+    getProducts(@Req() req: Request, @Query('id') id?: string){
         return this.productsService.getProducts(req);
     }
 

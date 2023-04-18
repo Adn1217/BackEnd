@@ -5,6 +5,7 @@ import MongoStore from 'connect-mongo';
 import session from 'express-session';
 import passport from 'passport';
 import dotenv from 'dotenv';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 dotenv.config({
     path: './.env'
@@ -53,9 +54,17 @@ export function fireBaseConnect(){
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule);
+    const swaggerOpts = new DocumentBuilder()
+                        .setTitle('Routes')
+                        .setDescription('The routes description')
+                        .setVersion('1.0')
+                        .addTag('Routes')
+                        .build()
 
-  app.use(
+    const document = SwaggerModule.createDocument(app, swaggerOpts);
+    SwaggerModule.setup('api', app, document);
+    app.use(
     session({
         name: 'loggedUser',
         store: MongoStore.create({
@@ -74,11 +83,11 @@ async function bootstrap() {
         }
     })
     )
-    
+
     app.use(passport.initialize());
     app.use(passport.session());
 
-  // app.enableCors();
-  await app.listen(process.env.PORT || 8080);
+    // app.enableCors();
+    await app.listen(process.env.PORT || 8080);
 }
 bootstrap();
