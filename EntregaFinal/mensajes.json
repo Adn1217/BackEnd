@@ -1,0 +1,44 @@
+[
+  {
+    "fecha": "2023-01-22T22:37:31.454Z",
+    "usuario": "Alejandra",
+    "mensaje": "Esto es FireBase",
+    "id": 1,
+    "timestamp": "22/01/2023, 17:37:31"
+  },
+  {
+    "fecha": "2023-02-11T22:51:01.091Z",
+    "usuario": "Adrian",
+    "mensaje": "Prueba con Nginx+Socket",
+    "id": 2,
+    "timestamp": "11/02/2023, 17:51:01"
+  },
+  {
+    "fecha": "2023-03-17T02:51:21.418Z",
+    "usuario": "Adrian",
+    "mensaje": "Prueba con funcionalidad en capas",
+    "id": 3,
+    "timestamp": "16/03/2023, 21:51:22"
+  },
+  {
+    "fecha": "2023-03-24T00:01:33.649Z",
+    "usuario": "Adrian",
+    "mensaje": "Prueba con DTO",
+    "id": 4,
+    "timestamp": "23/03/2023, 19:01:34"
+  },
+  {
+    "fecha": "2023-04-08T23:54:20.673Z",
+    "mensaje": "Mensaje guardado por graphql",
+    "usuario": "Adrian",
+    "id": 21,
+    "timestamp": "08/04/2023, 18:54:21"
+  },
+  {
+    "fecha": "2023-04-08T23:54:34.921Z",
+    "mensaje": "Otro mensaje guardado por graphql",
+    "usuario": "Adrian",
+    "id": 22,
+    "timestamp": "08/04/2023, 18:54:35"
+  }
+]
