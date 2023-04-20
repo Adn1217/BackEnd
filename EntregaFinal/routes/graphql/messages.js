@@ -1,5 +1,5 @@
 import express from 'express';
-import {onlyAdmin, isLogged} from '../../functions.js';
+import {onlyAdmin, isLogged} from '../../utils/functions.js';
 import * as msgController from '../../controller/messagesController.js';
 import {graphqlHTTP} from 'express-graphql';
 import {schema} from '../../models/graphql/messages.js';

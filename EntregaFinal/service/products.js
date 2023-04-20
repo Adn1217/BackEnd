@@ -1,6 +1,6 @@
 import * as container from '../container/products.js';
 import * as msgController from '../controller/messagesController.js';
-import logger from '../logger.js';
+import logger from '../utils/logger.js';
 
 export async function saveProduct(product){
     if (Object.keys(product).length === 0){

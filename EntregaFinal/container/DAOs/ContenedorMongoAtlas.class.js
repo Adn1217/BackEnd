@@ -3,12 +3,12 @@ import {productsModel} from '../../models/products.js';
 import {msgsModel} from '../../models/messages.js';
 import {cartsModel} from '../../models/carts.js';
 import {usersModel} from '../../models/users.js';
-import { productsCollection, messagesCollection, cartsCollection } from "../../variables.js";
+import { productsCollection, messagesCollection, cartsCollection } from "../../utils/variables.js";
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import dbClient from "./dbClient.class.js";
-import {getURL} from '../../functions.js';
-import logger from '../../logger.js';
+import {getURL} from '../../utils/functions.js';
+import logger from '../../utils/logger.js';
 
 dotenv.config({
     path: './.env'

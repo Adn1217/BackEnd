@@ -1,6 +1,6 @@
 import ContainerFactory from './DAOs/ContainerFactory.class.js';
 import { transformToDTO } from './DTOs/products.js';
-import { productsCollection } from '../variables.js';
+import { productsCollection } from '../utils/variables.js';
 import dotenv from 'dotenv';
 
 dotenv.config({
@@ -12,7 +12,7 @@ const factory = new ContainerFactory();
 function createContainers(){
     const productosFirebase = factory.createContainer('Firebase', productsCollection);
     const productosMongoAtlas = factory.createContainer('MongoAtlas', productsCollection);
-    const productosFile = factory.createContainer('File','./productos.json');
+    const productosFile = factory.createContainer('File','./local/productos.json');
     return [productosFirebase, productosMongoAtlas, productosFile]
 }
 

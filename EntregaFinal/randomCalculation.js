@@ -1,4 +1,4 @@
-import {randomCount} from './functions.js';
+import {randomCount} from './utils/functions.js';
 
 process.on('message', cant => {
     

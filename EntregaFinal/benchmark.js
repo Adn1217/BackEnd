@@ -1,6 +1,6 @@
 import autocannon from 'autocannon';
 import stream from 'stream';
-import logger from './logger.js';
+import logger from './utils/logger.js';
 
 function run(url){
     logger.info(`Inicio de pruebas Benchmark para ${url}`);

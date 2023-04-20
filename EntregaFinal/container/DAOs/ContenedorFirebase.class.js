@@ -3,8 +3,8 @@ import admin from 'firebase-admin';
 // import {doc, getDoc} from 'firebase/firestore';
 import dotenv from 'dotenv';
 import dbClient from "./dbClient.class.js";
-import logger from '../../logger.js';
-import { serviceAccount } from '../../variables.js';
+import logger from '../../utils/logger.js';
+import { serviceAccount } from '../../utils/variables.js';
 
 dotenv.config({
     path: './.env'

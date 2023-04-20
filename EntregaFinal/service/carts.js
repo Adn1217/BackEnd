@@ -1,6 +1,6 @@
 import * as container from '../container/carts.js';
-import { sendMail, sendSmsMsg, sendWappMsg } from '../functions.js';
-import logger from '../logger.js';
+import { sendMail, sendSmsMsg, sendWappMsg } from '../utils/functions.js';
+import logger from '../utils/logger.js';
 
 export async function getCarts(){
     const carts = await container.getCarts(); 

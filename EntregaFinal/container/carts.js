@@ -1,8 +1,8 @@
 import ContainerFactory from './DAOs/ContainerFactory.class.js';
-import { calculateId } from '../functions.js';
+import { calculateId } from '../utils/functions.js';
 import dotenv from 'dotenv';
 import { transformToDTO } from './DTOs/carts.js';
-import { cartsCollection } from '../variables.js';
+import { cartsCollection } from '../utils/variables.js';
 
 dotenv.config({
     path: './.env'
@@ -13,7 +13,7 @@ const factory = new ContainerFactory();
 function createContainers(){
     const carritoFirebase = factory.createContainer('Firebase', cartsCollection);
     const carritoMongoAtlas = factory.createContainer('MongoAtlas',cartsCollection);
-    const carritoFile = factory.createContainer('File','./cart.json');
+    const carritoFile = factory.createContainer('File','./local/cart.json');
     return [carritoFirebase, carritoMongoAtlas, carritoFile]
 }
 

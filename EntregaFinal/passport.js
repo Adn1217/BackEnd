@@ -1,9 +1,10 @@
-import logger from './logger.js';
+
+import logger from './utils/logger.js';
 import bCrypt from 'bcrypt';
 import { dbFS } from './container/DAOs/ContenedorFirebase.class.js';
-import { usersCollection } from './variables.js';
+import { usersCollection } from './utils/variables.js';
 
-export function encrypt(pwd){
+function encrypt(pwd){
     let encrypted = bCrypt.hashSync(pwd, bCrypt.genSaltSync(10), null)
     return encrypted
 }

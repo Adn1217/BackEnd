@@ -1,5 +1,5 @@
 import express from 'express';
-import {isLogged} from '../functions.js';
+import {isLogged} from '../utils/functions.js';
 import * as msgController from '../controller/messagesController.js';
 import {messagesGraphql} from './graphql/messages.js';
 

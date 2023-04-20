@@ -1,5 +1,5 @@
 import axios from 'axios';
-import logger from '../logger.js';
+import logger from '../utils/logger.js';
 import dotenv from 'dotenv';
 import parseArgs from 'minimist';
 

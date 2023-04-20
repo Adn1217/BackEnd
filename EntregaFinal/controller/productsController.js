@@ -1,6 +1,6 @@
 import * as msgController from './messagesController.js';
 import { faker } from '@faker-js/faker';
-import logger from '../logger.js';
+import logger from '../utils/logger.js';
 import * as service from '../service/products.js';
 
 function createRandomProducts(n){

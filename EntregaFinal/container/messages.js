@@ -2,8 +2,8 @@
 import ContainerFactory from './DAOs/ContainerFactory.class.js';
 import { transformToDTO } from './DTOs/messages.js';
 import {schema, normalize, denormalize} from 'normalizr';
-import { messagesCollection, normMessagesCollection } from '../variables.js';
-import logger from '../logger.js';
+import { messagesCollection, normMessagesCollection } from '../utils/variables.js';
+import logger from '../utils/logger.js';
 import dotenv from 'dotenv';
 
 dotenv.config({
@@ -16,7 +16,7 @@ function createContainers(){
     const messagesFirebase = factory.createContainer('Firebase', messagesCollection);
     const messagesFirebaseNorm = factory.createContainer('Firebase', normMessagesCollection);
     const messagesMongoAtlas = factory.createContainer('MongoAtlas', messagesCollection);
-    const messagesFile = factory.createContainer('File','./mensajes.json');
+    const messagesFile = factory.createContainer('File','./local/mensajes.json');
     return [messagesFirebase, messagesFirebaseNorm, messagesMongoAtlas, messagesFile]
 }
 

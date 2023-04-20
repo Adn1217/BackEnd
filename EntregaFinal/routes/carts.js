@@ -1,5 +1,5 @@
 import express from 'express';
-import {onlyAdmin, isLogged} from '../functions.js';
+import {onlyAdmin, isLogged} from '../utils/functions.js';
 import * as cartController from '../controller/cartsController.js';
 
 const { Router } = express;

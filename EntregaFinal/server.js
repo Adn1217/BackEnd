@@ -8,7 +8,7 @@ import {Server as IOServer} from 'socket.io';
 import path from 'path';
 import {fileURLToPath} from 'url';
 // import {getURL, serviceAccount} from './config.js';
-import {getURL, loadMocktoFireBase, logRequest} from './functions.js';
+import {getURL, loadMocktoFireBase, logRequest} from './utils/functions.js';
 
 import dotenv from 'dotenv';
 import parseArgs from 'minimist';
@@ -39,8 +39,8 @@ import {carrito} from './routes/carts.js';
 import {random} from './routes/random.js';
 
 import compression from 'compression';
-import logger from './logger.js';
-import { sessionOpts } from './variables.js';
+import logger from './utils/logger.js';
+import { sessionOpts } from './utils/variables.js';
 
 const numCPUs = os.cpus().length;
 
@@ -122,10 +122,6 @@ app.use('/static', express.static(path.join(__dirname, 'public')))
 // console.log(__dirname + '/public');
 
 app.use('/', logRequest);
-// app.use('/graphql', graphqlRouter, (req, res) =>{
-//     logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-//     res.sendStatus(400);
-// })
 app.post('/login',
     passport.authenticate('login', {
     failureRedirect: '/faillogin', 
@@ -172,7 +168,7 @@ app.use('/randoms', compression(), random, (req, res) =>{
     res.sendStatus(400); //Bad Request
 });
 
-// loadMocktoFireBase(['products']); // Habilitar solo al requerirse recargar mocks originales.
+// loadMocktoFireBase(['products', 'carts']); // Habilitar solo al requerirse recargar mocks originales.
 
 io.on('connection', (socket) => {
     // console.log('Usuario Conectado');
@@ -207,9 +203,7 @@ app.get('/home', compression(), (req, res) => {
         logger.info(`SesiónIniciada: ${JSON.stringify(req.session)}`);
         prdController.showProducts(req, res);
     }else{
-        // res.sendStatus(401); //Unauthorized
-        res.status(401).send({Error: 'Usuario no autenticado'})
-        // res.send({Error: 'Usuario no autenticado'})
+        res.status(401).send({Error: 'Usuario no autenticado'}) // Unauthorized.
     }
 })
 
@@ -227,7 +221,6 @@ app.get('/info', compression(), (req, res) =>{
     // console.log("ProcessInfo: ",usedArgs);
     logger.info(`ProcessInfo: ${JSON.stringify(usedArgs)}`);
     res.render('pages/info.ejs', {Args: usedArgs});
-    // res.send(usedArgs);
 })
 
 app.get('/faillogin', (req, res) =>{

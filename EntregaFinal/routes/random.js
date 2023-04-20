@@ -3,12 +3,13 @@ import { fork } from 'child_process';
 
 // import dotenv from 'dotenv';
 import parseArgs from 'minimist';
-import {randomCount} from '../functions.js';
+import { randomCount } from '../utils/functions.js';
 
-// import {isLogged} from '../functions.js';
+// import {isLogged} from '../utils/functions.js';
 
 const { Router } = express;
 export const random = new Router();
+// Con Ngynx activado, esta ruta solo funciona al levantar el servidor en el puerto 8081.
 
 // random.use('/', isLogged);
 

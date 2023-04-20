@@ -2,7 +2,7 @@ import supertest from 'supertest';
 import axios from 'axios';
 import {strictEqual, deepStrictEqual} from 'assert';
 import {expect} from 'chai';
-import logger from '../logger.js';
+import logger from '../utils/logger.js';
 import dotenv from 'dotenv';
 
 dotenv.config({

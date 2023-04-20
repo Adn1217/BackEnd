@@ -1,8 +1,8 @@
 import * as fs from "fs";
-import {calculateId} from '../../functions.js';
+import {calculateId} from '../../utils/functions.js';
 import dotenv from 'dotenv';
 import dbClient from "./dbClient.class.js";
-import logger from '../../logger.js';
+import logger from '../../utils/logger.js';
 
 dotenv.config({
     path: './.env'

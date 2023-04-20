@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { dbFS } from './container/DAOs/ContenedorFirebase.class.js';
+import { dbFS } from '../container/DAOs/ContenedorFirebase.class.js';
 import logger from './logger.js';
 
 import twilio from 'twilio';
@@ -30,11 +30,11 @@ export async function loadMocktoFireBase(colecciones){
 
     for (let i = 0; i < colecciones.length;i++){
         if (colecciones[i] === 'products'){
-            const stockData = './mockProductos.json';
+            const stockData = './mocks/mockProductos.json';
             const productsTestCollection = dbFS.collection(colecciones[i]);
             await loadMockData(stockData, productsTestCollection);
         }else if (colecciones[i] ==='carts'){
-            const stockData = './mockCart.json';
+            const stockData = './mocks/mockCart.json';
             const cartsTestCollection = dbFS.collection(colecciones[i]);
             await loadMockData(stockData, cartsTestCollection);
         }
