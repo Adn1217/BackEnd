@@ -7,12 +7,10 @@ import {schema} from '../../models/graphql/products.js';
 const { Router } = express;
 export const productosGraphql = new Router();
 
-// productosGraphql.use('/', isLogged);
 productosGraphql.use('/graphql', debug, graphqlHTTP((req, res, next) => ({
     schema: schema,
     rootValue: {
         getProducts: async () => {
-            console.log('########-------ENTRÓ---------#######')
             let products = await prdController.getProducts(req, res);
             // next()
             return products;

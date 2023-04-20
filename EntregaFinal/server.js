@@ -110,11 +110,10 @@ passport.deserializeUser(async (username, done) => {
 
 
 app.use(cookieParser());
-app.use(session(
-))
+app.use(session(sessionOpts))
 
 app.use(passport.initialize());
-app.use(passport.session(sessionOpts));
+app.use(passport.session());
 
 app.set('view engine', 'ejs');
 // app.set('views', "./views"); //Por defecto.

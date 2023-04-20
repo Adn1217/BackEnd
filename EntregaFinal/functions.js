@@ -77,7 +77,7 @@ export async function onlyAdmin(req, res, next, params) {
 
 export function isLogged(req, res, next){
     console.log(req.session);
-    if (req.isAuthenticated() || req.session){
+    if (req.isAuthenticated()){
         next()
     }else{
         res.send({error: 'Usuario no autenticado'});
