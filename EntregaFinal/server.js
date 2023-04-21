@@ -42,6 +42,9 @@ import compression from 'compression';
 import logger from './utils/logger.js';
 import { sessionOpts } from './utils/variables.js';
 
+import swaggerUI from 'swagger-ui-express';
+import { swaggerSpecs } from './docs/swaggerSpecs.js';
+
 const numCPUs = os.cpus().length;
 
 
@@ -122,6 +125,7 @@ app.use('/static', express.static(path.join(__dirname, 'public')))
 // console.log(__dirname + '/public');
 
 app.use('/', logRequest);
+app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 app.post('/login',
     passport.authenticate('login', {
     failureRedirect: '/faillogin', 
