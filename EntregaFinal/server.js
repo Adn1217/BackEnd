@@ -142,35 +142,17 @@ app.post('/register',
     successRedirect: '/successregister'
     })
 )
-app.use('/register', register, (req, res) =>{
-    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400);
-});
-app.use('/logout', logout, (req, res) =>{
-    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400);
-});
+app.use('/register', register);
+app.use('/logout', logout);
 app.use('/productos', productos, (req, res) =>{
     console.log('Respuesta: ', res.json())
     logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400);
+    res.sendStatus(400); // Bad Request
 });
-app.use('/productos-test', productosTest, (req, res) =>{
-    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400);
-});
-app.use('/carrito', carrito,(req, res) =>{
-    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400);
-});
-app.use('/mensajes', mensajes, (req, res) =>{
-    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400); //Bad Request
-});
-app.use('/randoms', compression(), random, (req, res) =>{
-    logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
-    res.sendStatus(400); //Bad Request
-});
+app.use('/productos-test', productosTest);
+app.use('/carrito', carrito);
+app.use('/mensajes', mensajes);
+app.use('/randoms', compression(), random);
 
 // loadMocktoFireBase(['products', 'carts']); // Habilitar solo al requerirse recargar mocks originales.
 

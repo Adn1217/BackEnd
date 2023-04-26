@@ -1,0 +1,7 @@
+tags:
+  - name: Productos
+    description: Recursos para administrar servicios Productos.
+  - name: Mensajes
+    description: Recursos para administrar servicios de Mensajes.
+  - name: Carritos
+    description: Recursos para administrar servicios de Carritos.
