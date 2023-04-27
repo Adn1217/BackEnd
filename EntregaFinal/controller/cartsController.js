@@ -51,7 +51,7 @@ export async function doSaveProductInCart(req, res) {
 export async function updateCartById(req, res) {
     const updatedCart = req.body;
     const id = req.params.id;
-    let updated = service.updateCartById(updatedCart, id);
+    let updated = await service.updateCartByIdFB(updatedCart, id);
     res.send(updated);
 }
 

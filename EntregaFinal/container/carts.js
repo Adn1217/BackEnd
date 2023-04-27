@@ -2,6 +2,7 @@ import ContainerFactory from './DAOs/ContainerFactory.class.js';
 import { calculateId } from '../utils/functions.js';
 import dotenv from 'dotenv';
 import { transformToDTO } from './DTOs/carts.js';
+import { transformToDTO as transformToProdDTO } from './DTOs/products.js';
 import { cartsCollection } from '../utils/variables.js';
 
 dotenv.config({
@@ -72,6 +73,17 @@ export async function saveProductInCartMongo(newProd, id_cart){
     return actualizadoMongo;
 }
 
+export async function updateCartByIdFB(updatedCart, id){
+    const [carritoFirebase, carritoMongoAtlas, carritoFile] = createContainers();
+    const cartFirebase = await carritoFirebase.updateById(updatedCart, id);
+    const cartDTO = transformToDTO({id,...cartFirebase});
+    if (cartFirebase){
+        return({actualizadoFirebase: cartDTO})
+    }else{
+        return({error: "Producto no encontrado"});
+    }
+}
+
 export async function saveProductInCartByIdFile(res, newProd, id_cart){
     const [carritoFirebase, carritoMongoAtlas, carritoFile] = createContainers();
     const allCarts = await carritoFile.getAll();
@@ -135,7 +147,7 @@ export async function deleteProductInCartById(id_prod, id_cart) {
     const cart = await carritoFile.deleteProductInCartById(id_prod, id_cart);
     const cartMongoAtlas = await carritoMongoAtlas.deleteProductInCartById(id_prod, id_cart);
     // console.log('Carrito Firebase: ', cartFirebase);
-    const cartDTO = transformToDTO(cartFirebase);
+    const cartDTO = transformToProdDTO(cartFirebase);
     console.log('Carritos DTO: ', JSON.stringify(cartDTO, null, '\t'));
     return cartDTO
 }

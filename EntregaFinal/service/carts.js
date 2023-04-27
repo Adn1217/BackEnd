@@ -100,7 +100,20 @@ export async function deleteProductInCartById(id_prod, id_cart){
     // return deletedProduct;
 }
 
-export async function updateCartById(updatedCart, id){
+export async function updateCartByIdFB(updatedProd, id){
+    const updatedProductFB = await container.updateCartByIdFB(updatedProd, id);
+    if(!('error' in updatedProductFB)){
+        // console.log("Se ha actualizado el producto: \n", updatedProductFB);
+        logger.info(`Se ha actualizado en FB el producto: ${JSON.stringify(updatedProductFB.actualizadoFirebase)}`);
+    }else{
+        // console.log("Producto no actualizado");
+        logger.warn('Producto no actualizado');
+        logger.error(`Producto ${id} no encontrado`);
+    }
+    return updatedProductFB;
+}
+
+export async function updateCartByIdFile(updatedCart, id){
     let cartById = await container.getCartById(id);
     if (!cartById){
         logger.error(`Carrito ${id} no encontrado`);
@@ -109,7 +122,7 @@ export async function updateCartById(updatedCart, id){
         const allCarts = await container.getCarts();
         const newCarts = allCarts.map((cart) => {
             if(cart.id === id){
-                cart = updatedCart;
+                cart = {...cart, ...updatedCart};
                 cart.id = id;
                 // console.log(cart);
             }
@@ -117,11 +130,11 @@ export async function updateCartById(updatedCart, id){
         })
         // console.log('La nueva lista de carritos es: ', newCarts);
         logger.debug(`La nueva lista de carritos es: ${JSON.stringify(newCarts)}`);
-        const allSaved = await saveAllCarts(newCarts);
-        if (allSaved === 'ok'){
+        const allSaved = await container.saveAllCarts(newCarts);
+        if (allSaved.actualizadoArchivo === 'Ok'){
             return({actualizado: updatedCart})
         }else{
-            logger.error(`Se ha presentado error al guardar de forma local: ${allSaved}`)
+            logger.error(`Se ha presentado error al guardar de forma local: ${JSON.stringify(allSaved)}`)
             return({error: allSaved})
         }
     }

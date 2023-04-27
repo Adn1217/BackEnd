@@ -8,9 +8,15 @@ paths:
       parameters:
         - name: auth
           in: header
-          description: Rol administrador (true/false).
+          description: Rol administrador.
           required: true
           type: string
+          schema:
+            type: string
+            enum: 
+              - true
+              - false
+            default: false
       requestBody:
         required: true
         content:
@@ -84,7 +90,7 @@ paths:
           description: Petición mal ingresada.
     put:
       summary: Se actualiza producto con identificador único.
-      operationId: updateProduct
+      operationId: updateProductById
       tags:
         - Productos
       parameters:
@@ -124,7 +130,7 @@ paths:
           description: Rol autenticado con permisos insuficientes.
     delete:
       summary: Se elimina producto con identificador único.
-      operationId: deleteProduct
+      operationId: deleteProductById
       tags:
         - Productos
       parameters:

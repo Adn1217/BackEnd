@@ -9,8 +9,8 @@ export const mensajes = new Router();
 mensajes.use('/', isLogged);
 
 mensajes.get('/', async (req, res) => {
-    msgController.showMsgs(res);
-    // res.send({msgs: allMessages})
+    let allMessages = await msgController.getMsgs(); // Anteriormente era showMsgs(res)
+    res.send({msgs: allMessages})
 })
 
 mensajes.post('/', (req, res) => {
