@@ -145,7 +145,7 @@ app.post('/register',
 app.use('/register', register);
 app.use('/logout', logout);
 app.use('/productos', productos, (req, res) =>{
-    console.log('Respuesta: ', res.json())
+    // console.log('Respuesta: ', res.json())
     logger.warn(`Petición ${req.method} a ruta inexistente ${req.originalUrl}`)
     res.sendStatus(400); // Bad Request
 });

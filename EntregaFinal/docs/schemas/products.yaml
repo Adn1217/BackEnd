@@ -41,3 +41,11 @@ components:
         price: 345.67
         stock: 50
         thumbnail: "https://firebasestorage.googleapis.com/v0/b/ecommerce-28be7.appspot.com/o/globoTerraqueo.webp?alt=media&token=b1c23fc2-85e5-4174-a647-ac3d7262fbd9"
+    savedProduct:
+      type: object
+      properties:
+        id: 
+          type: string
+          description: Identificador autogenerado de producto guardado.
+      example:
+          id: "7dYrHpHSziLfUMCs05nC"
