@@ -1,4 +1,6 @@
 tags:
+  - name: Login
+    description: Recursos para administrar servicios de Login.
   - name: Productos
     description: Recursos para administrar servicios Productos.
   - name: Mensajes

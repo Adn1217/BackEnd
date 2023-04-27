@@ -1,0 +1,30 @@
+paths:
+  /login:
+    post:
+      summary: Autentica usuario registrado por 10 minutos.
+      operationId: passportAuth
+      tags:
+        - Login
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/requestBodies/Login'
+      responses:
+        "200":
+          description: Autenticación exitosa.
+          content: 
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Login'
+        "201":
+          description: Autenticación exitosa.
+          content: 
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/Login'
+        "400":
+          description: Petición mal ingresada.
+        "401":
+          description: Rol autenticado con permisos insuficientes.

@@ -26,11 +26,3 @@ components:
         fecha: "2023-04-11T23:29:24.608Z"
         mensaje: "Buenos días"
         usuario: "Adrian"
-    # savedProduct:
-    #   type: object
-    #   properties:
-    #     id: 
-    #       type: string
-    #       description: Identificador autogenerado de producto guardado.
-    #   example:
-    #       id: "7dYrHpHSziLfUMCs05nC"

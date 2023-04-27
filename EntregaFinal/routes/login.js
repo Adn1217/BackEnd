@@ -10,7 +10,6 @@ login.get('/', (req, res) => {
 })
 
 register.get('/', (req, res) => {
-
     res.render('pages/register', {error: null});
 })
 
