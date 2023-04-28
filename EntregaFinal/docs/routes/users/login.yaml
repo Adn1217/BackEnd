@@ -28,3 +28,25 @@ paths:
           description: Petición mal ingresada.
         "401":
           description: Rol autenticado con permisos insuficientes.
+    delete:
+      summary: Elimina sesión de usuario registrado.
+      operationId: deleteSession
+      tags:
+        - Login
+      responses:
+        "200":
+          description: Cierre de sesion exitoso.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logout'
+        "201":
+          description: Autenticación exitosa.
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logout'
+        "400":
+          description: Petición mal ingresada.
+        "401":
+          description: Rol autenticado con permisos insuficientes.

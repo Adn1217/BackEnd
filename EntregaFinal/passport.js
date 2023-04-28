@@ -1,8 +1,16 @@
 
 import logger from './utils/logger.js';
+import { sendMail } from './utils/functions.js';
 import bCrypt from 'bcrypt';
 import { dbFS } from './container/DAOs/ContenedorFirebase.class.js';
+import ContainerFactory from './container/DAOs/ContainerFactory.class.js';
 import { usersCollection } from './utils/variables.js';
+import { usersModel } from './models/users.js';
+import mongoose from 'mongoose';
+
+mongoose.set('strictQuery', false);
+const factory = new ContainerFactory();    
+const usersMongoAtlas = factory.createContainer('MongoAtlas', usersCollection);
 
 function encrypt(pwd){
     let encrypted = bCrypt.hashSync(pwd, bCrypt.genSaltSync(10), null)
@@ -39,7 +47,7 @@ export async function searchUserFirebase(username){
 }
 
 export async function searchUserMongoAtlas(username){
-    let user = usersModel.findOne({username: username});
+    let user = await usersModel.findOne({username: username});
     if(!user){
         return null
     }else{
@@ -81,7 +89,7 @@ export async function register (req, username, password, done){
             // console.log('Usuario encontrado FB: ', usuario)
             logger.info(`Usuario encontrado FB: ${usuario.username}`);
             // console.log('Usuario encontrado Mongo Atlas: ', usuarioMongoAtlas)
-            logger.info(`Usuario encontrado Mongo Atlas: ${usuarioMongoAtlas._id}}`);
+            logger.info(`Usuario encontrado Mongo Atlas: ${usuarioMongoAtlas._id}`);
             return done(null, false, {message: 'El usuario ya está registrado'})
         }
 

@@ -3,7 +3,7 @@ import ContenedorArchivo from './ContenedorArchivo.class.js';
 import ContenedorMongoAtlas from './ContenedorMongoAtlas.class.js';
 import {ContenedorFirebase} from './ContenedorFirebase.class.js';
 
-export default class containerFactory {
+export default class ContainerFactory {
 
   createContainer(db, type) {
     try {

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { usersCollection } from '../utils/variables.js';
 
-const usersCollection = 'users';
+// const usersCollection = 'users';
 const usersSchema = new mongoose.Schema({
         username: {type: String, required: true},
         mail: {type: String, required: false},

@@ -16,6 +16,21 @@ components:
       example:
         username: "Adrian"
         password: "1234"
+    Logout:
+      type: object
+      required:
+        - user
+        - eliminado
+      properties:
+        user:
+          type: string
+          description: Usuario registrado.
+        eliminado:
+          type: string
+          description: Sesión de usuario eliminada.
+      example:
+        user: "Adrian"
+        eliminado: "Ok"
   requestBodies:
     Login:
       type: object
